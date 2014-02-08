@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# stow
+export STOW_DIR=~/stow
+
 # make sure opt exists
 if [ ! -d ~/opt ]; then
     mkdir ~/opt
@@ -22,4 +25,7 @@ if [ -f $PASS_BASH_COMPLETION ]; then
     source $PASS_BASH_COMPLETION
 fi
 
+if [ ! -d ~/bin ]; then
+    mkdir ~/bin
+fi
 export PATH=~/bin:$PATH
