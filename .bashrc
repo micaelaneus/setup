@@ -23,7 +23,7 @@ fi
 
 # pass
 PASS_BASH_COMPLETION=$(brew list pass | grep 'bash_completion')
-if [ -f $PASS_BASH_COMPLETION ]; then
+if [ x"" != x"$PASS_BASH_COMPLETION" ] && [ -f $PASS_BASH_COMPLETION ]; then
     source $PASS_BASH_COMPLETION
 fi
 
