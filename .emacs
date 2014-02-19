@@ -33,10 +33,11 @@ Return a list of installed packages or nil for every package not installed."
            (package-install package)
          nil)))
    packages))
-(ensure-package-installed 'ido
-                          'malabar-mode 'flycheck
-                          'clojure-mode 'midje-mode 'cider 'paredit
-                          'rhtml-mode 'rinari)
+(add-hook 'after-init-hook (lambda ()
+                             (ensure-package-installed 'ido
+                                                       'malabar-mode 'flycheck
+                                                       'clojure-mode 'midje-mode 'cider 'paredit
+                                                       'rhtml-mode 'rinari)))
 
 ;; Env
 (when (not (getenv "TERM_PROGRAM"))
