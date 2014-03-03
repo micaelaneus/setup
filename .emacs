@@ -22,23 +22,27 @@
  )
 
 ;; Ensure installed
-(defun ensure-package-installed (&rest packages)
-  "Assure every package is installed, ask for installation if it’s not.
-Return a list of installed packages or nil for every package not installed."
-  (mapcar
-   (lambda (package)
-     (package-installed-p 'evil)
-     (if (package-installed-p package)
-         package
-       (if (y-or-n-p (format "Package %s is missing. Install it? " package))
-           (package-install package)
-         nil)))
-   packages))
-(add-hook 'after-init-hook (lambda ()
-                             (ensure-package-installed 'ido
-                                                       'malabar-mode 'flycheck
-                                                       'clojure-mode 'midje-mode 'cider 'paredit
-                                                       'rhtml-mode 'rinari)))
+
+(defvar packages
+  '(ido
+    malabar-mode
+    flycheck
+    clojure-mode
+    midje-mode
+    cider
+    paredit
+    rhtml-mode
+    rinari))
+
+(defun packages-installed-p ()
+  (if (remove-if 'package-installed-p packages)
+      nil
+    t))
+
+(defun packages-install ()
+  (dolist (package packages)
+    (when (not (package-installed-p package))
+      (package-install package))))
 
 ;; Env
 (when (not (getenv "TERM_PROGRAM"))
@@ -46,9 +50,6 @@ Return a list of installed packages or nil for every package not installed."
     (setq exec-path (split-string (getenv "PATH") ":")))
 
 ;; Malabar
-(add-hook 'after-init-hook (lambda ()
-                             (require 'malabar-mode)
-                             (malabar-abbrevs-setup)))
 (add-to-list 'auto-mode-alist '("\\.java\\'" . malabar-mode))
 (add-hook 'malabar-mode-hook 'flycheck-mode)
 (add-hook 'malabar-mode-hook
@@ -77,3 +78,16 @@ Return a list of installed packages or nil for every package not installed."
 (add-to-list 'auto-mode-alist '("\\.html\\.erb\\'" . rhtml-mode))
 (add-hook 'rhtml-mode-hook
      	  (lambda () (rinari-launch)))
+
+;;; After init
+(defun after-init ()
+  ; Ensure installed
+  (package-initialize)
+  (require 'cl)
+  (when (not (packages-installed-p))
+    (package-refresh-contents)
+    (packages-install))
+  ; Malabar
+  (require 'malabar-mode)
+  (malabar-abbrevs-setup))
+(add-hook 'after-init-hook 'after-init)
