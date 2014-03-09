@@ -30,11 +30,8 @@ if [ "$(uname)" == "Darwin" ]; then
     [ x"" == x"$(brew ls --versions git            )" ] && brew install git
 fi
 
-# pass
-PASS_BASH_COMPLETION=$(brew list pass | grep 'bash_completion')
-if [ x"" != x"$PASS_BASH_COMPLETION" ] && [ -f $PASS_BASH_COMPLETION ]; then
-    source $PASS_BASH_COMPLETION
-fi
+# bash_completion
+. $HOMEBREW/etc/bash_completion
 
 if [ ! -d ~/bin ]; then
     mkdir ~/bin
