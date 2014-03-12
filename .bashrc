@@ -28,10 +28,28 @@ if [ "$(uname)" == "Darwin" ]; then
     [ x"" == x"$(brew ls --versions pass           )" ] && brew install pass
     [ x"" == x"$(brew ls --versions bash-completion)" ] && brew install bash-completion
     [ x"" == x"$(brew ls --versions git            )" ] && brew install git
+elif [ "$(uname)" == "Linux" ]; then
+    if [ -d /etc/redhat-release ]; then
+        if  [ x"" == x"$(rpm -qa | grep gnupg2-         )" ] ||
+            [ x"" == x"$(rpm -qa | grep pass-           )" ] ||
+            [ x"" == x"$(rpm -qa | grep bash-completion-)" ] ||
+            [ x"" == x"$(rpm -qa | grep git-            )" ]; then
+            su - root
+            [ x"" == x"$(rpm -qa | grep gnupg2-         )" ] && yum install gnupg2
+            [ x"" == x"$(rpm -qa | grep pass-           )" ] && yum install pass
+            [ x"" == x"$(rpm -qa | grep bash-completion-)" ] && yum install bash-completion
+            [ x"" == x"$(rpm -qa | grep git-            )" ] && yum install git
+            exit
+        fi
+    fi
 fi
 
 # bash_completion
-. $HOMEBREW/etc/bash_completion
+if [ "$(uname)" == "Darwin" ]; then
+    source $HOMEBREW/etc/bash_completion
+elif [ "$(uname)" == "Linux" ]; then
+    source /usr/share/bash-completion/bash_completion
+fi
 
 if [ ! -d ~/bin ]; then
     mkdir ~/bin
