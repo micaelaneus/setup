@@ -8,6 +8,11 @@ if [ ! -d ~/opt ]; then
     mkdir ~/opt
 fi
 
+# pkgconfig
+if [ "$(uname)" == "Darwin" ]; then
+    export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:/opt/X11/lib/pkgconfig:$PKG_CONFIG_PATH
+fi
+
 # homebrew
 if [ "$(uname)" == "Darwin" ]; then
     # download if not exists
@@ -20,6 +25,7 @@ if [ "$(uname)" == "Darwin" ]; then
     export HOMEBREW=~/opt/homebrew
     export HOMEBREW_CACHE=~/Library/Caches/Homebrew
     export PATH=$HOMEBREW/bin:$PATH
+    export PKG_CONFIG_PATH=$HOMEBREW/lib/pkgconfig:$PKG_CONFIG_PATH
 fi
 
 # install
