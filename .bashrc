@@ -32,7 +32,6 @@ if [ "$(uname)" == "Darwin" ]; then
 # Linux
 elif [ "$(uname)" == "Linux" ]; then
 
-    # rpm
     if [ -d /etc/redhat-release ]; then
 
         [ x"" == x"$(rpm -qa | grep bash-completion-)" ] && sudo yum install bash-completion
@@ -42,6 +41,11 @@ elif [ "$(uname)" == "Linux" ]; then
 
         [ ! $(dpkg-query -Wf'${db:Status-abbrev}' bash-completion 2>/dev/null | grep -q '^i') ] && sudo apt-get install -y bash-completion
         [ ! $(dpkg-query -Wf'${db:Status-abbrev}' git             2>/dev/null | grep -q '^i') ] && sudo apt-get install -y git
+
+    elif [ -d /etc/arch_release ]; then
+
+        ! sudo pacman -Q bash-completion && sudo pacman -Sy bash-completion
+        ! sudo pacman -Q git             && sudo pacman -Sy git
 
     fi
 
