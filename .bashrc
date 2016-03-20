@@ -2,7 +2,6 @@
 
 [[ $- != *i* ]] && return
 
-# Darwin
 if [ "$(uname)" == "Darwin" ]; then
 
     # make sure opt exists
@@ -29,7 +28,17 @@ if [ "$(uname)" == "Darwin" ]; then
 
     source $HOMEBREW/etc/bash_completion
 
-# Linux
+    if [ x"" == x"$(brew ls --versions pyenv)" ]; then
+        brew install pyenv
+        brew install pyenv-virtualenv
+        eval "$(pyenv init -)"
+        eval "$(pyenv virtualenv-init -)"
+        pyenv install 3.5.0 && pyenv global 3.5.0
+    else
+        eval "$(pyenv init -)"
+        eval "$(pyenv virtualenv-init -)"
+    fi
+
 elif [ "$(uname)" == "Linux" ]; then
 
     if [ -d /etc/redhat-release ]; then
@@ -42,7 +51,7 @@ elif [ "$(uname)" == "Linux" ]; then
         [ ! $(dpkg-query -Wf'${db:Status-abbrev}' bash-completion 2>/dev/null | grep -q '^i') ] && sudo apt-get install -y bash-completion
         [ ! $(dpkg-query -Wf'${db:Status-abbrev}' git             2>/dev/null | grep -q '^i') ] && sudo apt-get install -y git
 
-    elif [ -d /etc/arch_release ]; then
+    elif [ -f /etc/arch_release ]; then
 
         ! sudo pacman -Q bash-completion && sudo pacman -Sy bash-completion
         ! sudo pacman -Q git             && sudo pacman -Sy git
@@ -50,6 +59,21 @@ elif [ "$(uname)" == "Linux" ]; then
     fi
 
     source /usr/share/bash-completion/bash_completion
+
+    if [ ! -d ~/.pyenv ]; then
+        git clone https://github.com/yyuu/pyenv.git ~/.pyenv
+        git clone https://github.com/yyuu/pyenv-virtualenv.git ~/.pyenv/plugins/pyenv-virtualenv
+        export PYENV_ROOT="$HOME/.pyenv"
+        export PATH="$PYENV_ROOT/bin:$PATH"
+        eval "$(pyenv init -)"
+        eval "$(pyenv virtualenv-init -)"
+        pyenv install 3.5.0 && pyenv global 3.5.0
+    else
+        export PYENV_ROOT="$HOME/.pyenv"
+        export PATH="$PYENV_ROOT/bin:$PATH"
+        eval "$(pyenv init -)"
+        eval "$(pyenv virtualenv-init -)"
+    fi
 
 fi
 
