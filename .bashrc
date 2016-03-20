@@ -23,14 +23,21 @@ if [ "$(uname)" == "Darwin" ]; then
     export PATH=$HOMEBREW/bin:$PATH
     export PKG_CONFIG_PATH=$HOMEBREW/lib/pkgconfig:$PKG_CONFIG_PATH
 
+    # coreutils
+    [ x"" == x"$(brew ls --versions coreutils      )" ] && brew install bash-completion
+    # coreutils - man
+    export MANPATH=$MANPATH:$HOMEBREW/opt/coreutils/libexec/gnuman
+
     [ x"" == x"$(brew ls --versions bash-completion)" ] && brew install bash-completion
     [ x"" == x"$(brew ls --versions git            )" ] && brew install git
+    [ x"" == x"$(brew ls --versions direnv         )" ] && brew install direnv
 
     source $HOMEBREW/etc/bash_completion
 
     if [ x"" == x"$(brew ls --versions pyenv)" ]; then
         brew install pyenv
         brew install pyenv-virtualenv
+        brew install pyenv-virtualenvwrapper
         eval "$(pyenv init -)"
         eval "$(pyenv virtualenv-init -)"
         pyenv install 3.5.0 && pyenv global 3.5.0
@@ -38,6 +45,7 @@ if [ "$(uname)" == "Darwin" ]; then
         eval "$(pyenv init -)"
         eval "$(pyenv virtualenv-init -)"
     fi
+    pyenv virtualenvwrapper
 
 elif [ "$(uname)" == "Linux" ]; then
 
@@ -63,6 +71,7 @@ elif [ "$(uname)" == "Linux" ]; then
     if [ ! -d ~/.pyenv ]; then
         git clone https://github.com/yyuu/pyenv.git ~/.pyenv
         git clone https://github.com/yyuu/pyenv-virtualenv.git ~/.pyenv/plugins/pyenv-virtualenv
+        git clone https://github.com/yyuu/pyenv-virtualenvwrapper.git ~/.pyenv/plugins/pyenv-virtualenvwrapper
         export PYENV_ROOT="$HOME/.pyenv"
         export PATH="$PYENV_ROOT/bin:$PATH"
         eval "$(pyenv init -)"
@@ -74,6 +83,7 @@ elif [ "$(uname)" == "Linux" ]; then
         eval "$(pyenv init -)"
         eval "$(pyenv virtualenv-init -)"
     fi
+    pyenv virtualenvwrapper
 
 fi
 
@@ -81,3 +91,8 @@ if [ ! -d ~/bin ]; then
     mkdir ~/bin
 fi
 export PATH=~/bin:$PATH
+
+# Direnv - Last
+if [ "$(uname)" == "Darwin" ]; then
+    eval "$(direnv hook bash)"
+fi
