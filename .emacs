@@ -12,6 +12,7 @@
    (quote
     (("gnu" . "http://elpa.gnu.org/packages/")
      ("melpa" . "http://melpa.milkbox.net/packages/"))))
+ '(projectile-completion-system (quote helm))
  '(savehist-mode t)
  '(truncate-lines t)
  '(visible-bell t)
@@ -38,9 +39,11 @@
     cider
     paredit
     go-mode
+    company-go
     groovy-mode
     rhtml-mode
-    rinari))
+    rinari
+    yaml-mode))
 
 (defun packages-installed-p ()
   (if (remove-if 'package-installed-p packages)
@@ -99,6 +102,7 @@
   (global-set-key (kbd "C-c h o") 'helm-occur)
   (global-set-key (kbd "C-h SPC") 'helm-all-mark-rings)
   (helm-mode 1)
+  (helm-projectile-on)
   ;; Magit
   (global-set-key (kbd "C-x g") 'magit-status)
   (global-set-key (kbd "C-x M-g") 'magit-dispatch-popup)
