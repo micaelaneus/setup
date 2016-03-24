@@ -48,6 +48,12 @@ if [ "$(uname)" == "Darwin" ]; then
         eval "$(pyenv virtualenv-init -)"
     fi
     pyenv virtualenvwrapper
+    
+    if [ x"" == x"$(brew ls --versions rbenv)" ]; then
+        brew install rbenv
+        brew install ruby-build
+    fi
+    eval "$(rbenv init -)"
 
 elif [ "$(uname)" == "Linux" ]; then
 
@@ -89,6 +95,12 @@ elif [ "$(uname)" == "Linux" ]; then
         eval "$(pyenv virtualenv-init -)"
     fi
     pyenv virtualenvwrapper
+    
+    if [ ! -d ~/.rbenv ]; then
+        git clone https://github.com/rbenv/rbenv.git ~/.rbenv
+    fi
+    export PATH="$PATH:$HOME/.rbenv/bin"
+    rbenv init
 
 fi
 
