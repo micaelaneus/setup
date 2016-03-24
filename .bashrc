@@ -34,6 +34,8 @@ if [ "$(uname)" == "Darwin" ]; then
 
     source $HOMEBREW/etc/bash_completion
 
+    [ x"" == x"$(brew ls --versions go             )" ] && brew install go
+
     if [ x"" == x"$(brew ls --versions pyenv)" ]; then
         brew install pyenv
         brew install pyenv-virtualenv
@@ -53,16 +55,19 @@ elif [ "$(uname)" == "Linux" ]; then
 
         [ x"" == x"$(rpm -qa | grep bash-completion-)" ] && sudo yum install bash-completion
         [ x"" == x"$(rpm -qa | grep git-            )" ] && sudo yum install git
+        [ x"" == x"$(rpm -qa | grep go-             )" ] && sudo yum install go
 
     elif [ -d /etc/debian_version ]; then
 
         [ ! $(dpkg-query -Wf'${db:Status-abbrev}' bash-completion 2>/dev/null | grep -q '^i') ] && sudo apt-get install -y bash-completion
         [ ! $(dpkg-query -Wf'${db:Status-abbrev}' git             2>/dev/null | grep -q '^i') ] && sudo apt-get install -y git
+        [ ! $(dpkg-query -Wf'${db:Status-abbrev}' go              2>/dev/null | grep -q '^i') ] && sudo apt-get install -y go
 
     elif [ -f /etc/arch_release ]; then
 
         ! sudo pacman -Q bash-completion && sudo pacman -Sy bash-completion
         ! sudo pacman -Q git             && sudo pacman -Sy git
+        ! sudo pacman -Q go              && sudo pacman -Sy go
 
     fi
 
@@ -86,6 +91,11 @@ elif [ "$(uname)" == "Linux" ]; then
     pyenv virtualenvwrapper
 
 fi
+
+export GOPATH="$HOME/Projects/go"
+export PATH="$PATH:$GOPATH/bin"
+[ ! -d "$GOPATH/src/golang.org/x/tools/cmd"        ] && go get -u golang.org/x/tools/cmd/...
+[ ! -d "$GOPATH/src/github.com/kardianos/govendor" ] && go get -u github.com/kardianos/govendor
 
 if [ ! -d ~/bin ]; then
     mkdir ~/bin
