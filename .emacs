@@ -5,6 +5,7 @@
  ;; If there is more than one, they won't work right.
  '(backup-directory-alist (quote ((".*" . "~/.emacs.d/backup"))))
  '(column-number-mode t)
+ '(helm-command-prefix-key "C-x h")
  '(indent-tabs-mode nil)
  '(js-indent-level 2)
  '(package-archives
@@ -31,8 +32,8 @@
     helm-projectile
     helm-company
     flycheck
-    clojure-mode
     magit
+    clojure-mode
     midje-mode
     cider
     paredit
@@ -90,6 +91,17 @@
   (projectile-global-mode)
   ;; Company
   (global-company-mode)
+  ;; Helm
+  (global-set-key (kbd "M-x") 'helm-M-x)
+  (global-set-key (kbd "M-y") 'helm-show-kill-ring)
+  (global-set-key (kbd "C-x b") 'helm-mini)
+  (global-set-key (kbd "C-x C-f") 'helm-find-files)
+  (global-set-key (kbd "C-c h o") 'helm-occur)
+  (global-set-key (kbd "C-h SPC") 'helm-all-mark-rings)
+  (helm-mode 1)
+  ;; Magit
+  (global-set-key (kbd "C-x g") 'magit-status)
+  (global-set-key (kbd "C-x M-g") 'magit-dispatch-popup)
   ;; Paredit
   (autoload 'paredit-mode "paredit" nil t)
   (add-hook 'emacs-lisp-mode-hook 'paredit-mode))
