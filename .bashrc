@@ -122,6 +122,16 @@ export PATH="$PATH:$GOPATH/bin"
 # Python
 pyenv virtualenvwrapper
 
+# Node.js
+if [ ! -d ~/.nvm ]; then
+    git clone https://github.com/creationix/nvm.git ~/.nvm
+    pushd ~/.nvm
+    git checkout `git describe --abbrev=0 --tags`
+    popd
+fi
+export NVM_DIR="$HOME/.nvm"
+. "$NVM_DIR/nvm.sh"
+
 # Ruby
 eval "$(rbenv init -)"
 
