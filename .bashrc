@@ -100,7 +100,7 @@ elif [ "$(uname)" == "Linux" ]; then
         git clone https://github.com/rbenv/rbenv.git ~/.rbenv
     fi
     export PATH="$PATH:$HOME/.rbenv/bin"
-    rbenv init
+    eval "$(rbenv init -)"
 
 fi
 
