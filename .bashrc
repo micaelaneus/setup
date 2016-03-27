@@ -140,6 +140,8 @@ if [ ! -d ~/bin ]; then
 fi
 export PATH=~/bin:$PATH
 
+[ -f ~/.bashrc_local ] && source ~/.bashrc_local
+
 # Direnv - Last
 if [ "$(uname)" == "Darwin" ]; then
     eval "$(direnv hook bash)"
