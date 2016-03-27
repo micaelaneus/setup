@@ -57,7 +57,6 @@ if [ "$(uname)" == "Darwin" ]; then
         brew install rbenv
         brew install ruby-build
     fi
-    eval "$(rbenv init -)"
 
 elif [ "$(uname)" == "Linux" ]; then
 
