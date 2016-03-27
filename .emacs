@@ -27,7 +27,8 @@
 ;; Ensure installed
 
 (defvar packages
-  '(projectile
+  '(exec-path-from-shell
+    projectile
     company
     helm
     helm-projectile
@@ -90,6 +91,9 @@
   (when (not (packages-installed-p))
     (package-refresh-contents)
     (packages-install))
+  ;; exec-path-from-shell
+  (when (memq window-system '(mac ns))
+    (exec-path-from-shell-initialize))
   ;; Projectile
   (projectile-global-mode)
   ;; Company
