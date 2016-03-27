@@ -20,8 +20,10 @@ if [ "$(uname)" == "Darwin" ]; then
     fi
     export HOMEBREW=~/opt/homebrew
     export HOMEBREW_CACHE=~/Library/Caches/Homebrew
-    export PATH=$HOMEBREW/bin:$PATH
+    export PATH=$HOMEBREW/bin:$HOMEBREW/sbin:$PATH
     export PKG_CONFIG_PATH=$HOMEBREW/lib/pkgconfig:$PKG_CONFIG_PATH
+    export CPATH="$CPATH:$HOMEBREW/include"
+    export DYLD_LIBRARY_PATH="$DYLD_LIBRARY_PATH:$HOMEBREW/lib"
 
     # coreutils
     [ x"" == x"$(brew ls --versions coreutils      )" ] && brew install bash-completion
@@ -34,8 +36,10 @@ if [ "$(uname)" == "Darwin" ]; then
 
     source $HOMEBREW/etc/bash_completion
 
+    # Go
     [ x"" == x"$(brew ls --versions go             )" ] && brew install go
 
+    # Python
     if [ x"" == x"$(brew ls --versions pyenv)" ]; then
         brew install pyenv
         brew install pyenv-virtualenv
@@ -47,8 +51,8 @@ if [ "$(uname)" == "Darwin" ]; then
         eval "$(pyenv init -)"
         eval "$(pyenv virtualenv-init -)"
     fi
-    pyenv virtualenvwrapper
-    
+
+    # Ruby
     if [ x"" == x"$(brew ls --versions rbenv)" ]; then
         brew install rbenv
         brew install ruby-build
@@ -61,24 +65,31 @@ elif [ "$(uname)" == "Linux" ]; then
 
         [ x"" == x"$(rpm -qa | grep bash-completion-)" ] && sudo yum install bash-completion
         [ x"" == x"$(rpm -qa | grep git-            )" ] && sudo yum install git
+        
+        # Go
         [ x"" == x"$(rpm -qa | grep go-             )" ] && sudo yum install go
 
     elif [ -d /etc/debian_version ]; then
 
         [ ! $(dpkg-query -Wf'${db:Status-abbrev}' bash-completion 2>/dev/null | grep -q '^i') ] && sudo apt-get install -y bash-completion
         [ ! $(dpkg-query -Wf'${db:Status-abbrev}' git             2>/dev/null | grep -q '^i') ] && sudo apt-get install -y git
+        
+        # Go
         [ ! $(dpkg-query -Wf'${db:Status-abbrev}' go              2>/dev/null | grep -q '^i') ] && sudo apt-get install -y go
 
     elif [ -f /etc/arch_release ]; then
 
         ! sudo pacman -Q bash-completion && sudo pacman -Sy bash-completion
         ! sudo pacman -Q git             && sudo pacman -Sy git
+        
+        # Go
         ! sudo pacman -Q go              && sudo pacman -Sy go
 
     fi
 
     source /usr/share/bash-completion/bash_completion
 
+    # Python
     if [ ! -d ~/.pyenv ]; then
         git clone https://github.com/yyuu/pyenv.git ~/.pyenv
         git clone https://github.com/yyuu/pyenv-virtualenv.git ~/.pyenv/plugins/pyenv-virtualenv
@@ -94,20 +105,25 @@ elif [ "$(uname)" == "Linux" ]; then
         eval "$(pyenv init -)"
         eval "$(pyenv virtualenv-init -)"
     fi
-    pyenv virtualenvwrapper
-    
+
+    # Ruby
     if [ ! -d ~/.rbenv ]; then
         git clone https://github.com/rbenv/rbenv.git ~/.rbenv
     fi
-    export PATH="$PATH:$HOME/.rbenv/bin"
-    eval "$(rbenv init -)"
 
 fi
 
+# Go
 export GOPATH="$HOME/Projects/go"
 export PATH="$PATH:$GOPATH/bin"
 [ ! -d "$GOPATH/src/golang.org/x/tools/cmd"        ] && go get -u golang.org/x/tools/cmd/...
 [ ! -d "$GOPATH/src/github.com/kardianos/govendor" ] && go get -u github.com/kardianos/govendor
+
+# Python
+pyenv virtualenvwrapper
+
+# Ruby
+eval "$(rbenv init -)"
 
 if [ ! -d ~/bin ]; then
     mkdir ~/bin
