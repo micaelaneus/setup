@@ -63,6 +63,8 @@ if [ "$(uname)" == "Darwin" ]; then
         brew install nvm
         mkdir "${HOME}/.nvm"
     fi
+    export NVM_DIR="$HOME/.nvm"
+    . "$(brew --prefix nvm)/nvm.sh"
 
 elif [ "$(uname)" == "Linux" ]; then
 
@@ -123,6 +125,8 @@ elif [ "$(uname)" == "Linux" ]; then
         git checkout `git describe --abbrev=0 --tags`
         popd
     fi
+    export NVM_DIR="${HOME}/.nvm"
+    . "${NVM_DIR}/nvm.sh"
 
 fi
 
@@ -134,10 +138,6 @@ export PATH="$PATH:$GOPATH/bin"
 
 # Python
 pyenv virtualenvwrapper
-
-# Node.js
-export NVM_DIR="$HOME/.nvm"
-. "$NVM_DIR/nvm.sh"
 
 # Ruby
 eval "$(rbenv init -)"
