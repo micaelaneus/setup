@@ -130,12 +130,6 @@ elif [ "$(uname)" == "Linux" ]; then
 
 fi
 
-# Go
-export GOPATH="$HOME/Projects/go"
-export PATH="$PATH:$GOPATH/bin"
-[ ! -d "$GOPATH/src/golang.org/x/tools/cmd"        ] && go get -u golang.org/x/tools/cmd/...
-[ ! -d "$GOPATH/src/github.com/kardianos/govendor" ] && go get -u github.com/kardianos/govendor
-
 # Python
 pyenv virtualenvwrapper
 
@@ -146,6 +140,12 @@ if [ ! -d ~/bin ]; then
     mkdir ~/bin
 fi
 export PATH=~/bin:$PATH
+
+# Go
+export GOPATH="$HOME/Projects/go"
+export PATH="$PATH:$GOPATH/bin"
+[ ! -d "$GOPATH/src/golang.org/x/tools/cmd"        ] && go get -u golang.org/x/tools/cmd/...
+[ ! -d "$GOPATH/src/github.com/kardianos/govendor" ] && go get -u github.com/kardianos/govendor
 
 [ -f ~/.bashrc_local ] && source ~/.bashrc_local
 
