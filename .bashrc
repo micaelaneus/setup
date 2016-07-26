@@ -57,6 +57,12 @@ if [ "$(uname)" == "Darwin" ]; then
         brew install rbenv
         brew install ruby-build
     fi
+    
+    # Node.js
+    if [ x"" == x"$(brew ls --versions nvm)" ]; then
+        brew install nvm
+        mkdir "${HOME}/.nvm"
+    fi
 
 elif [ "$(uname)" == "Linux" ]; then
 
@@ -110,6 +116,14 @@ elif [ "$(uname)" == "Linux" ]; then
         git clone https://github.com/rbenv/rbenv.git ~/.rbenv
     fi
 
+    # Node.js
+    if [ ! -d ~/.nvm ]; then
+        git clone https://github.com/creationix/nvm.git ~/.nvm
+        pushd ~/.nvm
+        git checkout `git describe --abbrev=0 --tags`
+        popd
+    fi
+
 fi
 
 # Go
@@ -122,12 +136,6 @@ export PATH="$PATH:$GOPATH/bin"
 pyenv virtualenvwrapper
 
 # Node.js
-if [ ! -d ~/.nvm ]; then
-    git clone https://github.com/creationix/nvm.git ~/.nvm
-    pushd ~/.nvm
-    git checkout `git describe --abbrev=0 --tags`
-    popd
-fi
 export NVM_DIR="$HOME/.nvm"
 . "$NVM_DIR/nvm.sh"
 
