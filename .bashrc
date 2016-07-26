@@ -26,7 +26,7 @@ if [ "$(uname)" == "Darwin" ]; then
     export DYLD_LIBRARY_PATH="$DYLD_LIBRARY_PATH:$HOMEBREW/lib"
 
     # coreutils
-    [ x"" == x"$(brew ls --versions coreutils      )" ] && brew install bash-completion
+    [ x"" == x"$(brew ls --versions coreutils      )" ] && brew install coreutils
     # coreutils - man
     export MANPATH=$MANPATH:$HOMEBREW/opt/coreutils/libexec/gnuman
 
