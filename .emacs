@@ -15,7 +15,7 @@
  '(projectile-completion-system (quote helm))
  '(savehist-mode t)
  '(truncate-lines t)
- '(visible-bell t)
+ '(visible-bell nil)
  '(web-mode-markup-indent-offset 2))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
