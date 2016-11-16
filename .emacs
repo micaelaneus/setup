@@ -14,6 +14,7 @@
      ("melpa" . "http://melpa.milkbox.net/packages/"))))
  '(projectile-completion-system (quote helm))
  '(savehist-mode t)
+ '(show-trailing-whitespace t)
  '(truncate-lines t)
  '(visible-bell nil)
  '(web-mode-markup-indent-offset 2))
