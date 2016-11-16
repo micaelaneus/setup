@@ -57,6 +57,8 @@
     (when (not (package-installed-p package))
       (package-install package))))
 
+(global-set-key (kbd "M-TAB") 'company-complete)
+
 ;; Cider
 (add-hook 'cider-mode-hook 'cider-turn-on-eldoc-mode)
 
@@ -94,7 +96,8 @@
     (packages-install))
   ;; exec-path-from-shell
   (when (memq window-system '(mac ns))
-    (exec-path-from-shell-initialize))
+    (exec-path-from-shell-initialize)
+    (exec-path-from-shell-copy-env "GOPATH"))
   ;; Projectile
   (projectile-global-mode)
   ;; Company

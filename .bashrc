@@ -146,6 +146,7 @@ export GOPATH="$HOME/Projects/go"
 export PATH="$PATH:$GOPATH/bin"
 [ ! -d "$GOPATH/src/golang.org/x/tools/cmd"        ] && go get -u golang.org/x/tools/cmd/...
 [ ! -d "$GOPATH/src/github.com/kardianos/govendor" ] && go get -u github.com/kardianos/govendor
+[ ! -d "$GOPATH/src/github.com/nsf/gocode"         ] && go get -u github.com/nsf/gocode
 
 [ -f ~/.bashrc_local ] && source ~/.bashrc_local
 
