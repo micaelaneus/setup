@@ -46,7 +46,7 @@ if [ "$(uname)" == "Darwin" ]; then
         brew install pyenv-virtualenvwrapper
         eval "$(pyenv init -)"
         eval "$(pyenv virtualenv-init -)"
-        pyenv install 3.5.0 && pyenv global 3.5.0
+        pyenv install 3.5.2 && pyenv global 3.5.2
     else
         eval "$(pyenv init -)"
         eval "$(pyenv virtualenv-init -)"
@@ -105,7 +105,7 @@ elif [ "$(uname)" == "Linux" ]; then
         export PATH="$PYENV_ROOT/bin:$PATH"
         eval "$(pyenv init -)"
         eval "$(pyenv virtualenv-init -)"
-        pyenv install 3.5.0 && pyenv global 3.5.0
+        pyenv install 3.5.2 && pyenv global 3.5.2
     else
         export PYENV_ROOT="$HOME/.pyenv"
         export PATH="$PYENV_ROOT/bin:$PATH"
@@ -147,6 +147,7 @@ export PATH="$PATH:$GOPATH/bin"
 [ ! -d "$GOPATH/src/golang.org/x/tools/cmd"        ] && go get -u golang.org/x/tools/cmd/...
 [ ! -d "$GOPATH/src/github.com/kardianos/govendor" ] && go get -u github.com/kardianos/govendor
 [ ! -d "$GOPATH/src/github.com/nsf/gocode"         ] && go get -u github.com/nsf/gocode
+[ ! -d "$GOPATH/src/github.com/rogpeppe/godef"     ] && go get -u github.com/rogpeppe/godef
 
 [ -f ~/.bashrc_local ] && source ~/.bashrc_local
 

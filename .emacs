@@ -14,6 +14,7 @@
      ("melpa" . "http://melpa.milkbox.net/packages/"))))
  '(projectile-completion-system (quote helm))
  '(savehist-mode t)
+ '(show-trailing-whitespace t)
  '(truncate-lines t)
  '(visible-bell nil)
  '(web-mode-markup-indent-offset 2))
@@ -56,8 +57,6 @@
     (when (not (package-installed-p package))
       (package-install package))))
 
-(global-set-key (kbd "M-TAB") 'company-complete)
-
 ;; Cider
 (add-hook 'cider-mode-hook 'cider-turn-on-eldoc-mode)
 
@@ -75,10 +74,13 @@
 
 ;; Go
 (add-hook 'go-mode-hook (lambda ()
-                            (if (not (string-match "go" compile-command))
-                                (set (make-local-variable 'compile-command)
-                                     "go build -v && go test -v && go vet"))))
-(add-hook 'before-save-hook #'gofmt-before-save)
+                          (if (not (string-match "go" compile-command))
+                              (set (make-local-variable 'compile-command)
+                                   "go build -v && go test -v && go vet"))
+                          (add-hook 'before-save-hook #'gofmt-before-save)
+                          (set (make-local-variable 'company-backends) '(company-go))
+                          (local-set-key (kbd "M-.") 'godef-jump)
+                          (local-set-key (kbd "M-*") 'pop-tag-mark)))
 
 ;; Ruby
 (add-to-list 'auto-mode-alist '("\\.html\\.erb\\'" . rhtml-mode))
@@ -101,6 +103,9 @@
   (projectile-global-mode)
   ;; Company
   (global-company-mode)
+  (global-set-key (kbd "M-TAB") 'company-complete)
+  ;; Flycheck
+  (global-flycheck-mode)
   ;; Helm
   (global-set-key (kbd "M-x") 'helm-M-x)
   (global-set-key (kbd "M-y") 'helm-show-kill-ring)
