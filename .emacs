@@ -100,7 +100,7 @@
     (exec-path-from-shell-initialize)
     (exec-path-from-shell-copy-env "GOPATH"))
   ;; Projectile
-  (projectile-global-mode)
+  (projectile-mode)
   ;; Company
   (global-company-mode)
   (global-set-key (kbd "M-TAB") 'company-complete)
