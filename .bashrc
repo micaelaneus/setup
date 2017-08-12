@@ -46,7 +46,7 @@ if [ "$(uname)" == "Darwin" ]; then
         brew install pyenv-virtualenvwrapper
         eval "$(pyenv init -)"
         eval "$(pyenv virtualenv-init -)"
-        pyenv install 3.5.2 && pyenv global 3.5.2
+        pyenv install 3.6.2 && pyenv global 3.6.2
     else
         eval "$(pyenv init -)"
         eval "$(pyenv virtualenv-init -)"
@@ -105,7 +105,7 @@ elif [ "$(uname)" == "Linux" ]; then
         export PATH="$PYENV_ROOT/bin:$PATH"
         eval "$(pyenv init -)"
         eval "$(pyenv virtualenv-init -)"
-        pyenv install 3.5.2 && pyenv global 3.5.2
+        pyenv install 3.6.2 && pyenv global 3.6.2
     else
         export PYENV_ROOT="$HOME/.pyenv"
         export PATH="$PYENV_ROOT/bin:$PATH"
