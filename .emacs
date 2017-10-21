@@ -5,9 +5,12 @@
  ;; If there is more than one, they won't work right.
  '(backup-directory-alist (quote ((".*" . "~/.emacs.d/backup"))))
  '(column-number-mode t)
+ '(exec-path-from-shell-check-startup-files nil)
  '(helm-command-prefix-key "C-x h")
  '(indent-tabs-mode nil)
  '(js-indent-level 2)
+ '(js2-basic-offset 2)
+ '(js2-bounce-indent-p t)
  '(package-archives
    (quote
     (("gnu" . "http://elpa.gnu.org/packages/")
@@ -42,6 +45,9 @@
     paredit
     go-mode
     company-go
+    js2-mode
+    company-tern
+    web-mode
     groovy-mode
     rhtml-mode
     rinari
@@ -81,6 +87,21 @@
                           (set (make-local-variable 'company-backends) '(company-go))
                           (local-set-key (kbd "M-.") 'godef-jump)
                           (local-set-key (kbd "M-*") 'pop-tag-mark)))
+
+;; JavaScript
+(add-to-list 'auto-mode-alist `(,(rx ".js" string-end) . js2-mode))
+(add-hook 'js2-mode-hook (lambda ()
+                           (set (make-local-variable 'company-backends) '(company-tern))))
+
+;; Web
+(add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.[agj]sp\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
 
 ;; Ruby
 (add-to-list 'auto-mode-alist '("\\.html\\.erb\\'" . rhtml-mode))

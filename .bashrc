@@ -1,5 +1,7 @@
 #!/bin/bash
 
+CURRENT_NODE_VERSION='v7.4.0'
+
 [[ $- != *i* ]] && return
 
 if [ "$(uname)" == "Darwin" ]; then
@@ -52,19 +54,17 @@ if [ "$(uname)" == "Darwin" ]; then
         eval "$(pyenv virtualenv-init -)"
     fi
 
-    # Ruby
-    if [ x"" == x"$(brew ls --versions rbenv)" ]; then
-        brew install rbenv
-        brew install ruby-build
-    fi
-    
     # Node.js
     if [ x"" == x"$(brew ls --versions nvm)" ]; then
         brew install nvm
         mkdir "${HOME}/.nvm"
     fi
-    export NVM_DIR="$HOME/.nvm"
-    . "$(brew --prefix nvm)/nvm.sh"
+
+    # Ruby
+    if [ x"" == x"$(brew ls --versions rbenv)" ]; then
+        brew install rbenv
+        brew install ruby-build
+    fi
 
 elif [ "$(uname)" == "Linux" ]; then
 
@@ -72,7 +72,7 @@ elif [ "$(uname)" == "Linux" ]; then
 
         [ x"" == x"$(rpm -qa | grep bash-completion-)" ] && sudo yum install bash-completion
         [ x"" == x"$(rpm -qa | grep git-            )" ] && sudo yum install git
-        
+
         # Go
         [ x"" == x"$(rpm -qa | grep go-             )" ] && sudo yum install go
 
@@ -80,7 +80,7 @@ elif [ "$(uname)" == "Linux" ]; then
 
         [ ! $(dpkg-query -Wf'${db:Status-abbrev}' bash-completion 2>/dev/null | grep -q '^i') ] && sudo apt-get install -y bash-completion
         [ ! $(dpkg-query -Wf'${db:Status-abbrev}' git             2>/dev/null | grep -q '^i') ] && sudo apt-get install -y git
-        
+
         # Go
         [ ! $(dpkg-query -Wf'${db:Status-abbrev}' go              2>/dev/null | grep -q '^i') ] && sudo apt-get install -y go
 
@@ -88,7 +88,7 @@ elif [ "$(uname)" == "Linux" ]; then
 
         ! sudo pacman -Q bash-completion && sudo pacman -Sy bash-completion
         ! sudo pacman -Q git             && sudo pacman -Sy git
-        
+
         # Go
         ! sudo pacman -Q go              && sudo pacman -Sy go
 
@@ -113,11 +113,6 @@ elif [ "$(uname)" == "Linux" ]; then
         eval "$(pyenv virtualenv-init -)"
     fi
 
-    # Ruby
-    if [ ! -d ~/.rbenv ]; then
-        git clone https://github.com/rbenv/rbenv.git ~/.rbenv
-    fi
-
     # Node.js
     if [ ! -d ~/.nvm ]; then
         git clone https://github.com/creationix/nvm.git ~/.nvm
@@ -125,13 +120,22 @@ elif [ "$(uname)" == "Linux" ]; then
         git checkout `git describe --abbrev=0 --tags`
         popd
     fi
-    export NVM_DIR="${HOME}/.nvm"
-    . "${NVM_DIR}/nvm.sh"
+
+    # Ruby
+    if [ ! -d ~/.rbenv ]; then
+        git clone https://github.com/rbenv/rbenv.git ~/.rbenv
+    fi
 
 fi
 
 # Python
 pyenv virtualenvwrapper
+
+# Node.js
+export NVM_DIR="$HOME/.nvm"
+. "$(brew --prefix nvm)/nvm.sh"
+[ ! $(nvm version node | grep "${CURRENT_NODE_VERSION}") ] && nvm install "${CURRENT_NODE_VERSION}" && nvm alias default "${CURRENT_NODE_VERSION}"
+[ $(npm list --depth 0 --global tern > /dev/null 2>&1) ] && npm install -g tern
 
 # Ruby
 eval "$(rbenv init -)"
