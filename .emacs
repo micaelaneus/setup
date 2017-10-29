@@ -43,6 +43,7 @@
     midje-mode
     cider
     paredit
+    intero
     go-mode
     company-go
     js2-mode
@@ -77,6 +78,9 @@
 (add-hook 'scheme-mode-hook                      'paredit-mode)
 (add-hook 'clojure-mode-hook                     'paredit-mode)
 (add-hook 'cider-repl-mode-hook                  'paredit-mode)
+
+;; Haskell
+(add-hook 'haskell-mode-hook 'intero-mode)
 
 ;; Go
 (add-hook 'go-mode-hook (lambda ()
