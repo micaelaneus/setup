@@ -38,6 +38,9 @@ if [ "$(uname)" == "Darwin" ]; then
 
     source $HOMEBREW/etc/bash_completion
 
+    # Haskell
+    [ x"" == x"$(brew ls --versions stack          )" ] && brew install stack
+
     # Go
     [ x"" == x"$(brew ls --versions go             )" ] && brew install go
 
@@ -69,32 +72,32 @@ if [ "$(uname)" == "Darwin" ]; then
 elif [ "$(uname)" == "Linux" ]; then
 
     if [ -d /etc/redhat-release ]; then
-
         [ x"" == x"$(rpm -qa | grep bash-completion-)" ] && sudo yum install bash-completion
         [ x"" == x"$(rpm -qa | grep git-            )" ] && sudo yum install git
-
-        # Go
-        [ x"" == x"$(rpm -qa | grep go-             )" ] && sudo yum install go
-
     elif [ -d /etc/debian_version ]; then
-
         [ ! $(dpkg-query -Wf'${db:Status-abbrev}' bash-completion 2>/dev/null | grep -q '^i') ] && sudo apt-get install -y bash-completion
         [ ! $(dpkg-query -Wf'${db:Status-abbrev}' git             2>/dev/null | grep -q '^i') ] && sudo apt-get install -y git
-
-        # Go
-        [ ! $(dpkg-query -Wf'${db:Status-abbrev}' go              2>/dev/null | grep -q '^i') ] && sudo apt-get install -y go
-
     elif [ -f /etc/arch_release ]; then
-
         ! sudo pacman -Q bash-completion && sudo pacman -Sy bash-completion
         ! sudo pacman -Q git             && sudo pacman -Sy git
+    fi
+    source /usr/share/bash-completion/bash_completion
 
-        # Go
-        ! sudo pacman -Q go              && sudo pacman -Sy go
-
+    # Haskell
+    if [ -d /etc/arch_release ] ; then
+        ! sudo pacman -Q stack           && sudo pacman -Sy stack
+    else
+        curl -sSL https://get.haskellstack.org/ | sh -s - -d $HOME/bin/stack
     fi
 
-    source /usr/share/bash-completion/bash_completion
+    # Go
+    if [ -d /etc/redhat-release ]; then
+        [ x"" == x"$(rpm -qa | grep go-             )" ] && sudo yum install go
+    elif [ -d /etc/debian_version ]; then
+        [ ! $(dpkg-query -Wf'${db:Status-abbrev}' go              2>/dev/null | grep -q '^i') ] && sudo apt-get install -y go
+    elif [ -f /etc/arch_release ]; then
+        ! sudo pacman -Q go              && sudo pacman -Sy go
+    fi
 
     # Python
     if [ ! -d ~/.pyenv ]; then
