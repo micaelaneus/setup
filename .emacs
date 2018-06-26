@@ -39,9 +39,12 @@
     helm-company
     flycheck
     magit
+    lsp-mode
+    lsp-ui
+    company-lsp
     clojure-mode
-    midje-mode
     cider
+    midje-mode
     paredit
     intero
     go-mode
@@ -65,9 +68,12 @@
       (package-install package))))
 
 ;; Cider
-(add-hook 'cider-mode-hook 'cider-turn-on-eldoc-mode)
 
 ;; Midje
+(with-eval-after-load "midje-mode"
+  (let ((prefix-map (lookup-key midje-mode-map (kbd "C-c"))))
+    (define-key midje-mode-map (kbd "C-c") nil)
+    (define-key midje-mode-map (kbd "C-c C-m") prefix-map)))
 (add-hook 'clojure-mode-hook 'midje-mode)
 
 ;; Paredit
@@ -125,7 +131,7 @@
     (exec-path-from-shell-initialize)
     (exec-path-from-shell-copy-env "GOPATH"))
   ;; Projectile
-  (projectile-mode)
+  (projectile-mode 1)
   ;; Company
   (global-company-mode)
   (global-set-key (kbd "M-TAB") 'company-complete)

@@ -1,8 +1,13 @@
 #!/bin/bash
 
-CURRENT_NODE_VERSION='v7.4.0'
-
+[ -z "$PS1" ] && return
 [[ $- != *i* ]] && return
+
+if [ -f /etc/bashrc ]; then
+    . /etc/bashrc
+fi
+
+CURRENT_NODE_VERSION='v7.4.0'
 
 if [ "$(uname)" == "Darwin" ]; then
 
