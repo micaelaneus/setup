@@ -43,6 +43,8 @@ if [ "$(uname)" == "Darwin" ]; then
 
     source $HOMEBREW/etc/bash_completion
 
+    [ x"" == x"$(brew ls --versions tmux           )" ] && brew install tmux
+
     # Haskell
     [ x"" == x"$(brew ls --versions stack          )" ] && brew install stack
 
@@ -87,6 +89,14 @@ elif [ "$(uname)" == "Linux" ]; then
         ! sudo pacman -Q git             && sudo pacman -Sy git
     fi
     source /usr/share/bash-completion/bash_completion
+
+    if [ -d /etc/redhat-release ]; then
+        [ x"" == x"$(rpm -qa | grep tmux-)" ] && sudo yum install tmux
+    elif [ -d /etc/debian_version ]; then
+        [ ! $(dpkg-query -Wf'${db:Status-abbrev}' tmux 2>/dev/null | grep -q '^i') ] && sudo apt-get install -y tmux
+    elif [ -f /etc/arch_release ]; then
+        ! sudo pacman -Q tmux && sudo pacman -Sy tmux
+    fi
 
     # Haskell
     if [ -d /etc/arch_release ] ; then
