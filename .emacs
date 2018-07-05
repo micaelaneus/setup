@@ -5,6 +5,7 @@
  ;; If there is more than one, they won't work right.
  '(backup-directory-alist (quote ((".*" . "~/.emacs.d/backup"))))
  '(column-number-mode t)
+ '(enable-remote-dir-locals t)
  '(exec-path-from-shell-check-startup-files nil)
  '(helm-command-prefix-key "C-x h")
  '(indent-tabs-mode nil)
