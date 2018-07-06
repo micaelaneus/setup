@@ -50,6 +50,7 @@
     intero
     go-mode
     company-go
+    jdee
     js2-mode
     company-tern
     web-mode
