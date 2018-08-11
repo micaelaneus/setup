@@ -16,6 +16,9 @@
    (quote
     (("gnu" . "http://elpa.gnu.org/packages/")
      ("melpa" . "http://melpa.milkbox.net/packages/"))))
+ '(package-selected-packages
+   (quote
+    (pyenv-mode-auto yaml-mode web-mode rinari rhtml-mode paredit midje-mode magit lsp-ui lsp-python js2-mode intero helm-projectile helm-company groovy-mode exec-path-from-shell company-tern company-lsp company-go)))
  '(projectile-completion-system (quote helm))
  '(savehist-mode t)
  '(show-trailing-whitespace t)
@@ -50,7 +53,9 @@
     intero
     go-mode
     company-go
-    jdee
+    pyenv-mode-auto
+    lsp-python
+    lsp-java
     js2-mode
     company-tern
     web-mode
@@ -99,6 +104,12 @@
                           (set (make-local-variable 'company-backends) '(company-go))
                           (local-set-key (kbd "M-.") 'godef-jump)
                           (local-set-key (kbd "M-*") 'pop-tag-mark)))
+
+;; Python
+(add-hook 'python-mode-hook #'lsp-python-enable)
+
+;; Java
+(add-hook 'java-mode-hook #'lsp-java-enable)
 
 ;; JavaScript
 (add-to-list 'auto-mode-alist `(,(rx ".js" string-end) . js2-mode))
@@ -153,5 +164,7 @@
   (global-set-key (kbd "C-x M-g") 'magit-dispatch-popup)
   ;; Paredit
   (autoload 'paredit-mode "paredit" nil t)
-  (add-hook 'emacs-lisp-mode-hook 'paredit-mode))
+  (add-hook 'emacs-lisp-mode-hook 'paredit-mode)
+  ;; Python
+  (require 'lsp-python))
 (add-hook 'after-init-hook 'after-init)
