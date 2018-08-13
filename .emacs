@@ -16,9 +16,6 @@
    (quote
     (("gnu" . "http://elpa.gnu.org/packages/")
      ("melpa" . "http://melpa.milkbox.net/packages/"))))
- '(package-selected-packages
-   (quote
-    (pyenv-mode-auto yaml-mode web-mode rinari rhtml-mode paredit midje-mode magit lsp-ui lsp-python js2-mode intero helm-projectile helm-company groovy-mode exec-path-from-shell company-tern company-lsp company-go)))
  '(projectile-completion-system (quote helm))
  '(savehist-mode t)
  '(show-trailing-whitespace t)
@@ -37,6 +34,7 @@
 (defvar packages
   '(exec-path-from-shell
     projectile
+    org
     company
     helm
     helm-projectile
@@ -168,3 +166,8 @@
   ;; Python
   (require 'lsp-python))
 (add-hook 'after-init-hook 'after-init)
+
+(let ((path "~/.emacs_local"))
+  (setq custom-file path)
+  (if (file-exists-p path)
+    (load-file path)))
