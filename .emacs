@@ -72,6 +72,10 @@
     (when (not (package-installed-p package))
       (package-install package))))
 
+;; Org
+(add-hook 'org-mode-hook (lambda ()
+                           (local-set-key (kbd "C-c a") 'org-agenda)))
+
 ;; Cider
 
 ;; Midje
