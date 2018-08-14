@@ -39,6 +39,7 @@ if [ "$(uname)" == "Darwin" ]; then
 
     [ x"" == x"$(brew ls --versions bash-completion)" ] && brew install bash-completion
     [ x"" == x"$(brew ls --versions git            )" ] && brew install git
+    [ x"" == x"$(brew ls --versions wget           )" ] && brew install wget
     [ x"" == x"$(brew ls --versions direnv         )" ] && brew install direnv
 
     source $HOMEBREW/etc/bash_completion
@@ -81,12 +82,15 @@ elif [ "$(uname)" == "Linux" ]; then
     if [ -d /etc/redhat-release ]; then
         [ x"" == x"$(rpm -qa | grep bash-completion-)" ] && sudo yum install bash-completion
         [ x"" == x"$(rpm -qa | grep git-            )" ] && sudo yum install git
+        [ x"" == x"$(rpm -qa | grep wget            )" ] && sudo yum install wget
     elif [ -d /etc/debian_version ]; then
         [ ! $(dpkg-query -Wf'${db:Status-abbrev}' bash-completion 2>/dev/null | grep -q '^i') ] && sudo apt-get install -y bash-completion
         [ ! $(dpkg-query -Wf'${db:Status-abbrev}' git             2>/dev/null | grep -q '^i') ] && sudo apt-get install -y git
+        [ ! $(dpkg-query -Wf'${db:Status-abbrev}' wget            2>/dev/null | grep -q '^i') ] && sudo apt-get install -y wget
     elif [ -f /etc/arch_release ]; then
         ! sudo pacman -Q bash-completion && sudo pacman -Sy bash-completion
         ! sudo pacman -Q git             && sudo pacman -Sy git
+        ! sudo pacman -Q wget            && sudo pacman -Sy wget
     fi
     source /usr/share/bash-completion/bash_completion
 
@@ -148,6 +152,13 @@ fi
 
 # Python
 pyenv virtualenvwrapper
+
+# Java
+if [ ! -d ~/.emacs.d/eclipse.jdt.ls/server/ ]; then
+    mkdir -p ~/.emacs.d/eclipse.jdt.ls/server/
+    wget http://download.eclipse.org/jdtls/snapshots/jdt-language-server-latest.tar.gz -O /tmp/jdt-latest.tar
+    tar xf /tmp/jdt-latest.tar -C ~/.emacs.d/eclipse.jdt.ls/server/
+fi
 
 # Node.js
 export NVM_DIR="$HOME/.nvm"
