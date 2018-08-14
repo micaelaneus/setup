@@ -12,11 +12,16 @@
  '(js-indent-level 2)
  '(js2-basic-offset 2)
  '(js2-bounce-indent-p t)
+ '(org-catch-invisible-edits (quote show-and-error))
+ '(org-goto-auto-isearch nil)
+ '(org-log-done (quote time))
+ '(org-log-into-drawer t)
  '(package-archives
    (quote
     (("gnu" . "http://elpa.gnu.org/packages/")
      ("melpa" . "http://melpa.milkbox.net/packages/"))))
  '(projectile-completion-system (quote helm))
+ '(projectile-keymap-prefix (kbd "C-M-p"))
  '(savehist-mode t)
  '(show-trailing-whitespace t)
  '(truncate-lines t)
@@ -71,10 +76,6 @@
   (dolist (package packages)
     (when (not (package-installed-p package))
       (package-install package))))
-
-;; Org
-(add-hook 'org-mode-hook (lambda ()
-                           (local-set-key (kbd "C-c a") 'org-agenda)))
 
 ;; Cider
 
@@ -147,6 +148,11 @@
     (exec-path-from-shell-copy-env "GOPATH"))
   ;; Projectile
   (projectile-mode 1)
+  ;; Org
+  (global-set-key "\C-cl" 'org-store-link)
+  (global-set-key "\C-ca" 'org-agenda)
+  (global-set-key "\C-cc" 'org-capture)
+  (global-set-key "\C-cb" 'org-switchb)
   ;; Company
   (global-company-mode)
   (global-set-key (kbd "M-TAB") 'company-complete)
