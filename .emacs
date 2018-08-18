@@ -18,6 +18,7 @@
  '(org-agenda-skip-scheduled-if-done t)
  '(org-catch-invisible-edits (quote show-and-error))
  '(org-goto-auto-isearch nil)
+ '(org-id-link-to-org-use-id (quote create-if-interactive-and-no-custom-id))
  '(org-log-done (quote time))
  '(org-log-into-drawer t)
  '(package-archives
@@ -153,6 +154,7 @@
   ;; Projectile
   (projectile-mode 1)
   ;; Org
+  (require 'org-id)
   (global-set-key "\C-cl" 'org-store-link)
   (global-set-key "\C-ca" 'org-agenda)
   (global-set-key "\C-cc" 'org-capture)
