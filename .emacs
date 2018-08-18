@@ -25,6 +25,9 @@
    (quote
     (("gnu" . "http://elpa.gnu.org/packages/")
      ("melpa" . "http://melpa.milkbox.net/packages/"))))
+ '(package-selected-packages
+   (quote
+    (pyenv-mode-auto yaml-mode web-mode rinari rhtml-mode paredit midje-mode magit lsp-ui lsp-python js2-mode intero helm-projectile helm-company groovy-mode exec-path-from-shell company-tern company-lsp company-go)))
  '(projectile-completion-system (quote helm))
  '(projectile-keymap-prefix (kbd "C-M-p"))
  '(savehist-mode t)
