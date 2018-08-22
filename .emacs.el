@@ -5,6 +5,7 @@
  ;; If there is more than one, they won't work right.
  '(backup-directory-alist (quote ((".*" . "~/.emacs.d/backup"))))
  '(column-number-mode t)
+ '(debug-on-error t)
  '(default-frame-alist (quote ((fullscreen . maximized))))
  '(enable-remote-dir-locals t)
  '(exec-path-from-shell-check-startup-files nil)
@@ -27,13 +28,6 @@
  '(org-id-link-to-org-use-id (quote create-if-interactive-and-no-custom-id))
  '(org-log-done (quote time))
  '(org-log-into-drawer t)
- '(package-archives
-   (quote
-    (("gnu" . "http://elpa.gnu.org/packages/")
-     ("melpa" . "http://melpa.milkbox.net/packages/"))))
- '(package-selected-packages
-   (quote
-    (pyenv-mode-auto yaml-mode web-mode rinari rhtml-mode paredit midje-mode magit lsp-ui lsp-python js2-mode intero helm-projectile helm-company groovy-mode exec-path-from-shell company-tern company-lsp company-go)))
  '(projectile-completion-system (quote helm))
  '(projectile-keymap-prefix (kbd "C-M-p"))
  '(savehist-mode t)
@@ -48,12 +42,29 @@
  ;; If there is more than one, they won't work right.
  )
 
-(setq tramp-ssh-controlmaster-options "")
+(require 'package)
+(let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
+                    (not (gnutls-available-p))))
+       (proto (if no-ssl "http" "https")))
+  (setq package-archives '())
+  ;; Comment/uncomment these two lines to enable/disable MELPA and MELPA Stable as desired
+  ;;(add-to-list 'package-archives (cons "melpa" (concat proto "://melpa.org/packages/")) t)
+  (add-to-list 'package-archives (cons "melpa-stable" (concat proto "://stable.melpa.org/packages/")) t)
+  (when (< emacs-major-version 24)
+    ;; For important compatibility libraries like cl-lib
+    (add-to-list 'package-archives '("gnu" . (concat proto "://elpa.gnu.org/packages/")))))
+(package-initialize)
+
+;; (require 'benchmark-init)
+;; (add-hook 'after-init-hook #'benchmark-init/deactivate)
+
+(require 'cl)
 
 ;; Ensure installed
 
 (defvar packages
   '(exec-path-from-shell
+    use-package
     projectile
     org
     benchmark-init
@@ -101,6 +112,42 @@
   (when (not (packages-installed-p))
     (package-refresh-contents)
     (packages-install)))
+
+(eval-when-compile
+  (require 'use-package))
+
+;; Org
+(use-package org-id
+  :commands (org-store-link org-agenda org-capture org-switchb)
+  :bind (("C-c l" . org-store-link)
+         ("C-c a" . org-agenda)
+         ("C-c c" . org-capture)
+         ("C-c b" . org-switchb)))
+
+;; Edit Server
+(require 'edit-server)
+(edit-server-start)
+
+;; Company
+(use-package company
+  :commands (company-complete)
+  :bind (("M-<tab>" . company-complete)))
+
+;; Helm
+(use-package helm
+  :commands (helm-M-x helm-show-kill-ring helm-mini helm-find-files helm-occur helm-all-mark-rings)
+  :bind (("M-x" . helm-M-x)
+         ("M-y" . helm-show-kill-ring)
+         ("C-x b" . helm-mini)
+         ("C-x C-f" . helm-find-files)
+         ("C-c h o" . helm-occur)
+         ("C-h <spc>" . helm-all-mark-rings)))
+
+;; Magit
+(use-package magit
+  :commands (magit-status magit-dispatch-popup)
+  :bind (("C-x g" . magit-status)
+         ("C-x M-g" . magit-dispatch-popup)))
 
 ;; Cider
 
@@ -162,52 +209,25 @@
 (add-hook 'rhtml-mode-hook
      	  (lambda () (rinari-launch)))
 
-;;; After init
-
-(add-hook 'after-init-hook #'benchmark-init/deactivate)
-
-(let ((path "~/.emacs_local"))
+(let ((path "~/.emacs_local.el"))
   (setq custom-file path)
   (if (file-exists-p path)
     (load-file path)))
 
 (defun after-init ()
-  ;; Ensure installed
-  (package-initialize)
-  (require 'benchmark-init)
-  (require 'cl)
   ;; exec-path-from-shell
   (when (memq window-system '(mac ns))
     (exec-path-from-shell-initialize)
     (exec-path-from-shell-copy-env "GOPATH"))
   ;; Projectile
   (projectile-mode 1)
-  ;; Org
-  (require 'org-id)
-  (global-set-key "\C-cl" 'org-store-link)
-  (global-set-key "\C-ca" 'org-agenda)
-  (global-set-key "\C-cc" 'org-capture)
-  (global-set-key "\C-cb" 'org-switchb)
   ;; Company
   (global-company-mode)
-  (global-set-key (kbd "M-TAB") 'company-complete)
   ;; Flycheck
   (global-flycheck-mode)
   ;; Helm
-  (global-set-key (kbd "M-x") 'helm-M-x)
-  (global-set-key (kbd "M-y") 'helm-show-kill-ring)
-  (global-set-key (kbd "C-x b") 'helm-mini)
-  (global-set-key (kbd "C-x C-f") 'helm-find-files)
-  (global-set-key (kbd "C-c h o") 'helm-occur)
-  (global-set-key (kbd "C-h SPC") 'helm-all-mark-rings)
   (helm-mode 1)
   (helm-projectile-on)
-  ;; Magit
-  (global-set-key (kbd "C-x g") 'magit-status)
-  (global-set-key (kbd "C-x M-g") 'magit-dispatch-popup)
   ;; Paredit
-  (autoload 'paredit-mode "paredit" nil t)
-  ;; Edit Server
-  (require 'edit-server)
-  (edit-server-start))
+  (autoload 'paredit-mode "paredit" nil t))
 (add-hook 'after-init-hook #'after-init)

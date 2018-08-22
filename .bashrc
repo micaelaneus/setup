@@ -179,10 +179,10 @@ export NVM_DIR="$HOME/.nvm"
 # Ruby
 eval "$(rbenv init -)"
 
-if [ ! -d ~/bin ]; then
-    mkdir ~/bin
+if [ ! -d ~/bin_local ]; then
+    mkdir ~/bin_local
 fi
-export PATH=~/bin:$PATH
+export PATH=~/bin_local:~/bin:$PATH
 
 # Go
 export GOPATH="$HOME/Projects/go"
