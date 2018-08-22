@@ -14,8 +14,14 @@
  '(js2-basic-offset 2)
  '(js2-bounce-indent-p t)
  '(org-agenda-skip-deadline-if-done t)
- '(org-agenda-skip-scheduled-if-deadline-is-shown t)
+ '(org-agenda-skip-scheduled-if-deadline-is-shown (quote repeated-after-deadline))
  '(org-agenda-skip-scheduled-if-done t)
+ '(org-agenda-sorting-strategy
+   (quote
+    ((agenda deadline-up scheduled-up)
+     (todo priority-down category-keep)
+     (tags priority-down category-keep)
+     (search category-keep))))
  '(org-catch-invisible-edits (quote show-and-error))
  '(org-goto-auto-isearch nil)
  '(org-id-link-to-org-use-id (quote create-if-interactive-and-no-custom-id))
@@ -73,7 +79,9 @@
     groovy-mode
     rhtml-mode
     rinari
-    yaml-mode))
+    yaml-mode
+    edit-server
+    gmail-message-mode))
 
 (defun packages-installed-p ()
   (if (remove-if 'package-installed-p packages)
@@ -183,7 +191,10 @@
   (autoload 'paredit-mode "paredit" nil t)
   (add-hook 'emacs-lisp-mode-hook 'paredit-mode)
   ;; Python
-  (require 'lsp-python))
+  (require 'lsp-python)
+  ;; Edit Server
+  (require 'edit-server)
+  (edit-server-start))
 (add-hook 'after-init-hook 'after-init)
 
 (let ((path "~/.emacs_local"))

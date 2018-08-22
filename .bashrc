@@ -46,6 +46,8 @@ if [ "$(uname)" == "Darwin" ]; then
 
     [ x"" == x"$(brew ls --versions tmux           )" ] && brew install tmux
 
+    [ x"" == x"$(brew ls --versions pandoc         )" ] && brew install pandoc
+
     # Haskell
     [ x"" == x"$(brew ls --versions stack          )" ] && brew install stack
 
@@ -100,6 +102,14 @@ elif [ "$(uname)" == "Linux" ]; then
         [ ! $(dpkg-query -Wf'${db:Status-abbrev}' tmux 2>/dev/null | grep -q '^i') ] && sudo apt-get install -y tmux
     elif [ -f /etc/arch_release ]; then
         ! sudo pacman -Q tmux && sudo pacman -Sy tmux
+    fi
+
+    if [ -d /etc/redhat-release ]; then
+        [ x"" == x"$(rpm -qa | grep pandoc-)" ] && sudo yum install pandoc
+    elif [ -d /etc/debian_version ]; then
+        [ ! $(dpkg-query -Wf'${db:Status-abbrev}' pandoc 2>/dev/null | grep -q '^i') ] && sudo apt-get install -y pandoc
+    elif [ -f /etc/arch_release ]; then
+        ! sudo pacman -Q pandoc && sudo pacman -Sy pandoc
     fi
 
     # Haskell
