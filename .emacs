@@ -48,12 +48,15 @@
  ;; If there is more than one, they won't work right.
  )
 
+(setq tramp-ssh-controlmaster-options "")
+
 ;; Ensure installed
 
 (defvar packages
   '(exec-path-from-shell
     projectile
     org
+    benchmark-init
     company
     helm
     helm-projectile
@@ -93,6 +96,12 @@
     (when (not (package-installed-p package))
       (package-install package))))
 
+(defun bootstrap ()
+  (interactive)
+  (when (not (packages-installed-p))
+    (package-refresh-contents)
+    (packages-install)))
+
 ;; Cider
 
 ;; Midje
@@ -110,6 +119,7 @@
 (add-hook 'scheme-mode-hook                      'paredit-mode)
 (add-hook 'clojure-mode-hook                     'paredit-mode)
 (add-hook 'cider-repl-mode-hook                  'paredit-mode)
+(add-hook 'emacs-lisp-mode-hook                  'paredit-mode)
 
 ;; Haskell
 (add-hook 'haskell-mode-hook 'intero-mode)
@@ -125,7 +135,9 @@
                           (local-set-key (kbd "M-*") 'pop-tag-mark)))
 
 ;; Python
-(add-hook 'python-mode-hook #'lsp-python-enable)
+(add-hook 'python-mode-hook (lambda ()
+                              (require 'lsp-python)
+                              (lsp-python-enable)))
 
 ;; Java
 (add-hook 'java-mode-hook #'lsp-java-enable)
@@ -151,13 +163,19 @@
      	  (lambda () (rinari-launch)))
 
 ;;; After init
+
+(add-hook 'after-init-hook #'benchmark-init/deactivate)
+
+(let ((path "~/.emacs_local"))
+  (setq custom-file path)
+  (if (file-exists-p path)
+    (load-file path)))
+
 (defun after-init ()
   ;; Ensure installed
   (package-initialize)
+  (require 'benchmark-init)
   (require 'cl)
-  (when (not (packages-installed-p))
-    (package-refresh-contents)
-    (packages-install))
   ;; exec-path-from-shell
   (when (memq window-system '(mac ns))
     (exec-path-from-shell-initialize)
@@ -189,15 +207,7 @@
   (global-set-key (kbd "C-x M-g") 'magit-dispatch-popup)
   ;; Paredit
   (autoload 'paredit-mode "paredit" nil t)
-  (add-hook 'emacs-lisp-mode-hook 'paredit-mode)
-  ;; Python
-  (require 'lsp-python)
   ;; Edit Server
   (require 'edit-server)
   (edit-server-start))
-(add-hook 'after-init-hook 'after-init)
-
-(let ((path "~/.emacs_local"))
-  (setq custom-file path)
-  (if (file-exists-p path)
-    (load-file path)))
+(add-hook 'after-init-hook #'after-init)
