@@ -48,15 +48,17 @@
        (proto (if no-ssl "http" "https")))
   (setq package-archives '())
   ;; Comment/uncomment these two lines to enable/disable MELPA and MELPA Stable as desired
-  ;;(add-to-list 'package-archives (cons "melpa" (concat proto "://melpa.org/packages/")) t)
-  (add-to-list 'package-archives (cons "melpa-stable" (concat proto "://stable.melpa.org/packages/")) t)
+  (add-to-list 'package-archives (cons "melpa" (concat proto "://melpa.org/packages/")) t)
+  ;;(add-to-list 'package-archives (cons "melpa-stable" (concat proto "://stable.melpa.org/packages/")) t)
   (when (< emacs-major-version 24)
     ;; For important compatibility libraries like cl-lib
     (add-to-list 'package-archives '("gnu" . (concat proto "://elpa.gnu.org/packages/")))))
 (package-initialize)
 
-;; (require 'benchmark-init)
-;; (add-hook 'after-init-hook #'benchmark-init/deactivate)
+(use-package benchmark-init
+  :ensure t
+  :demand t
+  :hook (after-init . benchmark-init/deactivate))
 
 (require 'cl)
 
@@ -64,17 +66,6 @@
 
 (defvar packages
   '(use-package
-    benchmark-init
-    lsp-mode
-    lsp-ui
-    company-lsp
-    clojure-mode
-    cider
-    midje-mode
-    paredit
-    intero
-    go-mode
-    company-go
     pyenv-mode-auto
     lsp-python
     lsp-java
@@ -169,7 +160,7 @@
 (use-package helm-company
   :ensure t
   :demand t
-  :after (helm))
+  :after (helm company))
 
 ;; Flycheck
 (use-package flycheck
@@ -184,37 +175,67 @@
   :bind (("C-x g" . magit-status)
          ("C-x M-g" . magit-dispatch-popup)))
 
-;; Cider
+(use-package lsp-mode
+  :ensure t
+  :demand t)
+(use-package lsp-ui
+  :ensure t
+  :demand t
+  :after (lsp-mode))
+(use-package company-lsp
+  :ensure t
+  :demand t
+  :after (lsp-mode company))
 
-;; Midje
-(with-eval-after-load "midje-mode"
-  (let ((prefix-map (lookup-key midje-mode-map (kbd "C-c"))))
-    (define-key midje-mode-map (kbd "C-c") nil)
-    (define-key midje-mode-map (kbd "C-c C-m") prefix-map)))
-(add-hook 'clojure-mode-hook 'midje-mode)
+;; Clojure
+;; Cider
+(use-package clojure-mode
+  :ensure t)
+(use-package cider
+  :ensure t
+  :after (clojure-mode))
+(use-package midje-mode
+  :ensure t
+  :after (clojure-mode)
+  :config (let ((prefix-map (lookup-key midje-mode-map (kbd "C-c"))))
+            (define-key midje-mode-map (kbd "C-c") nil)
+            (define-key midje-mode-map (kbd "C-c C-m") prefix-map))
+  :hook (clojure-mode))
 
 ;; Paredit
-(add-hook 'eval-expression-minibuffer-setup-hook 'paredit-mode)
-(add-hook 'ielm-mode-hook                        'paredit-mode)
-(add-hook 'lisp-mode-hook                        'paredit-mode)
-(add-hook 'lisp-interaction-mode-hook            'paredit-mode)
-(add-hook 'scheme-mode-hook                      'paredit-mode)
-(add-hook 'clojure-mode-hook                     'paredit-mode)
-(add-hook 'cider-repl-mode-hook                  'paredit-mode)
-(add-hook 'emacs-lisp-mode-hook                  'paredit-mode)
+(use-package paredit
+  :ensure t
+  :commands (paredit-mode)
+  :hook ((eval-expression-minibuffer-setup
+          ielm-mode
+          lisp-mode
+          lisp-interaction-mode
+          scheme-mode
+          clojure-mode
+          cider-repl-mode
+          emacs-lisp-mode) . paredit-mode))
 
 ;; Haskell
-(add-hook 'haskell-mode-hook 'intero-mode)
+(use-package haskell-mode
+  :ensure t)
+(use-package intero
+  :ensure t
+  :hook (haskell-mode . intero-mode))
 
 ;; Go
-(add-hook 'go-mode-hook (lambda ()
-                          (if (not (string-match "go" compile-command))
-                              (set (make-local-variable 'compile-command)
-                                   "go build -v && go test -v && go vet"))
-                          (add-hook 'before-save-hook #'gofmt-before-save)
-                          (set (make-local-variable 'company-backends) '(company-go))
-                          (local-set-key (kbd "M-.") 'godef-jump)
-                          (local-set-key (kbd "M-*") 'pop-tag-mark)))
+(use-package go-mode
+  :ensure t
+  :config (if (not (string-match "go" compile-command))
+              (set (make-local-variable 'compile-command)
+                   "go build -v && go test -v && go vet"))
+          (add-hook 'before-save-hook #'gofmt-before-save)
+          (set (make-local-variable 'company-backends) '(company-go))
+          (local-set-key (kbd "M-.") 'godef-jump)
+          (local-set-key (kbd "M-*") 'pop-tag-mark))
+(use-package company-go
+  :ensure t
+  :after (go-mode)
+  :commands (company-go))
 
 ;; Python
 (add-hook 'python-mode-hook (lambda ()
@@ -248,8 +269,3 @@
   (setq custom-file path)
   (if (file-exists-p path)
     (load-file path)))
-
-(defun after-init ()
-  ;; Paredit
-  (autoload 'paredit-mode "paredit" nil t))
-(add-hook 'after-init-hook #'after-init)
