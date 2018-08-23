@@ -31,6 +31,7 @@ if [ "$(uname)" == "Darwin" ]; then
     export PKG_CONFIG_PATH=$HOMEBREW/lib/pkgconfig:$PKG_CONFIG_PATH
     export CPATH="$CPATH:$HOMEBREW/include"
     export DYLD_LIBRARY_PATH="$DYLD_LIBRARY_PATH:$HOMEBREW/lib"
+    export HOMEBREW_CASK_OPTS="--appdir=~/Applications"
 
     # coreutils
     [ x"" == x"$(brew ls --versions coreutils      )" ] && brew install coreutils
