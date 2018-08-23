@@ -93,6 +93,7 @@
     groovy-mode
     rhtml-mode
     rinari
+    auctex
     yaml-mode
     edit-server
     gmail-message-mode))
