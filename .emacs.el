@@ -63,17 +63,8 @@
 ;; Ensure installed
 
 (defvar packages
-  '(exec-path-from-shell
-    use-package
-    projectile
-    org
+  '(use-package
     benchmark-init
-    company
-    helm
-    helm-projectile
-    helm-company
-    flycheck
-    magit
     lsp-mode
     lsp-ui
     company-lsp
@@ -94,9 +85,7 @@
     rhtml-mode
     rinari
     auctex
-    yaml-mode
-    edit-server
-    gmail-message-mode))
+    yaml-mode))
 
 (defun packages-installed-p ()
   (if (remove-if 'package-installed-p packages)
@@ -117,26 +106,53 @@
 (eval-when-compile
   (require 'use-package))
 
+(use-package exec-path-from-shell
+  :ensure t
+  :demand t
+  :config (when (memq window-system '(mac ns))
+            (exec-path-from-shell-initialize)
+            (exec-path-from-shell-copy-env "GOPATH")))
+
+(use-package projectile
+  :ensure t
+  :demand t
+  :config (projectile-mode 1))
+
 ;; Org
-(use-package org-id
+(use-package org
+  :ensure t
   :commands (org-store-link org-agenda org-capture org-switchb)
+  :config (require 'org-id)
   :bind (("C-c l" . org-store-link)
          ("C-c a" . org-agenda)
          ("C-c c" . org-capture)
          ("C-c b" . org-switchb)))
 
 ;; Edit Server
-(require 'edit-server)
-(edit-server-start)
+(use-package edit-server
+  :ensure t
+  :demand t
+  :config (edit-server-start))
+
+(use-package gmail-message-mode
+  :ensure t
+  :demand t
+  :after (edit-server))
 
 ;; Company
 (use-package company
+  :ensure t
+  :demand t
   :commands (company-complete)
+  :config (global-company-mode)
   :bind (("M-<tab>" . company-complete)))
 
 ;; Helm
 (use-package helm
+  :ensure t
+  :demand t
   :commands (helm-M-x helm-show-kill-ring helm-mini helm-find-files helm-occur helm-all-mark-rings)
+  :config (helm-mode 1)
   :bind (("M-x" . helm-M-x)
          ("M-y" . helm-show-kill-ring)
          ("C-x b" . helm-mini)
@@ -144,8 +160,26 @@
          ("C-c h o" . helm-occur)
          ("C-h <spc>" . helm-all-mark-rings)))
 
+(use-package helm-projectile
+  :ensure t
+  :demand t
+  :after (helm)
+  :config (helm-projectile-on))
+
+(use-package helm-company
+  :ensure t
+  :demand t
+  :after (helm))
+
+;; Flycheck
+(use-package flycheck
+  :ensure t
+  :demand t
+  :config (global-flycheck-mode))
+
 ;; Magit
 (use-package magit
+  :ensure t
   :commands (magit-status magit-dispatch-popup)
   :bind (("C-x g" . magit-status)
          ("C-x M-g" . magit-dispatch-popup)))
@@ -216,19 +250,6 @@
     (load-file path)))
 
 (defun after-init ()
-  ;; exec-path-from-shell
-  (when (memq window-system '(mac ns))
-    (exec-path-from-shell-initialize)
-    (exec-path-from-shell-copy-env "GOPATH"))
-  ;; Projectile
-  (projectile-mode 1)
-  ;; Company
-  (global-company-mode)
-  ;; Flycheck
-  (global-flycheck-mode)
-  ;; Helm
-  (helm-mode 1)
-  (helm-projectile-on)
   ;; Paredit
   (autoload 'paredit-mode "paredit" nil t))
 (add-hook 'after-init-hook #'after-init)
