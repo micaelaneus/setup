@@ -29,7 +29,7 @@
  '(org-log-done (quote time))
  '(org-log-into-drawer t)
  '(projectile-completion-system (quote helm))
- '(projectile-keymap-prefix (kbd "C-M-p"))
+ '(projectile-keymap-prefix (kbd "C-c C-p"))
  '(savehist-mode t)
  '(show-trailing-whitespace t)
  '(truncate-lines t)
@@ -75,7 +75,6 @@
     groovy-mode
     rhtml-mode
     rinari
-    auctex
     yaml-mode))
 
 (defun packages-installed-p ()
@@ -265,6 +264,18 @@
 (add-to-list 'auto-mode-alist '("\\.html\\.erb\\'" . rhtml-mode))
 (add-hook 'rhtml-mode-hook
      	  (lambda () (rinari-launch)))
+
+;; TeX
+(use-package tex
+  :ensure auctex
+  :init
+  (setq TeX-auto-save t)
+  (setq TeX-parse-self t)
+  (setq-default TeX-master nil))
+(use-package company-auctex
+  :ensure t
+  :after (tex company)
+  :hook (TeX . company-auctex))
 
 (let ((path "~/.emacs_local.el"))
   (setq custom-file path)
