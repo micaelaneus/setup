@@ -267,6 +267,9 @@
      	  (lambda () (rinari-launch)))
 
 (let ((path "~/.emacs_local.el"))
+  (if (file-exists-p path)
+    (load-file path)))
+(let ((path "~/.emacs_custom_set.el"))
   (setq custom-file path)
   (if (file-exists-p path)
     (load-file path)))
