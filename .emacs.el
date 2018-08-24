@@ -117,7 +117,8 @@
   :bind (("C-c l" . org-store-link)
          ("C-c a" . org-agenda)
          ("C-c c" . org-capture)
-         ("C-c b" . org-switchb)))
+         ("C-c b" . org-switchb)
+         ("C-c o r" . org-revert-all-org-buffers)))
 
 ;; Edit Server
 (use-package edit-server
