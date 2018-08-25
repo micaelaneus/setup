@@ -80,6 +80,9 @@ if [ "$(uname)" == "Darwin" ]; then
         brew install ruby-build
     fi
 
+    # LastPass
+    [ x"" == x"$(brew ls --versions lastpass-cli)" ] && brew install lastpass-cli --with-pinentry
+
 elif [ "$(uname)" == "Linux" ]; then
 
     if [ -d /etc/redhat-release ]; then
@@ -157,6 +160,35 @@ elif [ "$(uname)" == "Linux" ]; then
     # Ruby
     if [ ! -d ~/.rbenv ]; then
         git clone https://github.com/rbenv/rbenv.git ~/.rbenv
+    fi
+
+    # LastPass
+    if [ -d /etc/redhat-release ]; then
+        [ x"" == x"$(rpm -qa | grep lastpass-cli)" ] && sudo yum install lastpass-cli
+    elif [ -d /etc/debian_version ]; then
+        if [ ! -d ~/.lastpass-cli ]; then
+            sudo apt-get --no-install-recommends -yqq install \
+              bash-completion \
+              build-essential \
+              cmake \
+              libcurl3  \
+              libcurl3-openssl-dev  \
+              libssl1.0 \
+              libssl1.0-dev \
+              libxml2 \
+              libxml2-dev  \
+              pkg-config \
+              ca-certificates \
+              xclip
+            git clone https://github.com/lastpass/lastpass-cli.git ~/.lastpass-cli
+            pushd ~/.lastpass-cli
+            git checkout `git describe --abbrev=0 --tags`
+            make
+            sudo make install
+            popd
+        fi
+    elif [ -f /etc/arch_release ]; then
+        ! sudo pacman -Q lastpass-cli && sudo pacman -Sy lastpass-cli
     fi
 
 fi

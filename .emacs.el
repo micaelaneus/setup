@@ -277,6 +277,12 @@
   :after (tex company)
   :hook (TeX . company-auctex))
 
+;; LastPass
+(use-package lastpass
+  :ensure t
+  :config
+  (setq lastpass-user "me@alyssackwan.name"))
+
 (let ((path "~/.emacs_local.el"))
   (if (file-exists-p path)
     (load-file path)))
