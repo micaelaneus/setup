@@ -83,6 +83,9 @@ if [ "$(uname)" == "Darwin" ]; then
     # LastPass
     [ x"" == x"$(brew ls --versions lastpass-cli)" ] && brew install lastpass-cli --with-pinentry
 
+    # HLedger
+    [ x"" == x"$(brew ls --versions hledger)" ] && brew install hledger
+
 elif [ "$(uname)" == "Linux" ]; then
 
     if [ -d /etc/redhat-release ]; then
@@ -189,6 +192,15 @@ elif [ "$(uname)" == "Linux" ]; then
         fi
     elif [ -f /etc/arch_release ]; then
         ! sudo pacman -Q lastpass-cli && sudo pacman -Sy lastpass-cli
+    fi
+
+    # HLedger
+    if [ -d /etc/redhat-release ]; then
+        [ x"" == x"$(sudo dnf search hledger)" ] && sudo dnf install -y hledger
+    elif [ -d /etc/debian_version ]; then
+        [ ! $(dpkg-query -Wf'${db:Status-abbrev}' hledger 2>/dev/null | grep -q '^i') ] && sudo apt install -y hledger
+    elif [ -f /etc/arch_release ]; then
+        ! sudo pacman -Q hledger && sudo pacman -Sy hledger
     fi
 
 fi

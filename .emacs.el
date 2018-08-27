@@ -19,10 +19,18 @@
  '(org-agenda-skip-scheduled-if-done t)
  '(org-agenda-sorting-strategy
    (quote
-    ((agenda deadline-up scheduled-up)
+    ((agenda user-defined-up)
      (todo priority-down category-keep)
      (tags priority-down category-keep)
      (search category-keep))))
+ '(org-agenda-start-on-weekday 0)
+ '(org-agenda-use-time-grid nil)
+ '(org-capture-templates
+   (quote
+    (("t" "TODO" entry
+      (id "E2751D7F-DF21-48B4-9456-D7583FFD3510")
+      "** TODO %?\n   DEADLINE: %t SCHEDULED: %t"
+      :empty-lines 1))))
  '(org-catch-invisible-edits (quote show-and-error))
  '(org-goto-auto-isearch nil)
  '(org-id-link-to-org-use-id (quote create-if-interactive-and-no-custom-id))
@@ -101,7 +109,12 @@
   :demand t
   :config (when (memq window-system '(mac ns))
             (exec-path-from-shell-initialize)
+            (exec-path-from-shell-copy-env "MANPATH")
             (exec-path-from-shell-copy-env "GOPATH")))
+
+(use-package woman
+  :ensure t
+  :config (setq woman-path (woman-parse-colon-path (getenv "MANPATH"))))
 
 (use-package projectile
   :ensure t
@@ -112,7 +125,50 @@
 (use-package org
   :ensure t
   :commands (org-store-link org-agenda org-capture org-switchb)
-  :config (require 'org-id)
+  :init
+  (require 'cl-extra)
+  :config
+  (require 'org-id)
+  (defun my-org-agenda-cmp (a b)
+    (cond ((< a b) -1)
+          ((= a b) 0)
+          (t 1)))
+  (defun my-org-agenda-cmp-time-truncated (time-1 time-2)
+    (let ((cmp-seq (mapcar* #'my-org-agenda-cmp time-1 time-2)))
+      (seq-reduce (lambda (v e)
+                    (if (not (= v 0))
+                        v
+                      e))
+                  cmp-seq
+                  0)))
+  (defun my-org-agenda-cmp-time (time-1 time-2)
+    (let* ((time-1-len (if time-1
+                           (length time-1)
+                         0))
+           (time-2-len (if time-2
+                           (length time-2)
+                         0)))
+      (cond ((not time-1) 1)
+            ((not time-2) -1)
+            (t (let ((cmp (my-org-agenda-cmp-time-truncated time-1 time-2)))
+                 (cond ((< cmp 0) -1)
+                       ((= cmp 0) (my-org-agenda-cmp time-2-len time-1-len))
+                       (t 1)))))))
+  (defun my-org-agenda-cmp-user-defined (a b)
+    (let* ((a-pos (get-text-property 0 'org-marker a))
+           (b-pos (get-text-property 0 'org-marker b))
+           (a-deadline-time (org-get-deadline-time a-pos))
+           (a-scheduled-time (org-get-scheduled-time a-pos))
+           (b-deadline-time (org-get-deadline-time b-pos))
+           (b-scheduled-time (org-get-scheduled-time b-pos))
+           (a-time (if (<= (my-org-agenda-cmp-time a-deadline-time a-scheduled-time) 0)
+                       a-deadline-time
+                     a-scheduled-time))
+           (b-time (if (<= (my-org-agenda-cmp-time b-deadline-time b-scheduled-time) 0)
+                       b-deadline-time
+                     b-scheduled-time)))
+      (my-org-agenda-cmp-time a-time b-time)))
+  (setq org-agenda-cmp-user-defined #'my-org-agenda-cmp-user-defined)
   :bind (("C-c l" . org-store-link)
          ("C-c a" . org-agenda)
          ("C-c c" . org-capture)
@@ -282,6 +338,78 @@
   :ensure t
   :config
   (setq lastpass-user "me@alyssackwan.name"))
+
+;; HLedger
+(use-package hledger-mode
+  :ensure t
+  :mode ("\\.journal\\'")
+  :commands (hledger-enable-reporting)
+  :preface
+  (defun hledger/next-entry ()
+    "Move to next entry and pulse."
+    (interactive)
+    (hledger-next-or-new-entry)
+    (hledger-pulse-momentary-current-entry))
+  (defun hledger/prev-entry ()
+    "Move to last entry and pulse."
+    (interactive)
+    (hledger-backward-entry)
+    (hledger-pulse-momentary-current-entry))
+  (defface hledger-warning-face
+    '((((background dark))
+       :background "Red" :foreground "White")
+      (((background light))
+       :background "Red" :foreground "White")
+      (t :inverse-video t))
+    "Face for warning"
+    :group 'hledger)
+  :bind (("C-c j" . hledger-run-command)
+         :map hledger-mode-map
+         ("C-c e" . hledger-jentry)
+         ("M-p" . hledger/prev-entry)
+         ("M-n" . hledger/next-entry))
+  :init
+  (setq hledger-jfile (expand-file-name "~/Dropbox/.hledger.journal"))
+  (setq hledger-show-expanded-report nil)
+  :config
+  (require 'hledger-input)
+  (add-hook 'hledger-view-mode-hook #'hl-line-mode)
+  (add-hook 'hledger-view-mode-hook #'center-text-for-reading)
+  (add-hook 'hledger-view-mode-hook
+            (lambda ()
+              (run-with-timer 1
+                              nil
+                              (lambda ()
+                                (when (equal hledger-last-run-command
+                                             "balancesheet")
+                                  ;; highlight frequently changing accounts
+                                  (highlight-regexp "^assets:.*$")
+                                  (highlight-regexp "^liabilities:.*$" 'hledger-warning-face))))))
+  (add-hook 'hledger-mode-hook
+            (lambda ()
+              (make-local-variable 'company-backends)
+              (add-to-list 'company-backends 'hledger-company))))
+(use-package hledger-input
+  :after (hledger-mode)
+  :bind (("C-c e" . hledger-capture)
+         :map hledger-input-mode-map
+         ("C-c C-b" . popup-balance-at-point))
+  :preface
+  (defun popup-balance-at-point ()
+    "Show balance for account at point in a popup."
+    (interactive)
+    (if-let ((account (thing-at-point 'hledger-account)))
+        (message (hledger-shell-command-to-string (format " balance -N %s "
+                                                          account)))
+      (message "No account at point")))
+  :config
+  (setq hledger-input-buffer-height 20)
+  (add-hook 'hledger-input-post-commit-hook #'hledger-show-new-balances)
+  (add-hook 'hledger-input-mode-hook #'auto-fill-mode)
+  (add-hook 'hledger-input-mode-hook
+            (lambda ()
+              (make-local-variable 'company-idle-delay)
+              (setq-local company-idle-delay 0.1))))
 
 (let ((path "~/.emacs_local.el"))
   (if (file-exists-p path)
