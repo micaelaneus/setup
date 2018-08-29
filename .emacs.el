@@ -7,6 +7,9 @@
  '(column-number-mode t)
  '(debug-on-error t)
  '(default-frame-alist (quote ((fullscreen . maximized))))
+ '(desktop-dirname "~/.emacs.d/desktop")
+ '(desktop-save t)
+ '(desktop-save-mode t)
  '(enable-remote-dir-locals t)
  '(exec-path-from-shell-check-startup-files nil)
  '(helm-command-prefix-key "C-x h")
@@ -63,46 +66,28 @@
     (add-to-list 'package-archives '("gnu" . (concat proto "://elpa.gnu.org/packages/")))))
 (package-initialize)
 
+(when (not (package-installed-p 'use-package))
+  (package-install 'use-package))
+(eval-when-compile
+  (require 'use-package))
+
 (use-package benchmark-init
   :ensure t
   :demand t
   :hook (after-init . benchmark-init/deactivate))
 
-(require 'cl)
-
-;; Ensure installed
-
-(defvar packages
-  '(use-package
-    pyenv-mode-auto
-    lsp-python
-    lsp-java
-    js2-mode
-    company-tern
-    web-mode
-    groovy-mode
-    rhtml-mode
-    rinari
-    yaml-mode))
-
-(defun packages-installed-p ()
-  (if (remove-if 'package-installed-p packages)
-      nil
-    t))
-
-(defun packages-install ()
-  (dolist (package packages)
-    (when (not (package-installed-p package))
-      (package-install package))))
-
-(defun bootstrap ()
-  (interactive)
-  (when (not (packages-installed-p))
-    (package-refresh-contents)
-    (packages-install)))
-
-(eval-when-compile
-  (require 'use-package))
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 5))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
 
 (use-package exec-path-from-shell
   :ensure t
@@ -111,6 +96,10 @@
             (exec-path-from-shell-initialize)
             (exec-path-from-shell-copy-env "MANPATH")
             (exec-path-from-shell-copy-env "GOPATH")))
+
+(use-package visual-fill-column
+  :ensure t
+  :hook (visual-line-mode . visual-fill-column-mode))
 
 (use-package woman
   :ensure t
@@ -184,7 +173,8 @@
 (use-package gmail-message-mode
   :ensure t
   :demand t
-  :after (edit-server))
+  :after (edit-server)
+  :hook (gmail-message-mode . turn-on-visual-line-mode))
 
 ;; Company
 (use-package company
@@ -269,7 +259,8 @@
           scheme-mode
           clojure-mode
           cider-repl-mode
-          emacs-lisp-mode) . paredit-mode))
+          emacs-lisp-mode)
+         . paredit-mode))
 
 ;; Haskell
 (use-package haskell-mode
@@ -281,45 +272,71 @@
 ;; Go
 (use-package go-mode
   :ensure t
-  :config (if (not (string-match "go" compile-command))
-              (set (make-local-variable 'compile-command)
-                   "go build -v && go test -v && go vet"))
-          (add-hook 'before-save-hook #'gofmt-before-save)
-          (set (make-local-variable 'company-backends) '(company-go))
-          (local-set-key (kbd "M-.") 'godef-jump)
-          (local-set-key (kbd "M-*") 'pop-tag-mark))
+  :bind (:map
+         go-mode-map
+         ("M-." . godef-jump)
+         ("M-*" . pop-tag-mark))
+  :hook (go-mode-hook . (lambda ()
+                          (make-local-variable 'before-save-hook)
+                          (add-hook 'before-save-hook #'gofmt-before-save)))
+  :config
+  (if (not (string-match "go" compile-command))
+      (set (make-local-variable 'compile-command)
+           "go build -v && go test -v && go vet")))
 (use-package company-go
   :ensure t
   :after (go-mode)
+  :hook (go-mode . (lambda ()
+                     (set (make-local-variable 'company-backends) '(company-go))))
   :commands (company-go))
 
 ;; Python
-(add-hook 'python-mode-hook (lambda ()
-                              (require 'lsp-python)
-                              (lsp-python-enable)))
+(use-package pyenv-mode-auto
+  :ensure t)
+(use-package lsp-python
+  :ensure t
+  :commands (lsp-python-enable)
+  :hook (python-mode . lsp-python-enable))
 
 ;; Java
-(add-hook 'java-mode-hook #'lsp-java-enable)
+(use-package lsp-java
+  :ensure t
+  :commands (lsp-java-enable)
+  :hook (java-mode . lsp-java-enable))
 
 ;; JavaScript
-(add-to-list 'auto-mode-alist `(,(rx ".js" string-end) . js2-mode))
-(add-hook 'js2-mode-hook (lambda ()
-                           (set (make-local-variable 'company-backends) '(company-tern))))
+(use-package js2-mode
+  :ensure t
+  :mode ("\\.js\\'"))
+(use-package company-tern
+  :ensure t
+  :hook (js2-mode . (lambda ()
+                      (set (make-local-variable 'company-backends) '(company-tern))))
+  :commands (company-tern))
 
 ;; Web
-(add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.[agj]sp\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+(use-package web-mode
+  :mode ("\\.phtml\\'"
+         "\\.tpl\\.php\\'"
+         "\\.[agj]sp\\'"
+         "\\.as[cp]x\\'"
+         "\\.erb\\'"
+         "\\.mustache\\'"
+         "\\.djhtml\\'"
+         "\\.html?\\'"))
 
 ;; Ruby
-(add-to-list 'auto-mode-alist '("\\.html\\.erb\\'" . rhtml-mode))
-(add-hook 'rhtml-mode-hook
-     	  (lambda () (rinari-launch)))
+(use-package groovy-mode
+  :ensure t)
+(use-package rhtml-mode
+  :ensure t
+  :mode ("\\.html\\.erb\\'"))
+(use-package rinari
+  :hook (rhtml-mode . rinari-launch)
+  :commands (rinari-launch))
+
+(use-package yaml-mode
+  :ensure t)
 
 ;; TeX
 (use-package tex
@@ -339,77 +356,20 @@
   :config
   (setq lastpass-user "me@alyssackwan.name"))
 
-;; HLedger
-(use-package hledger-mode
+;; Ledger
+(use-package ledger-mode
+  :load-path "~/opt/homebrew/share/emacs/site-lisp/ledger"
+  :mode ("\\.ledger\\'")
+  :hook (ledger-mode . (lambda () (visual-line-mode nil))))
+(use-package flycheck-ledger
   :ensure t
-  :mode ("\\.journal\\'")
-  :commands (hledger-enable-reporting)
-  :preface
-  (defun hledger/next-entry ()
-    "Move to next entry and pulse."
-    (interactive)
-    (hledger-next-or-new-entry)
-    (hledger-pulse-momentary-current-entry))
-  (defun hledger/prev-entry ()
-    "Move to last entry and pulse."
-    (interactive)
-    (hledger-backward-entry)
-    (hledger-pulse-momentary-current-entry))
-  (defface hledger-warning-face
-    '((((background dark))
-       :background "Red" :foreground "White")
-      (((background light))
-       :background "Red" :foreground "White")
-      (t :inverse-video t))
-    "Face for warning"
-    :group 'hledger)
-  :bind (("C-c j" . hledger-run-command)
-         :map hledger-mode-map
-         ("C-c e" . hledger-jentry)
-         ("M-p" . hledger/prev-entry)
-         ("M-n" . hledger/next-entry))
-  :init
-  (setq hledger-jfile (expand-file-name "~/Dropbox/.hledger.journal"))
-  (setq hledger-show-expanded-report nil)
-  :config
-  (require 'hledger-input)
-  (add-hook 'hledger-view-mode-hook #'hl-line-mode)
-  (add-hook 'hledger-view-mode-hook #'center-text-for-reading)
-  (add-hook 'hledger-view-mode-hook
-            (lambda ()
-              (run-with-timer 1
-                              nil
-                              (lambda ()
-                                (when (equal hledger-last-run-command
-                                             "balancesheet")
-                                  ;; highlight frequently changing accounts
-                                  (highlight-regexp "^assets:.*$")
-                                  (highlight-regexp "^liabilities:.*$" 'hledger-warning-face))))))
-  (add-hook 'hledger-mode-hook
-            (lambda ()
-              (make-local-variable 'company-backends)
-              (add-to-list 'company-backends 'hledger-company))))
-(use-package hledger-input
-  :after (hledger-mode)
-  :bind (("C-c e" . hledger-capture)
-         :map hledger-input-mode-map
-         ("C-c C-b" . popup-balance-at-point))
-  :preface
-  (defun popup-balance-at-point ()
-    "Show balance for account at point in a popup."
-    (interactive)
-    (if-let ((account (thing-at-point 'hledger-account)))
-        (message (hledger-shell-command-to-string (format " balance -N %s "
-                                                          account)))
-      (message "No account at point")))
-  :config
-  (setq hledger-input-buffer-height 20)
-  (add-hook 'hledger-input-post-commit-hook #'hledger-show-new-balances)
-  (add-hook 'hledger-input-mode-hook #'auto-fill-mode)
-  (add-hook 'hledger-input-mode-hook
-            (lambda ()
-              (make-local-variable 'company-idle-delay)
-              (setq-local company-idle-delay 0.1))))
+  :after (flycheck ledger-mode)
+  :hook (ledger-mode . flycheck-mode))
+(use-package company-ledger
+  :straight (company-ledger :type git :host github :repo "debanjum/company-ledger")
+  :hook (ledger-mode . (lambda ()
+                         (set (make-local-variable 'company-backends) '(company-ledger-backend))))
+  :after (company ledger-mode))
 
 (let ((path "~/.emacs_local.el"))
   (if (file-exists-p path)
