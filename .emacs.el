@@ -7,7 +7,7 @@
  '(column-number-mode t)
  '(debug-on-error t)
  '(default-frame-alist (quote ((fullscreen . maximized))))
- '(desktop-dirname "~/.emacs.d/desktop")
+ '(desktop-path (quote ("~/.emacs.d/desktop/")))
  '(desktop-save t)
  '(desktop-save-mode t)
  '(enable-remote-dir-locals t)
@@ -52,6 +52,8 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+
+(make-directory (concat user-emacs-directory "desktop/") :parents)
 
 (require 'package)
 (let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
