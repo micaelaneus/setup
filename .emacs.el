@@ -53,6 +53,7 @@
  ;; If there is more than one, they won't work right.
  )
 
+(defalias 'yes-or-no-p 'y-or-n-p)
 (make-directory (concat user-emacs-directory "desktop/") :parents)
 
 (require 'package)
