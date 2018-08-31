@@ -20,6 +20,7 @@
  '(org-agenda-skip-deadline-if-done t)
  '(org-agenda-skip-scheduled-if-deadline-is-shown (quote repeated-after-deadline))
  '(org-agenda-skip-scheduled-if-done t)
+ '(org-agenda-skip-timestamp-if-done t)
  '(org-agenda-sorting-strategy
    (quote
     ((agenda user-defined-up)
@@ -365,8 +366,7 @@
 ;; Ledger
 (use-package ledger-mode
   :load-path "~/opt/homebrew/share/emacs/site-lisp/ledger"
-  :mode ("\\.ledger\\'")
-  :hook (ledger-mode . (lambda () (visual-line-mode nil))))
+  :mode ("\\.ledger\\'"))
 (use-package flycheck-ledger
   :ensure t
   :after (flycheck ledger-mode)
