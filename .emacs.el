@@ -39,6 +39,9 @@
  '(org-id-link-to-org-use-id (quote create-if-interactive-and-no-custom-id))
  '(org-log-done (quote time))
  '(org-log-into-drawer t)
+ '(org-modules
+   (quote
+    (org-bbdb org-bibtex org-docview org-gnus org-habit org-id org-info org-irc org-mhe org-rmail org-w3m)))
  '(projectile-completion-system (quote helm))
  '(projectile-keymap-prefix (kbd "C-c C-p"))
  '(savehist-mode t)
