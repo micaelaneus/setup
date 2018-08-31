@@ -105,7 +105,7 @@
 
 (use-package visual-fill-column
   :ensure t
-  :hook (visual-line-mode . visual-fill-column-mode))
+  :hook (visual-line-mode))
 
 (use-package woman
   :ensure t
@@ -376,6 +376,9 @@
   :hook (ledger-mode . (lambda ()
                          (set (make-local-variable 'company-backends) '(company-ledger-backend))))
   :after (company ledger-mode))
+
+(use-package dracula-theme
+  :ensure t)
 
 (let ((path "~/.emacs_local.el"))
   (if (file-exists-p path)
