@@ -21,12 +21,8 @@
  '(js2-basic-offset 2)
  '(js2-bounce-indent-p t)
  '(ledger-post-amount-alignment-column 80)
- ;; '(org-agenda-files
- ;;   (\`
- ;;    ((\,
- ;;      (concat my-org-root-dir "TODO.org"))
- ;;     (\,
- ;;      (concat my-org-root-dir "work_qbiz_TODO.org")))))
+ ;; '(org-agenda-files `(,(concat my-org-root-dir "TODO.org")
+ ;;                      ,(concat my-org-root-dir "work_qbiz_TODO.org")))
  '(org-agenda-skip-deadline-if-done t)
  '(org-agenda-skip-scheduled-if-deadline-is-shown (quote repeated-after-deadline))
  '(org-agenda-skip-scheduled-if-done t)
