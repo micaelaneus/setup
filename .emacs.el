@@ -5,6 +5,9 @@
  ;; If there is more than one, they won't work right.
  '(backup-directory-alist (quote ((".*" . "~/.emacs.d/backup"))))
  '(column-number-mode t)
+ '(custom-safe-themes
+   (quote
+    ("aaffceb9b0f539b6ad6becb8e96a04f2140c8faa1de8039a343a4f1e009174fb" default)))
  '(debug-on-error t)
  '(default-frame-alist (quote ((fullscreen . maximized))))
  '(desktop-path (quote ("~/.emacs.d/desktop/")))
@@ -18,6 +21,12 @@
  '(js2-basic-offset 2)
  '(js2-bounce-indent-p t)
  '(ledger-post-amount-alignment-column 80)
+ ;; '(org-agenda-files
+ ;;   (\`
+ ;;    ((\,
+ ;;      (concat my-org-root-dir "TODO.org"))
+ ;;     (\,
+ ;;      (concat my-org-root-dir "work_qbiz_TODO.org")))))
  '(org-agenda-skip-deadline-if-done t)
  '(org-agenda-skip-scheduled-if-deadline-is-shown (quote repeated-after-deadline))
  '(org-agenda-skip-scheduled-if-done t)
@@ -30,14 +39,20 @@
      (search category-keep))))
  '(org-agenda-start-on-weekday 0)
  '(org-agenda-use-time-grid nil)
+ '(org-babel-load-languages (quote ((emacs-lisp . t) (shell . t))))
  '(org-capture-templates
    (quote
     (("t" "TODO" entry
       (id "E2751D7F-DF21-48B4-9456-D7583FFD3510")
-      "** TODO %?\n   DEADLINE: %t SCHEDULED: %t"
+      "** TODO %?
+  SCHEDULED: %t"
       :empty-lines 1))))
  '(org-catch-invisible-edits (quote show-and-error))
+ ;; '(org-default-notes-file (concat my-org-root-dir "TODO.org"))
  '(org-goto-auto-isearch nil)
+ '(org-habit-following-days 2)
+ '(org-habit-graph-column 72)
+ '(org-habit-preceding-days 7)
  '(org-id-link-to-org-use-id (quote create-if-interactive-and-no-custom-id))
  '(org-log-done (quote time))
  '(org-log-into-drawer t)
