@@ -17,6 +17,7 @@
  '(js-indent-level 2)
  '(js2-basic-offset 2)
  '(js2-bounce-indent-p t)
+ '(ledger-post-amount-alignment-column 80)
  '(org-agenda-skip-deadline-if-done t)
  '(org-agenda-skip-scheduled-if-deadline-is-shown (quote repeated-after-deadline))
  '(org-agenda-skip-scheduled-if-done t)
@@ -111,6 +112,10 @@
 (use-package woman
   :ensure t
   :config (setq woman-path (woman-parse-colon-path (getenv "MANPATH"))))
+
+(use-package async
+  :ensure t
+  :config (dired-async-mode 1))
 
 (use-package projectile
   :ensure t
@@ -380,9 +385,12 @@
 (use-package dracula-theme
   :ensure t)
 
+(defvar my-org-root-dir)
+
 (let ((path "~/.emacs_local.el"))
   (if (file-exists-p path)
     (load-file path)))
+
 (let ((path "~/.emacs_custom_set.el"))
   (setq custom-file path)
   (if (file-exists-p path)

@@ -83,8 +83,15 @@ if [ "$(uname)" == "Darwin" ]; then
     # LastPass
     [ x"" == x"$(brew ls --versions lastpass-cli)" ] && brew install lastpass-cli --with-pinentry
 
-    # HLedger
+    # offlineimap + mu
+    [ x"" == x"$(brew ls --versions offlineimap)" ] && brew install offlineimap && brew services start offlineimap
+    [ x"" == x"$(brew ls --versions mu         )" ] && EMACS="~/Applications/Emacs.app/Contents/MacOS/Emacs" brew install mu --with-emacs
+
+    # Ledger
     [ x"" == x"$(brew ls --versions ledger)" ] && brew install ledger
+
+    # Gnuplot
+    [ x"" == x"$(brew ls --versions gnuplot)" ] && brew install gnuplot
 
 elif [ "$(uname)" == "Linux" ]; then
 

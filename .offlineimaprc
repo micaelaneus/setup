@@ -1,0 +1,22 @@
+[general]
+accounts = me@alyssackwan.name alyssa.c.kwan@gmail.com
+
+[Account me@alyssackwan.name]
+localrepository = local_me@alyssackwan.name
+remoterepository = remote_me@alyssackwan.name
+autorefresh = 3
+quick = 10
+postsynchook = mu index --maildir ~/.offlineimaprc/maildir/me@alyssackwan.name
+status_backend = sqlite
+
+[Account local_me@alyssackwan.name]
+type = Maildir
+localfolders = ~/.offlineimaprc/maildir/me@alyssackwan.name
+
+[Account remote_me@alyssackwan.name]
+type = Gmail
+maxconnections = 2
+remoteuser = me@alyssackwan.name
+remotepass = a clean slate for success
+folderfilter = lambda foldername: foldername not in ['[Gmail]/All Mail', '[Gmail]/Important']
+sslcacertfile = /usr/local/etc/openssl/cert.pem
