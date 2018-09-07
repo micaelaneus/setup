@@ -7,7 +7,7 @@
  '(column-number-mode t)
  '(custom-safe-themes
    (quote
-    ("aaffceb9b0f539b6ad6becb8e96a04f2140c8faa1de8039a343a4f1e009174fb" default)))
+    ("41c8c11f649ba2832347fe16fe85cf66dafe5213ff4d659182e25378f9cfc183" default)))
  '(debug-on-error t)
  '(default-frame-alist (quote ((fullscreen . maximized))))
  '(desktop-path (quote ("~/.emacs.d/desktop/")))
@@ -434,7 +434,7 @@
                          (set (make-local-variable 'company-backends) '(company-ledger-backend))))
   :after (company ledger-mode))
 
-(use-package dracula-theme
+(use-package darcula-theme
   :ensure t)
 
 (defvar my-org-root-dir)
