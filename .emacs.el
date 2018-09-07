@@ -128,6 +128,9 @@
   :ensure t
   :config (dired-async-mode 1))
 
+(use-package request
+  :ensure t)
+
 (use-package projectile
   :ensure t
   :demand t
@@ -378,6 +381,44 @@
   :ensure t
   :config
   (setq lastpass-user "me@alyssackwan.name"))
+
+;; Email
+(use-package w3m
+  :ensure t)
+(use-package mu4e
+  :load-path "~/opt/homebrew/Cellar/mu/1.0/share/emacs/site-lisp/mu/mu4e/"
+  :after (w3m)
+  :config
+  (imagemagick-register-types)
+  (setq
+   mail-user-agent 'mu4e-user-agent
+   mu4e-get-mail-command "offlineimap"
+   mu4e-update-interval 120
+   mu4e-show-images t
+   mu4e-html2text-command "w3m -dump -cols 80 -T text/html"
+   message-kill-buffer-on-exit t)
+  (add-to-list 'mu4e-view-actions '("ViewInBrowser" . mu4e-action-view-in-browser) t)
+  (setq mu4e-contexts `(,(make-mu4e-context
+                          :name "me@alyssackwan.name"
+                          :vars '((mu4e-maildir . "~/.offlineimap.d/maildir/me@alyssackwan.name")
+                                  (mu4e-drafts-folder . "/[Gmail].Drafts")
+                                  (mu4e-sent-folder . "/[Gmail].Sent Mail")
+                                  (mu4e-trash-folder . "/[Gmail].Trash")
+                                  (mu4e-sent-messages-behavior . 'delete)
+                                  (user-mail-address . "me@alyssackwan.name")
+                                  (user-full-name  . "Alyssa Kwan")))
+                        ,(make-mu4e-context
+                          :name "alyssa.c.kwan@gmail.com"
+                          :vars '((mu4e-maildir . "~/.offlineimap.d/maildir/alyssa.c.kwan@gmail.com")
+                                  (mu4e-drafts-folder . "/[Gmail].Drafts")
+                                  (mu4e-sent-folder . "/[Gmail].Sent Mail")
+                                  (mu4e-trash-folder . "/[Gmail].Trash")
+                                  (mu4e-sent-messages-behavior . 'delete)
+                                  (user-mail-address . "alyssa.c.kwan@gmail.com")
+                                  (user-full-name  . "Alyssa Kwan")))))
+  :hook ((mu4e-compose-mode . (lambda ()
+                                (set-fill-column 72)
+                                (flyspell-mode)))))
 
 ;; Ledger
 (use-package ledger-mode

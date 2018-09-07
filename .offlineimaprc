@@ -1,22 +1,35 @@
 [general]
-accounts = me@alyssackwan.name alyssa.c.kwan@gmail.com
+accounts = me@alyssackwan.name
+maxsyncaccounts = 4
 
 [Account me@alyssackwan.name]
 localrepository = local_me@alyssackwan.name
 remoterepository = remote_me@alyssackwan.name
-autorefresh = 3
-quick = 10
-postsynchook = mu index --maildir ~/.offlineimaprc/maildir/me@alyssackwan.name
-status_backend = sqlite
 
-[Account local_me@alyssackwan.name]
+[Repository local_me@alyssackwan.name]
 type = Maildir
-localfolders = ~/.offlineimaprc/maildir/me@alyssackwan.name
+localfolders = ~/.offlineimap.d/maildir/me@alyssackwan.name
 
-[Account remote_me@alyssackwan.name]
+[Repository remote_me@alyssackwan.name]
 type = Gmail
 maxconnections = 2
 remoteuser = me@alyssackwan.name
 remotepass = a clean slate for success
 folderfilter = lambda foldername: foldername not in ['[Gmail]/All Mail', '[Gmail]/Important']
-sslcacertfile = /usr/local/etc/openssl/cert.pem
+sslcacertfile = ~/opt/homebrew/etc/openssl/cert.pem
+
+[Account alyssa.c.kwan@gmail.com]
+localrepository = local_alyssa.c.kwan@gmail.com
+remoterepository = remote_alyssa.c.kwan@gmail.com
+
+[Repository local_alyssa.c.kwan@gmail.com]
+type = Maildir
+localfolders = ~/.offlineimap.d/maildir/alyssa.c.kwan@gmail.com
+
+[Repository remote_alyssa.c.kwan@gmail.com]
+type = Gmail
+maxconnections = 2
+remoteuser = alyssa.c.kwan@gmail.com
+remotepass = DDyIZMZZ7oyRnaI3hMBD
+folderfilter = lambda foldername: foldername not in ['[Gmail]/All Mail', '[Gmail]/Important']
+sslcacertfile = ~/opt/homebrew/etc/openssl/cert.pem

@@ -30,7 +30,7 @@ if [ "$(uname)" == "Darwin" ]; then
     export PATH=$HOMEBREW/bin:$HOMEBREW/sbin:$PATH
     export PKG_CONFIG_PATH=$HOMEBREW/lib/pkgconfig:$PKG_CONFIG_PATH
     export CPATH="$CPATH:$HOMEBREW/include"
-    export DYLD_LIBRARY_PATH="$DYLD_LIBRARY_PATH:$HOMEBREW/lib"
+    # export DYLD_LIBRARY_PATH="$DYLD_LIBRARY_PATH:$HOMEBREW/lib"
     export HOMEBREW_CASK_OPTS="--appdir=~/Applications"
 
     # coreutils
@@ -62,7 +62,7 @@ if [ "$(uname)" == "Darwin" ]; then
         brew install pyenv-virtualenvwrapper
         eval "$(pyenv init -)"
         eval "$(pyenv virtualenv-init -)"
-        pyenv install 3.6.2 && pyenv global 3.6.2
+        pyenv global system
     else
         eval "$(pyenv init -)"
         eval "$(pyenv virtualenv-init -)"
@@ -84,8 +84,9 @@ if [ "$(uname)" == "Darwin" ]; then
     [ x"" == x"$(brew ls --versions lastpass-cli)" ] && brew install lastpass-cli --with-pinentry
 
     # offlineimap + mu
+    [ x"" == x"$(brew ls --versions w3m        )" ] && brew install w3m
     [ x"" == x"$(brew ls --versions offlineimap)" ] && brew install offlineimap && brew services start offlineimap
-    [ x"" == x"$(brew ls --versions mu         )" ] && EMACS="~/Applications/Emacs.app/Contents/MacOS/Emacs" brew install mu --with-emacs
+    [ x"" == x"$(brew ls --versions mu         )" ] && brew install mu
 
     # Ledger
     [ x"" == x"$(brew ls --versions ledger)" ] && brew install ledger
@@ -151,7 +152,7 @@ elif [ "$(uname)" == "Linux" ]; then
         export PATH="$PYENV_ROOT/bin:$PATH"
         eval "$(pyenv init -)"
         eval "$(pyenv virtualenv-init -)"
-        pyenv install 3.6.2 && pyenv global 3.6.2
+        pyenv global system
     else
         export PYENV_ROOT="$HOME/.pyenv"
         export PATH="$PYENV_ROOT/bin:$PATH"
