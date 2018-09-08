@@ -21,6 +21,14 @@
  '(js2-basic-offset 2)
  '(js2-bounce-indent-p t)
  '(ledger-post-amount-alignment-column 80)
+ '(mu4e-headers-date-format "%FT%T(%Z)")
+ '(mu4e-headers-fields
+   (quote
+    ((:date . 24)
+     (:flags . 6)
+     (:mailing-list . 10)
+     (:from . 22)
+     (:subject))))
  ;; '(org-agenda-files `(,(concat my-org-root-dir "TODO.org")
  ;;                      ,(concat my-org-root-dir "work_qbiz_TODO.org")))
  '(org-agenda-skip-deadline-if-done t)
