@@ -21,6 +21,9 @@
  '(js2-basic-offset 2)
  '(js2-bounce-indent-p t)
  '(ledger-post-amount-alignment-column 80)
+ '(mail-user-agent 'mu4e-user-agent)
+ '(message-kill-buffer-on-exit t)
+ '(mu4e-get-mail-command "offlineimap")
  '(mu4e-headers-date-format "%FT%T(%Z)")
  '(mu4e-headers-fields
    (quote
@@ -29,6 +32,9 @@
      (:mailing-list . 10)
      (:from . 22)
      (:subject))))
+ '(mu4e-html2text-command "w3m -dump -cols 80 -T text/html")
+ '(mu4e-update-interval 120)
+ '(mu4e-view-show-images t)
  ;; '(org-agenda-files `(,(concat my-org-root-dir "TODO.org")
  ;;                      ,(concat my-org-root-dir "work_qbiz_TODO.org")))
  '(org-agenda-skip-deadline-if-done t)
@@ -384,7 +390,10 @@
   :after (tex company)
   :hook (TeX . company-auctex))
 
-;; LastPass
+;; pass
+(use-package pass
+  :ensure t
+  :commands (pass))
 (use-package lastpass
   :ensure t
   :config
@@ -398,13 +407,6 @@
   :after (w3m)
   :config
   (imagemagick-register-types)
-  (setq
-   mail-user-agent 'mu4e-user-agent
-   mu4e-get-mail-command "offlineimap"
-   mu4e-update-interval 120
-   mu4e-show-images t
-   mu4e-html2text-command "w3m -dump -cols 80 -T text/html"
-   message-kill-buffer-on-exit t)
   (add-to-list 'mu4e-view-actions '("ViewInBrowser" . mu4e-action-view-in-browser) t)
   (setq mu4e-contexts `(,(make-mu4e-context
                           :name "me@alyssackwan.name"

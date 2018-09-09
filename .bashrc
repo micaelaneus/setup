@@ -11,13 +11,17 @@ CURRENT_NODE_VERSION='v7.4.0'
 
 if [ "$(uname)" == "Darwin" ]; then
 
+    if [ ! -d "${HOME}/Applications" ]; then
+        mkdir "${HOME}/Applications"
+    fi
+
     # make sure opt exists
-    if [ ! -d ~/opt ]; then
-        mkdir ~/opt
+    if [ ! -d "${HOME}/opt" ]; then
+        mkdir "${HOME}/opt"
     fi
 
     # pkgconfig
-    export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:/opt/X11/lib/pkgconfig:$PKG_CONFIG_PATH
+    export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:/opt/X11/lib/pkgconfig:${PKG_CONFIG_PATH}"
 
     # Homebrew
     if [ ! -d ~/opt/homebrew ]; then
@@ -80,10 +84,18 @@ if [ "$(uname)" == "Darwin" ]; then
         brew install ruby-build
     fi
 
-    # LastPass
+    # pass
+    [ x"" == x"$(brew ls --versions pass        )" ] && brew install pass
     [ x"" == x"$(brew ls --versions lastpass-cli)" ] && brew install lastpass-cli --with-pinentry
 
+    # Emacs
+    if [ x"" == x"$(brew ls --versions emacs)" ]; then
+        brew install emacs --with-cocoa --with-dbus --with-imagemagick@6 --with-librsvg --with-mailutils --with-modules
+        ln -s "${HOMEBREW}/opt/emacs/Emacs.app" "${HOME}/Applications/"
+    fi
+
     # offlineimap + mu
+    [ x"" == x"$(brew ls --versions imagemagick)" ] && brew install imagemagick
     [ x"" == x"$(brew ls --versions w3m        )" ] && brew install w3m
     [ x"" == x"$(brew ls --versions offlineimap)" ] && brew install offlineimap && brew services start offlineimap
     [ x"" == x"$(brew ls --versions mu         )" ] && brew install mu
@@ -173,7 +185,14 @@ elif [ "$(uname)" == "Linux" ]; then
         git clone https://github.com/rbenv/rbenv.git ~/.rbenv
     fi
 
-    # LastPass
+    # pass
+    if [ -d /etc/redhat-release ]; then
+        [ x"" == x"$(rpm -qa | grep pass)" ] && sudo yum install pass
+    elif [ -d /etc/debian_version ]; then
+        [ ! $(dpkg-query -Wf'${db:Status-abbrev}' pass 2>/dev/null | grep -q '^i') ] && sudo apt-get install -y pass
+    elif [ -f /etc/arch_release ]; then
+        ! sudo pacman -Q pass && sudo pacman -Sy pass
+    fi
     if [ -d /etc/redhat-release ]; then
         [ x"" == x"$(rpm -qa | grep lastpass-cli)" ] && sudo yum install lastpass-cli
     elif [ -d /etc/debian_version ]; then
