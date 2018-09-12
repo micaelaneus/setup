@@ -410,21 +410,21 @@
   :config
   (imagemagick-register-types)
   (add-to-list 'mu4e-view-actions '("ViewInBrowser" . mu4e-action-view-in-browser) t)
-  (setq mu4e-contexts `(,(make-mu4e-context
+  (setq mu4e-maildir "~/.offlineimap.d/maildir"
+        mu4e-contexts `(,(make-mu4e-context
                           :name "me@alyssackwan.name"
-                          :vars '((mu4e-maildir . "~/.offlineimap.d/maildir/me@alyssackwan.name")
-                                  (mu4e-drafts-folder . "/[Gmail].Drafts")
-                                  (mu4e-sent-folder . "/[Gmail].Sent Mail")
-                                  (mu4e-trash-folder . "/[Gmail].Trash")
+                          :vars '(
+                                  (mu4e-drafts-folder . "/me@alyssackwan.name/[Gmail].Drafts")
+                                  (mu4e-sent-folder . "/me@alyssackwan.name/[Gmail].Sent Mail")
+                                  (mu4e-trash-folder . "/me@alyssackwan.name/[Gmail].Trash")
                                   (mu4e-sent-messages-behavior . 'delete)
                                   (user-mail-address . "me@alyssackwan.name")
                                   (user-full-name  . "Alyssa Kwan")))
                         ,(make-mu4e-context
                           :name "alyssa.c.kwan@gmail.com"
-                          :vars '((mu4e-maildir . "~/.offlineimap.d/maildir/alyssa.c.kwan@gmail.com")
-                                  (mu4e-drafts-folder . "/[Gmail].Drafts")
-                                  (mu4e-sent-folder . "/[Gmail].Sent Mail")
-                                  (mu4e-trash-folder . "/[Gmail].Trash")
+                          :vars '((mu4e-drafts-folder . "/alyssa.c.kwan@gmail.com/[Gmail].Drafts")
+                                  (mu4e-sent-folder . "/alyssa.c.kwan@gmail.com/[Gmail].Sent Mail")
+                                  (mu4e-trash-folder . "/alyssa.c.kwan@gmail.com/[Gmail].Trash")
                                   (mu4e-sent-messages-behavior . 'delete)
                                   (user-mail-address . "alyssa.c.kwan@gmail.com")
                                   (user-full-name  . "Alyssa Kwan")))))
