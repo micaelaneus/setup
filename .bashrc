@@ -161,6 +161,7 @@ elif [ "$(uname)" == "Linux" ]; then
         git checkout `git describe --abbrev=0 --tags`
         popd
     fi
+    source "${NVM_DIR}/nvm.sh"
 fi
 [ ! $(nvm version node | grep "${CURRENT_NODE_VERSION}") ] && nvm install "${CURRENT_NODE_VERSION}" && nvm alias default "${CURRENT_NODE_VERSION}"
 [ $(npm list --depth 0 --global tern > /dev/null 2>&1) ] && npm install -g tern
@@ -173,6 +174,7 @@ elif [ "$(uname)" == "Linux" ]; then
     if [ ! -d "${HOME}/.rbenv" ]; then
         git clone https://github.com/rbenv/rbenv.git "${HOME}/.rbenv"
     fi
+    export PATH="${PATH}:${HOME}/.rbenv/bin"
 fi
 eval "$(rbenv init -)"
 
