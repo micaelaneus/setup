@@ -11,10 +11,6 @@ CURRENT_NODE_VERSION='v7.4.0'
 
 if [ "$(uname)" == "Darwin" ]; then
 
-    if [ ! -d "${HOME}/Applications" ]; then
-        mkdir "${HOME}/Applications"
-    fi
-
     # make sure opt exists
     if [ ! -d "${HOME}/opt" ]; then
         mkdir "${HOME}/opt"
@@ -24,179 +20,161 @@ if [ "$(uname)" == "Darwin" ]; then
     export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:/opt/X11/lib/pkgconfig:${PKG_CONFIG_PATH}"
 
     # Homebrew
-    if [ ! -d ~/opt/homebrew ]; then
-        mkdir ~/opt/homebrew
+    if [ ! -d "${HOME}/opt/homebrew" ]; then
+        mkdir "${HOME}/opt/homebrew"
         (cd ~/opt && curl -L https://github.com/Homebrew/homebrew/tarball/master | tar xz --strip 1 -C homebrew)
-        ~/opt/homebrew/bin/brew update
+        "${HOME}/opt/homebrew/bin/brew" update
     fi
-    export HOMEBREW=~/opt/homebrew
-    export HOMEBREW_CACHE=~/Library/Caches/Homebrew
-    export PATH=$HOMEBREW/bin:$HOMEBREW/sbin:$PATH
-    export PKG_CONFIG_PATH=$HOMEBREW/lib/pkgconfig:$PKG_CONFIG_PATH
+    export HOMEBREW="${HOME}/opt/homebrew"
+    export HOMEBREW_CACHE="${HOME}/Library/Caches/Homebrew"
+    export PATH="$HOMEBREW/bin:$HOMEBREW/sbin:$PATH"
+    export PKG_CONFIG_PATH="$HOMEBREW/lib/pkgconfig:$PKG_CONFIG_PATH"
     export CPATH="$CPATH:$HOMEBREW/include"
     # export DYLD_LIBRARY_PATH="$DYLD_LIBRARY_PATH:$HOMEBREW/lib"
-    export HOMEBREW_CASK_OPTS="--appdir=~/Applications"
+    export HOMEBREW_CASK_OPTS="--appdir=${HOME}/Applications"
 
     # coreutils
-    [ x"" == x"$(brew ls --versions coreutils      )" ] && brew install coreutils
+    [ x"" == x"$(brew ls --versions coreutils)" ] && brew install coreutils
     # coreutils - man
-    export MANPATH=$MANPATH:$HOMEBREW/opt/coreutils/libexec/gnuman
+    export "MANPATH=$MANPATH:$HOMEBREW/opt/coreutils/libexec/gnuman"
 
-    [ x"" == x"$(brew ls --versions bash-completion)" ] && brew install bash-completion
-    [ x"" == x"$(brew ls --versions git            )" ] && brew install git
-    [ x"" == x"$(brew ls --versions wget           )" ] && brew install wget
-    [ x"" == x"$(brew ls --versions direnv         )" ] && brew install direnv
-
-    source $HOMEBREW/etc/bash_completion
-
-    [ x"" == x"$(brew ls --versions tmux           )" ] && brew install tmux
-
-    [ x"" == x"$(brew ls --versions pandoc         )" ] && brew install pandoc
-
-    # Haskell
-    [ x"" == x"$(brew ls --versions stack          )" ] && brew install stack
-
-    # Go
-    [ x"" == x"$(brew ls --versions go             )" ] && brew install go
-
-    # Python
-    if [ x"" == x"$(brew ls --versions pyenv)" ]; then
-        brew install pyenv
-        brew install pyenv-virtualenv
-        brew install pyenv-virtualenvwrapper
-        eval "$(pyenv init -)"
-        eval "$(pyenv virtualenv-init -)"
-        pyenv global system
-    else
-        eval "$(pyenv init -)"
-        eval "$(pyenv virtualenv-init -)"
+    if [ ! -d "${HOME}/Applications" ]; then
+        mkdir "${HOME}/Applications"
     fi
+fi
 
-    # Node.js
-    if [ x"" == x"$(brew ls --versions nvm)" ]; then
-        brew install nvm
-        mkdir "${HOME}/.nvm"
-    fi
-
-    # Ruby
-    if [ x"" == x"$(brew ls --versions rbenv)" ]; then
-        brew install rbenv
-        brew install ruby-build
-    fi
-
-    # pass
-    [ x"" == x"$(brew ls --versions pass        )" ] && brew install pass
-    [ x"" == x"$(brew ls --versions lastpass-cli)" ] && brew install lastpass-cli --with-pinentry
-
-    # Emacs
-    if [ x"" == x"$(brew ls --versions emacs)" ]; then
-        brew install emacs --with-cocoa --with-dbus --with-imagemagick@6 --with-librsvg --with-mailutils --with-modules
-        ln -s "${HOMEBREW}/opt/emacs/Emacs.app" "${HOME}/Applications/"
-    fi
-
-    # offlineimap + mu
-    [ x"" == x"$(brew ls --versions imagemagick)" ] && brew install imagemagick
-    [ x"" == x"$(brew ls --versions w3m        )" ] && brew install w3m
-    [ x"" == x"$(brew ls --versions offlineimap)" ] && brew install offlineimap && brew services start offlineimap
-    [ x"" == x"$(brew ls --versions mu         )" ] && brew install mu
-
-    # Ledger
-    [ x"" == x"$(brew ls --versions ledger)" ] && brew install ledger
-
-    # Gnuplot
-    [ x"" == x"$(brew ls --versions gnuplot)" ] && brew install gnuplot
-
+if [ "$(uname)" == "Darwin" ]; then
+    installed="$(brew ls)"
 elif [ "$(uname)" == "Linux" ]; then
-
     if [ -d /etc/redhat-release ]; then
-        [ x"" == x"$(rpm -qa | grep bash-completion-)" ] && sudo yum install bash-completion
-        [ x"" == x"$(rpm -qa | grep git-            )" ] && sudo yum install git
-        [ x"" == x"$(rpm -qa | grep wget            )" ] && sudo yum install wget
+        installed="$(rpm -qa)"
     elif [ -d /etc/debian_version ]; then
-        [ ! $(dpkg-query -Wf'${db:Status-abbrev}' bash-completion 2>/dev/null | grep -q '^i') ] && sudo apt-get install -y bash-completion
-        [ ! $(dpkg-query -Wf'${db:Status-abbrev}' git             2>/dev/null | grep -q '^i') ] && sudo apt-get install -y git
-        [ ! $(dpkg-query -Wf'${db:Status-abbrev}' wget            2>/dev/null | grep -q '^i') ] && sudo apt-get install -y wget
+        installed="$(dpkg-query -f '${binary:Package}\n' -W)"
     elif [ -f /etc/arch_release ]; then
-        ! sudo pacman -Q bash-completion && sudo pacman -Sy bash-completion
-        ! sudo pacman -Q git             && sudo pacman -Sy git
-        ! sudo pacman -Q wget            && sudo pacman -Sy wget
+        installed="$(pacman -Qqe)"
+    else
+        installed=""
     fi
+else
+    installed=""
+fi
+
+install() {
+    local installed=$(echo "${installed}" | grep ^"${1}"$)
+    if [ x"" == x"${installed}" ]; then
+        if [ "$(uname)" == "Darwin" ]; then
+            brew install "${2}"
+        elif [ "$(uname)" == "Linux" ]; then
+            if [ -d /etc/redhat-release ]; then
+                sudo yum install "${2}"
+            elif [ -d /etc/debian_version ]; then
+                sudo apt-get install -y "${2}"
+            elif [ -f /etc/arch_release ]; then
+                sudo pacman -Sy "${2}"
+            fi
+        fi
+    fi
+}
+
+install bash-completion bash-completion
+install git             git
+install wget            wget
+install direnv          direnv
+
+install tmux            tmux
+install pandoc          pandoc
+
+if [ "$(uname)" == "Darwin" ]; then
+    source $HOMEBREW/etc/bash_completion
+elif [ "$(uname)" == "Linux" ]; then
     source /usr/share/bash-completion/bash_completion
+fi
 
-    if [ -d /etc/redhat-release ]; then
-        [ x"" == x"$(rpm -qa | grep tmux-)" ] && sudo yum install tmux
-    elif [ -d /etc/debian_version ]; then
-        [ ! $(dpkg-query -Wf'${db:Status-abbrev}' tmux 2>/dev/null | grep -q '^i') ] && sudo apt-get install -y tmux
-    elif [ -f /etc/arch_release ]; then
-        ! sudo pacman -Q tmux && sudo pacman -Sy tmux
-    fi
-
-    if [ -d /etc/redhat-release ]; then
-        [ x"" == x"$(rpm -qa | grep pandoc-)" ] && sudo yum install pandoc
-    elif [ -d /etc/debian_version ]; then
-        [ ! $(dpkg-query -Wf'${db:Status-abbrev}' pandoc 2>/dev/null | grep -q '^i') ] && sudo apt-get install -y pandoc
-    elif [ -f /etc/arch_release ]; then
-        ! sudo pacman -Q pandoc && sudo pacman -Sy pandoc
-    fi
-
-    # Haskell
+# Haskell
+if [ "$(uname)" == "Darwin" ]; then
+    install haskell-stack haskell-stack
+elif [ "$(uname)" == "Linux" ]; then
     if [ -d /etc/arch_release ] ; then
-        ! sudo pacman -Q stack           && sudo pacman -Sy stack
+        install stack stack
     else
-        curl -sSL https://get.haskellstack.org/ | sh -s - -d $HOME/bin/stack
+        curl -sSL https://get.haskellstack.org/ | sh -s - -d "$HOME/bin/stack"
     fi
+fi
 
-    # Go
-    if [ -d /etc/redhat-release ]; then
-        [ x"" == x"$(rpm -qa | grep go-             )" ] && sudo yum install go
-    elif [ -d /etc/debian_version ]; then
-        [ ! $(dpkg-query -Wf'${db:Status-abbrev}' go              2>/dev/null | grep -q '^i') ] && sudo apt-get install -y go
-    elif [ -f /etc/arch_release ]; then
-        ! sudo pacman -Q go              && sudo pacman -Sy go
+# Go
+install go go
+export GOPATH="${HOME}/Projects/go"
+export PATH="${PATH}:${GOPATH}/bin"
+[ ! -d "${GOPATH}/src/golang.org/x/tools/cmd"        ] && go get -u golang.org/x/tools/cmd/...
+[ ! -d "${GOPATH}/src/github.com/kardianos/govendor" ] && go get -u github.com/kardianos/govendor
+[ ! -d "${GOPATH}/src/github.com/nsf/gocode"         ] && go get -u github.com/nsf/gocode
+[ ! -d "${GOPATH}/src/github.com/rogpeppe/godef"     ] && go get -u github.com/rogpeppe/godef
+
+# Python
+if [ "$(uname)" == "Darwin" ]; then
+    install pyenv                   pyenv
+    install pyenv-virtualenv        pyenv-virtualenv
+    install pyenv-virtualenvwrapper pyenv-virtualenvwrapper
+elif [ "$(uname)" == "Linux" ]; then
+    if [ ! -d "${HOME}/.pyenv" ]; then
+        git clone https://github.com/yyuu/pyenv.git "${HOME}/.pyenv"
+        git clone https://github.com/yyuu/pyenv-virtualenv.git "${HOME}/.pyenv/plugins/pyenv-virtualenv"
+        git clone https://github.com/yyuu/pyenv-virtualenvwrapper.git "${HOME}/.pyenv/plugins/pyenv-virtualenvwrapper"
     fi
+    export PYENV_ROOT="$HOME/.pyenv"
+    export PATH="$PYENV_ROOT/bin:$PATH"
+fi
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
+pyenv global system
+pyenv virtualenvwrapper
 
-    # Python
-    if [ ! -d ~/.pyenv ]; then
-        git clone https://github.com/yyuu/pyenv.git ~/.pyenv
-        git clone https://github.com/yyuu/pyenv-virtualenv.git ~/.pyenv/plugins/pyenv-virtualenv
-        git clone https://github.com/yyuu/pyenv-virtualenvwrapper.git ~/.pyenv/plugins/pyenv-virtualenvwrapper
-        export PYENV_ROOT="$HOME/.pyenv"
-        export PATH="$PYENV_ROOT/bin:$PATH"
-        eval "$(pyenv init -)"
-        eval "$(pyenv virtualenv-init -)"
-        pyenv global system
-    else
-        export PYENV_ROOT="$HOME/.pyenv"
-        export PATH="$PYENV_ROOT/bin:$PATH"
-        eval "$(pyenv init -)"
-        eval "$(pyenv virtualenv-init -)"
-    fi
+# Java
+if [ ! -d "${HOME}/.emacs.d/eclipse.jdt.ls/server/" ]; then
+    mkdir -p "${HOME}/.emacs.d/eclipse.jdt.ls/server/"
+    wget http://download.eclipse.org/jdtls/snapshots/jdt-language-server-latest.tar.gz -O /tmp/jdt-latest.tar
+    tar xf /tmp/jdt-latest.tar -C ~/.emacs.d/eclipse.jdt.ls/server/
+fi
 
-    # Node.js
-    if [ ! -d ~/.nvm ]; then
-        git clone https://github.com/creationix/nvm.git ~/.nvm
-        pushd ~/.nvm
+# Node.js
+export NVM_DIR="$HOME/.nvm"
+if [ "$(uname)" == "Darwin" ]; then
+    install nvm nvm
+    mkdir -p "${NVM_DIR}"
+    source "$(brew --prefix nvm)/nvm.sh"
+elif [ "$(uname)" == "Linux" ]; then
+    if [ ! -d "${NVM_DIR}" ]; then
+        git clone https://github.com/creationix/nvm.git "${NVM_DIR}"
+        pushd "${NVM_DIR}"
         git checkout `git describe --abbrev=0 --tags`
         popd
     fi
+fi
+[ ! $(nvm version node | grep "${CURRENT_NODE_VERSION}") ] && nvm install "${CURRENT_NODE_VERSION}" && nvm alias default "${CURRENT_NODE_VERSION}"
+[ $(npm list --depth 0 --global tern > /dev/null 2>&1) ] && npm install -g tern
 
-    # Ruby
-    if [ ! -d ~/.rbenv ]; then
-        git clone https://github.com/rbenv/rbenv.git ~/.rbenv
+# Ruby
+if [ "$(uname)" == "Darwin" ]; then
+    install rbenv      rbenv
+    install ruby-build ruby-build
+elif [ "$(uname)" == "Linux" ]; then
+    if [ ! -d "${HOME}/.rbenv" ]; then
+        git clone https://github.com/rbenv/rbenv.git "${HOME}/.rbenv"
     fi
+fi
+eval "$(rbenv init -)"
 
-    # pass
-    if [ -d /etc/redhat-release ]; then
-        [ x"" == x"$(rpm -qa | grep pass)" ] && sudo yum install pass
+# Miscellaneous
+
+# pass
+install pass pass
+if [ "$(uname)" == "Darwin" ]; then
+    install lastpass-cli "lastpass-cli --with-pinentry"
+elif [ "$(uname)" == "Linux" ]; then
+    if [ -d /etc/redhat-release ] || [ -f /etc/arch_release ]; then
+        install lastpass-cli lastpass-cli
     elif [ -d /etc/debian_version ]; then
-        [ ! $(dpkg-query -Wf'${db:Status-abbrev}' pass 2>/dev/null | grep -q '^i') ] && sudo apt-get install -y pass
-    elif [ -f /etc/arch_release ]; then
-        ! sudo pacman -Q pass && sudo pacman -Sy pass
-    fi
-    if [ -d /etc/redhat-release ]; then
-        [ x"" == x"$(rpm -qa | grep lastpass-cli)" ] && sudo yum install lastpass-cli
-    elif [ -d /etc/debian_version ]; then
-        if [ ! -d ~/.lastpass-cli ]; then
+        if [ ! -d "${HOME}/.lastpass-cli" ]; then
             sudo apt-get --no-install-recommends -yqq install \
               bash-completion \
               build-essential \
@@ -210,63 +188,41 @@ elif [ "$(uname)" == "Linux" ]; then
               pkg-config \
               ca-certificates \
               xclip
-            git clone https://github.com/lastpass/lastpass-cli.git ~/.lastpass-cli
-            pushd ~/.lastpass-cli
+            git clone https://github.com/lastpass/lastpass-cli.git "${HOME}/.lastpass-cli"
+            pushd "${HOME}/.lastpass-cli"
             git checkout `git describe --abbrev=0 --tags`
             make
             sudo make install
             popd
         fi
-    elif [ -f /etc/arch_release ]; then
-        ! sudo pacman -Q lastpass-cli && sudo pacman -Sy lastpass-cli
     fi
-
-    # Ledger
-    if [ -d /etc/redhat-release ]; then
-        [ x"" == x"$(rpm -qa | grep ledger)" ] && sudo yum install ledger
-    elif [ -d /etc/debian_version ]; then
-        [ ! $(dpkg-query -Wf'${db:Status-abbrev}' ledger 2>/dev/null | grep -q '^i') ] && sudo apt install -y ledger
-    elif [ -f /etc/arch_release ]; then
-        ! sudo pacman -Q ledger && sudo pacman -Sy ledger
-    fi
-
 fi
 
-# Python
-pyenv virtualenvwrapper
-
-# Java
-if [ ! -d ~/.emacs.d/eclipse.jdt.ls/server/ ]; then
-    mkdir -p ~/.emacs.d/eclipse.jdt.ls/server/
-    wget http://download.eclipse.org/jdtls/snapshots/jdt-language-server-latest.tar.gz -O /tmp/jdt-latest.tar
-    tar xf /tmp/jdt-latest.tar -C ~/.emacs.d/eclipse.jdt.ls/server/
+# Emacs
+if [ "$(uname)" == "Darwin" ]; then
+    install emacs "emacs --with-cocoa --with-dbus --with-imagemagick@6 --with-librsvg --with-mailutils --with-modules"
+    [ ! -L "${HOME}/Applications/Emacs.app" ] && ln -s "${HOMEBREW}/opt/emacs/Emacs.app" "${HOME}/Applications/"
+elif [ "$(uname)" == "Linux" ]; then
+    install emacs emacs
 fi
 
-# Node.js
-export NVM_DIR="$HOME/.nvm"
-. "$(brew --prefix nvm)/nvm.sh"
-[ ! $(nvm version node | grep "${CURRENT_NODE_VERSION}") ] && nvm install "${CURRENT_NODE_VERSION}" && nvm alias default "${CURRENT_NODE_VERSION}"
-[ $(npm list --depth 0 --global tern > /dev/null 2>&1) ] && npm install -g tern
-
-# Ruby
-eval "$(rbenv init -)"
-
-if [ ! -d ~/bin_local ]; then
-    mkdir ~/bin_local
+# offlineimap + mu
+if [ "$(uname)" == "Darwin" ]; then
+    install imagemagick imagemagick
+    install w3m         w3m
 fi
-export PATH=~/bin_local:~/bin:$PATH
+install offlineimap offlineimap
+install mu          mu
 
-# Go
-export GOPATH="$HOME/Projects/go"
-export PATH="$PATH:$GOPATH/bin"
-[ ! -d "$GOPATH/src/golang.org/x/tools/cmd"        ] && go get -u golang.org/x/tools/cmd/...
-[ ! -d "$GOPATH/src/github.com/kardianos/govendor" ] && go get -u github.com/kardianos/govendor
-[ ! -d "$GOPATH/src/github.com/nsf/gocode"         ] && go get -u github.com/nsf/gocode
-[ ! -d "$GOPATH/src/github.com/rogpeppe/godef"     ] && go get -u github.com/rogpeppe/godef
+# Ledger
+install ledger ledger
+
+if [ ! -d "${HOME}/bin_local" ]; then
+    mkdir "${HOME}/bin_local"
+fi
+export PATH="${HOME}/bin_local:${HOME}/bin:${PATH}"
 
 [ -f ~/.bashrc_local ] && source ~/.bashrc_local
 
 # Direnv - Last
-if [ "$(uname)" == "Darwin" ]; then
-    eval "$(direnv hook bash)"
-fi
+eval "$(direnv hook bash)"

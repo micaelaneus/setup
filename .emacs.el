@@ -56,7 +56,7 @@
     (("t" "TODO" entry
       (id "E2751D7F-DF21-48B4-9456-D7583FFD3510")
       "** TODO %?
-  SCHEDULED: %t"
+   SCHEDULED: %t"
       :empty-lines 1))))
  '(org-catch-invisible-edits (quote show-and-error))
  ;; '(org-default-notes-file (concat my-org-root-dir "TODO.org"))
@@ -413,8 +413,7 @@
   (setq mu4e-maildir "~/.offlineimap.d/maildir"
         mu4e-contexts `(,(make-mu4e-context
                           :name "me@alyssackwan.name"
-                          :vars '(
-                                  (mu4e-drafts-folder . "/me@alyssackwan.name/[Gmail].Drafts")
+                          :vars '((mu4e-drafts-folder . "/me@alyssackwan.name/[Gmail].Drafts")
                                   (mu4e-sent-folder . "/me@alyssackwan.name/[Gmail].Sent Mail")
                                   (mu4e-trash-folder . "/me@alyssackwan.name/[Gmail].Trash")
                                   (mu4e-sent-messages-behavior . 'delete)
