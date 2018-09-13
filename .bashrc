@@ -9,6 +9,8 @@ fi
 
 CURRENT_NODE_VERSION='v7.4.0'
 
+eval `ssh-agent -s`
+
 if [ "$(uname)" == "Darwin" ]; then
 
     # make sure opt exists
