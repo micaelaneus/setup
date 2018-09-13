@@ -243,8 +243,8 @@ fi
 # offlineimap + mu
 if [ "$(uname)" == "Darwin" ]; then
     install imagemagick imagemagick
-    install w3m         w3m
 fi
+install w3m         w3m
 install offlineimap offlineimap
 if [ "$(uname)" == "Darwin" ]; then
     install mu mu
