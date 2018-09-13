@@ -48,7 +48,7 @@ if [ "$(uname)" == "Darwin" ]; then
 elif [ "$(uname)" == "Linux" ]; then
     if [ -d /etc/redhat-release ]; then
         installed="$(rpm -qa)"
-    elif [ -d /etc/debian_version ]; then
+    elif [ -f /etc/debian_version ]; then
         installed="$(dpkg-query -f '${binary:Package}\n' -W)"
     elif [ -f /etc/arch_release ]; then
         installed="$(pacman -Qqe)"
@@ -67,7 +67,7 @@ install() {
         elif [ "$(uname)" == "Linux" ]; then
             if [ -d /etc/redhat-release ]; then
                 sudo yum install "${2}"
-            elif [ -d /etc/debian_version ]; then
+            elif [ -f /etc/debian_version ]; then
                 sudo apt-get install -y "${2}"
             elif [ -f /etc/arch_release ]; then
                 sudo pacman -Sy "${2}"
@@ -105,7 +105,7 @@ fi
 if [ "$(uname)" == "Darwin" ]; then
     install go go
 elif [ "$(uname)" == "Linux" ]; then
-    if [ -d /etc/debian_version ]; then
+    if [ -f /etc/debian_version ]; then
         install golang golang
     else
         install go go
@@ -181,7 +181,7 @@ if [ "$(uname)" == "Darwin" ]; then
 elif [ "$(uname)" == "Linux" ]; then
     if [ -d /etc/redhat-release ] || [ -f /etc/arch_release ]; then
         install lastpass-cli lastpass-cli
-    elif [ -d /etc/debian_version ]; then
+    elif [ -f /etc/debian_version ]; then
         if [ ! -d "${HOME}/.lastpass-cli" ]; then
             sudo apt-get --no-install-recommends -yqq install \
               bash-completion \
