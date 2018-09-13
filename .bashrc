@@ -97,7 +97,7 @@ elif [ "$(uname)" == "Linux" ]; then
     if [ -d /etc/arch_release ] ; then
         install stack stack
     else
-        curl -sSL https://get.haskellstack.org/ | sh -s - -d "$HOME/bin/stack"
+        [ ! -d "${HOME}/bin/stack" ] && curl -sSL https://get.haskellstack.org/ | sh -s - -d "$HOME/bin/stack"
     fi
 fi
 
