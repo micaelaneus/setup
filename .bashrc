@@ -224,7 +224,12 @@ if [ "$(uname)" == "Darwin" ]; then
     install w3m         w3m
 fi
 install offlineimap offlineimap
-install mu          mu
+if [ "$(uname)" == "Darwin" ]; then
+    install mu mu
+elif [ "$(uname)" == "Linux" ]; then
+    install maildir-utils maildir-utils
+    install mu4e          mu4e
+fi
 
 # Ledger
 install ledger ledger
