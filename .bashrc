@@ -102,7 +102,15 @@ elif [ "$(uname)" == "Linux" ]; then
 fi
 
 # Go
-install go go
+if [ "$(uname)" == "Darwin" ]; then
+    install go go
+elif [ "$(uname)" == "Linux" ]; then
+    if [ -d /etc/debian_version ]; then
+        install golang golang
+    else
+        install go go
+    fi
+fi
 export GOPATH="${HOME}/Projects/go"
 export PATH="${PATH}:${GOPATH}/bin"
 [ ! -d "${GOPATH}/src/golang.org/x/tools/cmd"        ] && go get -u golang.org/x/tools/cmd/...
