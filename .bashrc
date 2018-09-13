@@ -38,9 +38,24 @@ if [ "$(uname)" == "Darwin" ]; then
     # coreutils - man
     export "MANPATH=$MANPATH:$HOMEBREW/opt/coreutils/libexec/gnuman"
 
+    if [ ! -d "${HOME}/.gnupg" ]; then
+        mkdir "${HOME}/.gnupg"
+        touch "${HOME}/.gnupg/gpg-agent.conf"
+    fi
+    if [ x"" == x"$(brew ls --versions pinentry-mac)" ]; then
+        brew install pinentry-mac
+        echo "pinentry-program ${HOMEBREW}/bin/pinentry-mac" >> "${HOME}/.gnupg/gpg-agent.conf"
+    fi
+    [ x"" == x"$(brew ls --versions gnupg       )" ] && brew install gnupg
+
     if [ ! -d "${HOME}/Applications" ]; then
         mkdir "${HOME}/Applications"
     fi
+
+elif [ "$(uname)" == "Linux" ]; then
+
+    password=$(gpg --quiet --decrypt "${HOME}/.gnupg/.password.gpg")
+
 fi
 
 if [ "$(uname)" == "Darwin" ]; then
@@ -68,7 +83,7 @@ install() {
             if [ -d /etc/redhat-release ]; then
                 sudo yum install "${2}"
             elif [ -f /etc/debian_version ]; then
-                sudo apt-get install -y "${2}"
+                echo "${password}" | sudo -S apt-get install -y "${2}"
             elif [ -f /etc/arch_release ]; then
                 sudo pacman -Sy "${2}"
             fi
@@ -77,18 +92,17 @@ install() {
 }
 
 install bash-completion bash-completion
-install git             git
-install wget            wget
-install direnv          direnv
-
-install tmux            tmux
-install pandoc          pandoc
-
 if [ "$(uname)" == "Darwin" ]; then
     source $HOMEBREW/etc/bash_completion
 elif [ "$(uname)" == "Linux" ]; then
     source /usr/share/bash-completion/bash_completion
 fi
+
+install git    git
+install wget   wget
+install tmux   tmux
+install direnv direnv
+install pandoc pandoc
 
 # Haskell
 if [ "$(uname)" == "Darwin" ]; then
