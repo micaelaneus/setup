@@ -124,6 +124,7 @@ if [ "$(uname)" == "Darwin" ]; then
     install pyenv-virtualenv        pyenv-virtualenv
     install pyenv-virtualenvwrapper pyenv-virtualenvwrapper
 elif [ "$(uname)" == "Linux" ]; then
+    install python-pip python-pip
     if [ ! -d "${HOME}/.pyenv" ]; then
         git clone https://github.com/yyuu/pyenv.git "${HOME}/.pyenv"
         git clone https://github.com/yyuu/pyenv-virtualenv.git "${HOME}/.pyenv/plugins/pyenv-virtualenv"
