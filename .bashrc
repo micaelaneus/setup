@@ -108,6 +108,11 @@ fi
 
 install git    git
 install wget   wget
+
+if [ "$(uname)" == "Linux" ]; then
+    install dirmngr dirmngr
+fi
+
 install tmux   tmux
 install direnv direnv
 install pandoc pandoc

@@ -97,9 +97,9 @@
   ;; Comment/uncomment these two lines to enable/disable MELPA and MELPA Stable as desired
   (add-to-list 'package-archives (cons "melpa" (concat proto "://melpa.org/packages/")) t)
   ;;(add-to-list 'package-archives (cons "melpa-stable" (concat proto "://stable.melpa.org/packages/")) t)
-  (when (< emacs-major-version 24)
-    ;; For important compatibility libraries like cl-lib
-    (add-to-list 'package-archives '("gnu" . (concat proto "://elpa.gnu.org/packages/")))))
+  (add-to-list 'package-archives (cons "gnu" (concat proto "://elpa.gnu.org/packages/")) t)
+  (setq package-archive-priorities '((melpa . 10)
+                                     (gnu . 5))))
 (package-initialize)
 
 (when (not (package-installed-p 'use-package))
@@ -163,6 +163,7 @@
 
 ;; Org
 (use-package org
+  :straight t
   :ensure t
   :commands (org-store-link org-agenda org-capture org-switchb)
   :init
