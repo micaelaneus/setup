@@ -93,6 +93,12 @@ install() {
     fi
 }
 
+if [ "$(uname)" == "Linux" ]; then
+    if [ -f /etc/debian_version ]; then
+        install mosh mosh
+    fi
+fi
+
 install bash-completion bash-completion
 if [ "$(uname)" == "Darwin" ]; then
     source $HOMEBREW/etc/bash_completion

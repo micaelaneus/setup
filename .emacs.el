@@ -17,6 +17,7 @@
  '(enable-remote-dir-locals t)
  '(exec-path-from-shell-check-startup-files nil)
  '(helm-command-prefix-key "C-x h")
+ '(hl-line-face (quote my-hl-line))
  '(indent-tabs-mode nil)
  '(js-indent-level 2)
  '(js2-basic-offset 2)
@@ -82,6 +83,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+(defface my-hl-line '((t (:inherit hl-line :background "grey5"))) "my-hl-line face")
 
 (defalias 'yes-or-no-p 'y-or-n-p)
 (make-directory (expand-file-name "desktop/" user-emacs-directory) :parents)
@@ -207,6 +209,7 @@
                      b-scheduled-time)))
       (my-org-agenda-cmp-time a-time b-time)))
   (setq org-agenda-cmp-user-defined #'my-org-agenda-cmp-user-defined)
+  :hook (org-agenda-mode . (lambda () (hl-line-mode 1)))
   :bind (("C-c l" . org-store-link)
          ("C-c a" . org-agenda)
          ("C-c c" . org-capture)
