@@ -1,5 +1,39 @@
 #!/bin/bash
 
+# postgresql postgresql-client
+# apache2
+# sudo mv /etc/apache2/mods-enabled/mpm_event.conf /etc/apache2/mods-enabled/mpm_event.conf.bak
+# sudo mv /etc/apache2/mods-enabled/mpm_event.load /etc/apache2/mods-enabled/mpm_event.load.bak
+# sudo ln -s /etc/apache2/mods-available/mpm_prefork.conf /etc/apache2/mods-enabled/
+# sudo ln -s /etc/apache2/mods-available/mpm_prefork.load /etc/apache2/mods-enabled/
+# sudo service apache2 restart
+# libapache2-mod-php
+# php -m | grep -i -e '^ctype$'
+# ctype
+# curl php-curl
+# dom php-xml
+# gd php-gd
+# hash
+# iconv
+# intl php-intl
+# json
+# libxml
+# mbstring php-mbstring
+# openssl
+# PDO php-pdo
+# Phar
+# posix
+# SimpleXML
+# xmlwriter
+# zip php-zip
+# zlib
+# pgsql php-pgsql
+# wget -nv https://download.owncloud.org/download/repositories/10.0/Debian_9.0/Release.key -O /tmp/Release.key
+# sudo apt-key add - < /tmp/Release.key
+# echo 'deb http://download.owncloud.org/download/repositories/10.0/Debian_9.0/ /' | sudo tee /etc/apt/sources.list.d/owncloud.list
+# sudo apt-get update
+# sudo apt-get install owncloud-files
+
 [ -z "$PS1" ] && return
 [[ $- != *i* ]] && return
 
@@ -106,16 +140,23 @@ elif [ "$(uname)" == "Linux" ]; then
     source /usr/share/bash-completion/bash_completion
 fi
 
-install git    git
-install wget   wget
-
+install git       git
+install mercurial mercurial
+install wget      wget
 if [ "$(uname)" == "Linux" ]; then
     install dirmngr dirmngr
 fi
+install tmux      tmux
+install direnv    direnv
+install pandoc    pandoc
 
-install tmux   tmux
-install direnv direnv
-install pandoc pandoc
+if [ "$(uname)" == "Linux" ]; then
+    if [ -f /etc/debian_version ]; then
+        install libbz2-dev      libbz2-dev
+        install libreadline-dev libreadline-dev
+        install libsqlite3-dev  libsqlite3-dev
+    fi
+fi
 
 # Haskell
 if [ "$(uname)" == "Darwin" ]; then
@@ -165,6 +206,7 @@ elif [ "$(uname)" == "Linux" ]; then
 fi
 eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
+pyenv install 
 pyenv global system
 pyenv virtualenvwrapper
 
@@ -266,6 +308,19 @@ fi
 
 # Ledger
 install ledger ledger
+# Beancount
+[ ! -d "${HOME}/.beancount" ] && hg clone https://bitbucket.org/blais/beancount "${HOME}/.beancount"
+pushd "${HOME}/.beancount"
+pyenv shell 3.7.0
+pip install .
+pyenv shell --unset
+popd
+
+install sox sox
+if [ "$(uname)" == "Linux" ]; then
+    install libsox-fmt-all libsox-fmt-all
+fi
+
 
 if [ ! -d "${HOME}/bin_local" ]; then
     mkdir "${HOME}/bin_local"

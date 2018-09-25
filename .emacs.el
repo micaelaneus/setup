@@ -44,7 +44,7 @@
  '(org-agenda-skip-timestamp-if-done t)
  '(org-agenda-sorting-strategy
    (quote
-    ((agenda user-defined-up)
+    ((agenda priority-down user-defined-up)
      (todo priority-down category-keep)
      (tags priority-down category-keep)
      (search category-keep))))
@@ -83,7 +83,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
-(defface my-hl-line '((t (:inherit hl-line :background "grey5"))) "my-hl-line face")
+(defface my-hl-line '((t (:inherit hl-line :background "grey25"))) "my-hl-line face")
 
 (defalias 'yes-or-no-p 'y-or-n-p)
 (make-directory (expand-file-name "desktop/" user-emacs-directory) :parents)
@@ -451,7 +451,7 @@
  (lambda ()
    (when (memq system-type '(darwin))
      "~/opt/homebrew/share/emacs/site-lisp/ledger"))
-  :mode ("\\.ledger\\'"))
+ :mode ("\\.ledger\\'"))
 (use-package flycheck-ledger
   :ensure t
   :after (flycheck ledger-mode)
@@ -461,6 +461,11 @@
   :hook (ledger-mode . (lambda ()
                          (set (make-local-variable 'company-backends) '(company-ledger-backend))))
   :after (company ledger-mode))
+;; Beancount
+(use-package beancount
+  :load-path "~/.beancount/editors/emacs"
+  :mode ("\\.beancount\\'" . beancount-mode)
+  :config (setq beancount-install-dir "~/.pyenv/versions/3.7.0"))
 
 (use-package darcula-theme
   :ensure t)
