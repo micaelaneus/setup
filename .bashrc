@@ -206,7 +206,7 @@ elif [ "$(uname)" == "Linux" ]; then
 fi
 eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
-pyenv install 
+pyenv install 3.7.0
 pyenv global system
 pyenv virtualenvwrapper
 
