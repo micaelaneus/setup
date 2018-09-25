@@ -41,11 +41,27 @@ if [ -f /etc/bashrc ]; then
     . /etc/bashrc
 fi
 
+
 CURRENT_NODE_VERSION='v7.4.0'
+
 
 eval `ssh-agent -s`
 
+
+if [ ! -f "${HOME}/bin" ] && [ ! -d "${HOME}/bin" ] && [ -d "${HOME}/setup/bin" ]; then
+    pushd "${HOME}" > /dev/null
+    ln -s "./setup/bin" .
+    popd > /dev/null
+fi
+
+
 if [ "$(uname)" == "Darwin" ]; then
+
+    if [ ! -f "${HOME}/bin_platform" ] && [ ! -d "${HOME}/bin_platform" ] && [ -d "${HOME}/setup/platform/uname/Darwin/bin" ]; then
+        pushd "${HOME}" > /dev/null
+        ln -s "./setup/platform/uname/Darwin/bin" bin_platform
+        popd > /dev/null
+    fi
 
     # make sure opt exists
     if [ ! -d "${HOME}/opt" ]; then
@@ -206,7 +222,7 @@ elif [ "$(uname)" == "Linux" ]; then
 fi
 eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
-pyenv install 3.7.0
+[ ! "$(pyenv versions | grep '^  3\.7\.0$')" == '  3.7.0' ] && pyenv install 3.7.0
 pyenv global system
 pyenv virtualenvwrapper
 
@@ -226,9 +242,9 @@ if [ "$(uname)" == "Darwin" ]; then
 elif [ "$(uname)" == "Linux" ]; then
     if [ ! -d "${NVM_DIR}" ]; then
         git clone https://github.com/creationix/nvm.git "${NVM_DIR}"
-        pushd "${NVM_DIR}"
+        pushd "${NVM_DIR}" > /dev/null
         git checkout `git describe --abbrev=0 --tags`
-        popd
+        popd > /dev/null
     fi
     source "${NVM_DIR}/nvm.sh"
 fi
@@ -272,11 +288,11 @@ elif [ "$(uname)" == "Linux" ]; then
               ca-certificates \
               xclip
             git clone https://github.com/lastpass/lastpass-cli.git "${HOME}/.lastpass-cli"
-            pushd "${HOME}/.lastpass-cli"
+            pushd "${HOME}/.lastpass-cli" > /dev/null
             git checkout `git describe --abbrev=0 --tags`
             make
             sudo make install
-            popd
+            popd > /dev/null
         fi
     fi
 fi
@@ -292,6 +308,11 @@ elif [ "$(uname)" == "Linux" ]; then
         install emacs emacs
     fi
 fi
+if [ ! -f "${HOME}/.emacs.el" ] && [ -f "${HOME}/setup/.emacs.el" ]; then
+    pushd "${HOME}" > /dev/null
+    ln -s "./setup/.emacs.el" .
+    popd > /dev/null
+fi
 
 # offlineimap + mu
 if [ "$(uname)" == "Darwin" ]; then
@@ -305,16 +326,23 @@ elif [ "$(uname)" == "Linux" ]; then
     install maildir-utils maildir-utils
     install mu4e          mu4e
 fi
+if [ ! -f "${HOME}/.offlineimaprc" ] && [ -f "${HOME}/setup/.offlineimaprc" ]; then
+    pushd "${HOME}" > /dev/null
+    ln -s "./setup/.offlineimaprc" .
+    popd > /dev/null
+fi
 
 # Ledger
 install ledger ledger
 # Beancount
-[ ! -d "${HOME}/.beancount" ] && hg clone https://bitbucket.org/blais/beancount "${HOME}/.beancount"
-pushd "${HOME}/.beancount"
-pyenv shell 3.7.0
-pip install .
-pyenv shell --unset
-popd
+if [ ! -d "${HOME}/.beancount" ]; then
+    hg clone https://bitbucket.org/blais/beancount "${HOME}/.beancount"
+    pushd "${HOME}/.beancount" > /dev/null
+    pyenv shell 3.7.0
+    pip install .
+    pyenv shell --unset
+    popd > /dev/null
+fi
 
 install sox sox
 if [ "$(uname)" == "Linux" ]; then
@@ -322,10 +350,13 @@ if [ "$(uname)" == "Linux" ]; then
 fi
 
 
+export PATH="${HOME}/bin_platform:${HOME}/bin:${PATH}"
+
+
 if [ ! -d "${HOME}/bin_local" ]; then
     mkdir "${HOME}/bin_local"
 fi
-export PATH="${HOME}/bin_local:${HOME}/bin:${PATH}"
+export PATH="${HOME}/bin_local:${PATH}"
 
 [ -f ~/.bashrc_local ] && source ~/.bashrc_local
 
