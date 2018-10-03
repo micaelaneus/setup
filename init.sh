@@ -54,8 +54,7 @@ git clone https://github.com/alyssackwan/.password-store.git
 rm -rf .gnupg
 rm -rf .ssh
 cp -r .password-store/.gnupg .
-chmod 700 .gnupg
-chmod -R 600 .gnupg/*
+chmod -R a-x .gnupg; chmod -R u=rwX,g=,o= .gnupg
 cp -r .password-store/.ssh .
 
 pushd .gnupg > /dev/null
@@ -75,8 +74,7 @@ git clone git@github.com:alyssackwan/.password-store.git
 rm -rf .ssh
 rm -rf .gnupg
 ln -s .password-store/.gnupg .
-chmod 700 .gnupg
-chmod -R 600 .gnupg/*
+chmod -R a-x .gnupg; chmod -R u=rwX,g=,o= .gnupg
 ln -s .password-store/.ssh .
 
 pushd .gnupg > /dev/null
