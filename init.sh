@@ -52,6 +52,7 @@ rm -rf .password-store
 git clone https://github.com/alyssackwan/.password-store.git
 
 rm -rf .gnupg
+gpgconf --kill gpg-agent
 rm -rf .ssh
 cp -r .password-store/.gnupg .
 chmod -R a-x .gnupg; chmod -R u=rwX,g=,o= .gnupg
@@ -73,6 +74,7 @@ git clone git@github.com:alyssackwan/.password-store.git
 
 rm -rf .ssh
 rm -rf .gnupg
+gpgconf --kill gpg-agent
 ln -s .password-store/.gnupg .
 chmod -R a-x .gnupg; chmod -R u=rwX,g=,o= .gnupg
 ln -s .password-store/.ssh .
