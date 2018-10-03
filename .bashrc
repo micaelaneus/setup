@@ -63,42 +63,21 @@ if [ "$(uname)" == "Darwin" ]; then
         popd > /dev/null
     fi
 
-    # make sure opt exists
-    if [ ! -d "${HOME}/opt" ]; then
-        mkdir "${HOME}/opt"
-    fi
-
     # pkgconfig
     export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:/opt/X11/lib/pkgconfig:${PKG_CONFIG_PATH}"
 
     # Homebrew
-    if [ ! -d "${HOME}/opt/homebrew" ]; then
-        mkdir "${HOME}/opt/homebrew"
-        (cd ~/opt && curl -L https://github.com/Homebrew/homebrew/tarball/master | tar xz --strip 1 -C homebrew)
-        "${HOME}/opt/homebrew/bin/brew" update
-    fi
     export HOMEBREW="${HOME}/opt/homebrew"
     export HOMEBREW_CACHE="${HOME}/Library/Caches/Homebrew"
     export PATH="$HOMEBREW/bin:$HOMEBREW/sbin:$PATH"
     export PKG_CONFIG_PATH="$HOMEBREW/lib/pkgconfig:$PKG_CONFIG_PATH"
     export CPATH="$CPATH:$HOMEBREW/include"
-    # export DYLD_LIBRARY_PATH="$DYLD_LIBRARY_PATH:$HOMEBREW/lib"
     export HOMEBREW_CASK_OPTS="--appdir=${HOME}/Applications"
 
     # coreutils
     [ x"" == x"$(brew ls --versions coreutils)" ] && brew install coreutils
     # coreutils - man
     export "MANPATH=$MANPATH:$HOMEBREW/opt/coreutils/libexec/gnuman"
-
-    if [ ! -d "${HOME}/.gnupg" ]; then
-        mkdir "${HOME}/.gnupg"
-        touch "${HOME}/.gnupg/gpg-agent.conf"
-    fi
-    if [ x"" == x"$(brew ls --versions pinentry-mac)" ]; then
-        brew install pinentry-mac
-        echo "pinentry-program ${HOMEBREW}/bin/pinentry-mac" >> "${HOME}/.gnupg/gpg-agent.conf"
-    fi
-    [ x"" == x"$(brew ls --versions gnupg       )" ] && brew install gnupg
 
     if [ ! -d "${HOME}/Applications" ]; then
         mkdir "${HOME}/Applications"
@@ -111,24 +90,29 @@ elif [ "$(uname)" == "Linux" ]; then
 fi
 
 if [ "$(uname)" == "Darwin" ]; then
-    installed="$(brew ls)"
+    installed_cache="$(brew ls)"
 elif [ "$(uname)" == "Linux" ]; then
     if [ -d /etc/redhat-release ]; then
-        installed="$(rpm -qa)"
+        installed_cache="$(rpm -qa)"
     elif [ -f /etc/debian_version ]; then
-        installed="$(dpkg-query -f '${binary:Package}\n' -W)"
+        installed_cache="$(dpkg-query -f '${binary:Package}\n' -W)"
     elif [ -f /etc/arch_release ]; then
-        installed="$(pacman -Qqe)"
+        installed_cache="$(pacman -Qqe)"
     else
-        installed=""
+        installed_cache=""
     fi
 else
-    installed=""
+    installed_cache=""
 fi
 
+installedp() {
+    local installed=$(echo "${installed_cache}" | grep ^"${1}"$)
+    [ x"" != x"${installed}" ]
+}
+
 install() {
-    local installed=$(echo "${installed}" | grep ^"${1}"$)
-    if [ x"" == x"${installed}" ]; then
+    installedp "${1}"
+    if [ $? -ne 0 ]; then
         if [ "$(uname)" == "Darwin" ]; then
             brew install "${2}"
         elif [ "$(uname)" == "Linux" ]; then
@@ -143,11 +127,7 @@ install() {
     fi
 }
 
-if [ "$(uname)" == "Linux" ]; then
-    if [ -f /etc/debian_version ]; then
-        install mosh mosh
-    fi
-fi
+install mosh mosh
 
 install bash-completion bash-completion
 if [ "$(uname)" == "Darwin" ]; then
@@ -156,10 +136,10 @@ elif [ "$(uname)" == "Linux" ]; then
     source /usr/share/bash-completion/bash_completion
 fi
 
-install git       git
 install mercurial mercurial
 install wget      wget
 if [ "$(uname)" == "Linux" ]; then
+    install software-properties-common software-properties-common
     install dirmngr dirmngr
 fi
 install tmux      tmux
@@ -184,6 +164,12 @@ elif [ "$(uname)" == "Linux" ]; then
         [ ! -d "${HOME}/bin/stack" ] && curl -sSL https://get.haskellstack.org/ | sh -s - -d "$HOME/bin/stack"
     fi
 fi
+installedp opam
+if [ $? -ne 0 ]; then
+    install opam opam
+    opam init --enable-shell-hook
+fi
+eval $(opam env)
 
 # Go
 if [ "$(uname)" == "Darwin" ]; then
@@ -264,6 +250,8 @@ fi
 eval "$(rbenv init -)"
 
 # Miscellaneous
+
+# Google Drive
 
 # pass
 install pass pass
