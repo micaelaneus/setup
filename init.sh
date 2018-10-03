@@ -48,8 +48,11 @@ fi
 
 pushd "${HOME}" > /dev/null
 
+rm -rf .password-store
 git clone https://github.com/alyssackwan/.password-store.git
 
+rm -rf .gnupg
+rm -rf .ssh
 cp -r .password-store/.gnupg .
 cp -r .password-store/.ssh .
 
@@ -61,6 +64,7 @@ popd > /dev/null
 
 pushd .ssh > /dev/null
 gpg --output id_rsa --decrypt id_rsa.gpg
+chmod 400 id_rsa
 popd > /dev/null
 
 rm -rf .password-store
@@ -68,7 +72,6 @@ git clone git@github.com:alyssackwan/.password-store.git
 
 rm -rf .ssh
 rm -rf .gnupg
-
 ln -s .password-store/.gnupg .
 ln -s .password-store/.ssh .
 
@@ -80,6 +83,7 @@ popd > /dev/null
 
 pushd .ssh > /dev/null
 gpg --output id_rsa --decrypt id_rsa.gpg
+chmod 400 id_rsa
 popd > /dev/null
 
 git clone git@github.com:alyssackwan/setup.git
