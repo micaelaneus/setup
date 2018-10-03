@@ -55,7 +55,7 @@ rm -rf .gnupg
 rm -rf .ssh
 cp -r .password-store/.gnupg .
 chmod 700 .gnupg
-chmod -r 600 .gnupg/*
+chmod -R 600 .gnupg/*
 cp -r .password-store/.ssh .
 
 pushd .gnupg > /dev/null
@@ -76,7 +76,7 @@ rm -rf .ssh
 rm -rf .gnupg
 ln -s .password-store/.gnupg .
 chmod 700 .gnupg
-chmod -r 600 .gnupg/*
+chmod -R 600 .gnupg/*
 ln -s .password-store/.ssh .
 
 pushd .gnupg > /dev/null
