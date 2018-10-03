@@ -52,12 +52,12 @@ rm -rf .password-store
 git clone https://github.com/alyssackwan/.password-store.git
 
 rm -rf .gnupg
-gpgconf --kill gpg-agent
 rm -rf .ssh
 cp -r .password-store/.gnupg .
 chmod -R a-x .gnupg; chmod -R u=rwX,g=,o= .gnupg
 cp -r .password-store/.ssh .
 
+gpgconf --kill gpg-agent
 pushd .gnupg > /dev/null
 gpg --output secret-keys.asc --decrypt secret-keys.asc.gpg
 gpg --import secret-keys.asc
@@ -74,11 +74,11 @@ git clone git@github.com:alyssackwan/.password-store.git
 
 rm -rf .ssh
 rm -rf .gnupg
-gpgconf --kill gpg-agent
 ln -s .password-store/.gnupg .
 chmod -R a-x .gnupg; chmod -R u=rwX,g=,o= .gnupg
 ln -s .password-store/.ssh .
 
+gpgconf --kill gpg-agent
 pushd .gnupg > /dev/null
 gpg --output secret-keys.asc --decrypt secret-keys.asc.gpg
 gpg --import secret-keys.asc
