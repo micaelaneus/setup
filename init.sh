@@ -46,22 +46,22 @@ elif [ "$(uname)" == "Linux" ]; then
     fi
 fi
 
-pushd "${HOME}"
+pushd "${HOME}" > /dev/null
 
 git clone https://github.com/alyssackwan/.password-store.git
 
 cp -r .password-store/.gnupg .
 cp -r .password-store/.ssh .
 
-pushd .gnupg
+pushd .gnupg > /dev/null
 gpg --output secret-keys.asc --decrypt secret-keys.asc.gpg
 gpg --import secret-keys.asc
 rm secret-keys.asc
-popd
+popd > /dev/null
 
-pushd .ssh
+pushd .ssh > /dev/null
 gpg --output id_rsa --decrypt id_rsa.gpg
-popd
+popd > /dev/null
 
 rm -rf .password-store
 git clone git@github.com:alyssackwan/.password-store.git
@@ -72,14 +72,45 @@ rm -rf .gnupg
 ln -s .password-store/.gnupg .
 ln -s .password-store/.ssh .
 
-pushd .gnupg
+pushd .gnupg > /dev/null
 gpg --output secret-keys.asc --decrypt secret-keys.asc.gpg
 gpg --import secret-keys.asc
 rm secret-keys.asc
-popd
+popd > /dev/null
 
-pushd .ssh
+pushd .ssh > /dev/null
 gpg --output id_rsa --decrypt id_rsa.gpg
-popd
+popd > /dev/null
 
-popd
+git clone git@github.com:alyssackwan/setup.git
+if [ ! -f "${HOME}/bin" ] && [ ! -d "${HOME}/bin" ] && [ -d "${HOME}/setup/bin" ]; then
+    pushd "${HOME}" > /dev/null
+    ln -s "./setup/bin" .
+    popd > /dev/null
+fi
+if [ "$(uname)" == "Darwin" ]; then
+    if [ ! -f "${HOME}/bin_platform" ] && [ ! -d "${HOME}/bin_platform" ] && [ -d "${HOME}/setup/platform/uname/Darwin/bin" ]; then
+        pushd "${HOME}" > /dev/null
+        ln -s "./setup/platform/uname/Darwin/bin" bin_platform
+        popd > /dev/null
+    fi
+    if [ ! -d "${HOME}/Applications" ]; then
+        mkdir "${HOME}/Applications"
+    fi
+fi
+if [ ! -f "${HOME}/.emacs.el" ] && [ -f "${HOME}/setup/.emacs.el" ]; then
+    pushd "${HOME}" > /dev/null
+    ln -s "./setup/.emacs.el" .
+    popd > /dev/null
+fi
+if [ ! -f "${HOME}/.offlineimaprc" ] && [ -f "${HOME}/setup/.offlineimaprc" ]; then
+    pushd "${HOME}" > /dev/null
+    ln -s "./setup/.offlineimaprc" .
+    popd > /dev/null
+fi
+
+if [ ! -d "${HOME}/bin_local" ]; then
+    mkdir "${HOME}/bin_local"
+fi
+
+popd > /dev/null

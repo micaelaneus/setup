@@ -48,20 +48,7 @@ CURRENT_NODE_VERSION='v7.4.0'
 eval `ssh-agent -s`
 
 
-if [ ! -f "${HOME}/bin" ] && [ ! -d "${HOME}/bin" ] && [ -d "${HOME}/setup/bin" ]; then
-    pushd "${HOME}" > /dev/null
-    ln -s "./setup/bin" .
-    popd > /dev/null
-fi
-
-
 if [ "$(uname)" == "Darwin" ]; then
-
-    if [ ! -f "${HOME}/bin_platform" ] && [ ! -d "${HOME}/bin_platform" ] && [ -d "${HOME}/setup/platform/uname/Darwin/bin" ]; then
-        pushd "${HOME}" > /dev/null
-        ln -s "./setup/platform/uname/Darwin/bin" bin_platform
-        popd > /dev/null
-    fi
 
     # pkgconfig
     export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:/opt/X11/lib/pkgconfig:${PKG_CONFIG_PATH}"
@@ -78,10 +65,6 @@ if [ "$(uname)" == "Darwin" ]; then
     [ x"" == x"$(brew ls --versions coreutils)" ] && brew install coreutils
     # coreutils - man
     export "MANPATH=$MANPATH:$HOMEBREW/opt/coreutils/libexec/gnuman"
-
-    if [ ! -d "${HOME}/Applications" ]; then
-        mkdir "${HOME}/Applications"
-    fi
 
 elif [ "$(uname)" == "Linux" ]; then
 
@@ -296,11 +279,6 @@ elif [ "$(uname)" == "Linux" ]; then
         install emacs emacs
     fi
 fi
-if [ ! -f "${HOME}/.emacs.el" ] && [ -f "${HOME}/setup/.emacs.el" ]; then
-    pushd "${HOME}" > /dev/null
-    ln -s "./setup/.emacs.el" .
-    popd > /dev/null
-fi
 
 # offlineimap + mu
 if [ "$(uname)" == "Darwin" ]; then
@@ -313,11 +291,6 @@ if [ "$(uname)" == "Darwin" ]; then
 elif [ "$(uname)" == "Linux" ]; then
     install maildir-utils maildir-utils
     install mu4e          mu4e
-fi
-if [ ! -f "${HOME}/.offlineimaprc" ] && [ -f "${HOME}/setup/.offlineimaprc" ]; then
-    pushd "${HOME}" > /dev/null
-    ln -s "./setup/.offlineimaprc" .
-    popd > /dev/null
 fi
 
 # Ledger
@@ -339,11 +312,6 @@ fi
 
 
 export PATH="${HOME}/bin_platform:${HOME}/bin:${PATH}"
-
-
-if [ ! -d "${HOME}/bin_local" ]; then
-    mkdir "${HOME}/bin_local"
-fi
 export PATH="${HOME}/bin_local:${PATH}"
 
 [ -f ~/.bashrc_local ] && source ~/.bashrc_local
