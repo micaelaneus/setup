@@ -60,6 +60,7 @@
       :empty-lines 1))))
  '(org-catch-invisible-edits (quote show-and-error))
  ;; '(org-default-notes-file (concat my-org-root-dir "TODO.org"))
+ '(org-default-priority 67)
  '(org-goto-auto-isearch nil)
  '(org-habit-following-days 2)
  '(org-habit-graph-column 72)
@@ -67,6 +68,7 @@
  '(org-id-link-to-org-use-id (quote create-if-interactive-and-no-custom-id))
  '(org-log-done (quote time))
  '(org-log-into-drawer t)
+ '(org-lowest-priority 69)
  '(org-modules
    (quote
     (org-bbdb org-bibtex org-docview org-gnus org-habit org-id org-info org-irc org-mhe org-rmail org-w3m)))
