@@ -135,16 +135,20 @@ if [ "$(uname)" == "Darwin" ]; then
         mkdir "${HOME}/Applications"
     fi
 fi
-if [ ! -f "${HOME}/.emacs.el" ] && [ -f "${HOME}/setup/.emacs.el" ]; then
-    pushd "${HOME}" > /dev/null
-    ln -s "./setup/.emacs.el" .
-    popd > /dev/null
-fi
-if [ ! -f "${HOME}/.offlineimaprc" ] && [ -f "${HOME}/setup/.offlineimaprc" ]; then
-    pushd "${HOME}" > /dev/null
-    ln -s "./setup/.offlineimaprc" .
-    popd > /dev/null
-fi
+
+function link_setup() {
+    if [ -f "${HOME}/setup/${1}" ]; then
+        [ -f "${HOME}/${1}" ] && mv "${HOME}/${1}" "${HOME}/${1}.bak"
+        pushd "${HOME}" > /dev/null
+        ln -s "./setup/${1}" .
+        popd > /dev/null
+    fi
+}
+link_setup '.bash_profile'
+link_setup '.bashrc'
+link_setup '.bash_logout'
+link_setup '.emacs.el'
+link_setup '.offlineimaprc'
 
 if [ ! -d "${HOME}/bin_local" ]; then
     mkdir "${HOME}/bin_local"
