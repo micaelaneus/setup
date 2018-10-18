@@ -2,6 +2,11 @@
 
 if [ "$(uname)" == "Darwin" ]; then
 
+    if [ ! -d "${HOME}/Applications/Insync.app" ]; then
+        echo "Please install and configure insync."
+        exit 1
+    fi
+
     # make sure opt exists
     if [ ! -d "${HOME}/opt" ]; then
         mkdir "${HOME}/opt"
@@ -40,7 +45,23 @@ elif [ "$(uname)" == "Linux" ]; then
     if [ -d /etc/redhat-release ]; then
         sudo yum install git
     elif [ -f /etc/debian_version ]; then
+
+        if [ ! -f "/etc/apt/sources.list.d/insync.list" ]; then
+            sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys ACCAF35C
+            echo "deb http://apt.insynchq.com/debian stretch non-free contrib" | sudo tee /etc/apt/sources.list.d/insync.list
+            sudo apt-get update
+            sudo apt-get install insync-headless
+            echo 'Please configure insync.'
+            echo '  1. http://www.insynchq.com/auth to get the auth_code.'
+            echo '  2. `insync-headless add_account -a ${AUTH_CODE}`.'
+            echo '  3. `insync-headless move_folder ${OLD_ABSOLUTE_PATH} ${NEW_ABSOLUTE_PATH}`.'
+            echo '     a. Default ${OLD_ABSOLUTE_PATH} is `me@alyssackwan.name`.'
+            echo '     b. Default ${NEW_ABSOLUTE_PATH} is `Google Drive` (remember to escape the space).'
+            exit 1
+        fi
+
         sudo -S apt-get install -y git
+
     elif [ -f /etc/arch_release ]; then
         sudo pacman -Sy git
     fi
@@ -51,11 +72,13 @@ pushd "${HOME}" > /dev/null
 rm -rf .password-store
 git clone https://github.com/alyssackwan/.password-store.git
 
-rm -rf .gnupg
-rm -rf .ssh
-cp -r .password-store/.gnupg .
-chmod -R a-x .gnupg; chmod -R u=rwX,g=,o= .gnupg
-cp -r .password-store/.ssh .
+dotglob_shopt=$(shopt -q dotglob)
+shopt -qs dotglob
+
+chmod -R a-x .password-store/.gnupg
+chmod -R u=rwX,g=,o= .password-store/.gnupg
+cp -r .password-store/.gnupg/. .gnupg/
+cp -r .password-store/.ssh/. .ssh/
 
 gpgconf --kill gpg-agent
 pushd .gnupg > /dev/null
@@ -68,15 +91,19 @@ pushd .ssh > /dev/null
 gpg --output id_rsa --decrypt id_rsa.gpg
 chmod 400 id_rsa
 popd > /dev/null
+
+[ ! "${dotglob_shopt}" ] && shopt -qu dotglob
 
 rm -rf .password-store
 git clone git@github.com:alyssackwan/.password-store.git
 
-rm -rf .ssh
-rm -rf .gnupg
-ln -s .password-store/.gnupg .
-chmod -R a-x .gnupg; chmod -R u=rwX,g=,o= .gnupg
-ln -s .password-store/.ssh .
+dotglob_shopt=$(shopt -q dotglob)
+shopt -qs dotglob
+
+chmod -R a-x .password-store/.gnupg
+chmod -R u=rwX,g=,o= .password-store/.gnupg
+cp -r .password-store/.gnupg/. .gnupg/
+cp -r .password-store/.ssh/. .ssh/
 
 gpgconf --kill gpg-agent
 pushd .gnupg > /dev/null
@@ -89,6 +116,8 @@ pushd .ssh > /dev/null
 gpg --output id_rsa --decrypt id_rsa.gpg
 chmod 400 id_rsa
 popd > /dev/null
+
+[ ! "${dotglob_shopt}" ] && shopt -qu dotglob
 
 git clone git@github.com:alyssackwan/setup.git
 if [ ! -f "${HOME}/bin" ] && [ ! -d "${HOME}/bin" ] && [ -d "${HOME}/setup/bin" ]; then

@@ -135,6 +135,12 @@
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
 
+(add-hook 'dired-load-hook
+          (lambda ()
+            (load "dired-x")))
+(add-hook 'dired-mode-hook
+          (lambda ()))
+
 (use-package exec-path-from-shell
   :ensure t
   :demand t
@@ -463,11 +469,176 @@
   :hook (ledger-mode . (lambda ()
                          (set (make-local-variable 'company-backends) '(company-ledger-backend))))
   :after (company ledger-mode))
+
 ;; Beancount
 (use-package beancount
   :load-path "~/.beancount/editors/emacs"
   :mode ("\\.beancount\\'" . beancount-mode)
   :config (setq beancount-install-dir "~/.pyenv/versions/3.7.0"))
+(defun my-beancount-convert-goodbudget-csv (@begin @end)
+  (interactive
+   (if (region-active-p)
+       (list (region-beginning) (region-end))
+     (list (point-min) (point-max))))
+  (save-excursion
+    (save-restriction
+      (narrow-to-region @begin @end)
+      (progn
+        (goto-char (point-min))
+        (replace-regexp
+         "^\\([0-9][0-9]\\)/\\([0-9][0-9]\\)/\\([0-9][0-9][0-9][0-9]\\),"
+         "\\3-\\2-\\1,"
+         nil nil nil nil)
+        (goto-char (point-min))
+        (replace-regexp
+         ",\"\\(-?[0-9]+\\),\\([0-9][0-9][0-9]\\.[0-9][0-9]\\)\","
+         ",\\1\\2,"
+         nil nil nil nil)
+        (goto-char (point-min))
+        (replace-regexp
+         "^\\([-0-9]+\\),\\(\"[^\"]*\"\\|[^,]*\\),\\(\"[^\"]*\"\\|[^,]*\\),\\(\"[^\"]*\"\\|[^,]*\\),\\(\"[^\"]*\"\\|[^,]*\\),\\(-?[0-9.]+\\),\\(\"[^\"]*\"\\|[^,]*\\),\\(\"[^\"]*\"\\|[^,]*\\)$"
+         (quote (replace-eval-replacement concat "\\1," (replace-quote (let ((s (match-string 2))) (if (or (and (s-starts-with\? "\"" s) (s-ends-with\? "\"" s)) (string= s "")) s (concat "\"" s "\"")))) "," (replace-quote (let ((s (match-string 3))) (if (or (and (s-starts-with\? "\"" s) (s-ends-with\? "\"" s)) (string= s "")) s (concat "\"" s "\"")))) "," (replace-quote (let ((s (match-string 4))) (if (or (and (s-starts-with\? "\"" s) (s-ends-with\? "\"" s)) (string= s "")) s (concat "\"" s "\"")))) "," (replace-quote (let ((s (match-string 5))) (if (or (and (s-starts-with\? "\"" s) (s-ends-with\? "\"" s)) (string= s "")) s (concat "\"" s "\"")))) ",\\6," (replace-quote (let ((s (match-string 7))) (if (or (and (s-starts-with\? "\"" s) (s-ends-with\? "\"" s)) (string= s "")) s (concat "\"" s "\"")))) "," (replace-quote (let ((s (match-string 8))) (if (or (and (s-starts-with\? "\"" s) (s-ends-with\? "\"" s)) (string= s "")) s (concat "\"" s "\""))))))
+         nil 1 229231 nil)
+        (goto-char (point-min))
+        (replace-regexp
+         "^\\([-0-9]+\\),,\\(\"[^\"]+\"\\),,\"Account Transfer\",\\([0-9.]+\\),,
+\\1,,\\(\"[^\"]+\"\\),,\"Account Transfer\",-\\3,,$"
+         "\\1 * \"Account Transfer\"
+    \\2  \\3 USD
+    \\4
+"
+         nil nil nil nil)
+        (goto-char (point-min))
+        (replace-regexp
+         "^\\([-0-9]+\\),,\\(\"[^\"]+\"\\),\\(\"[^\"]+\"\\),,\\([0-9.]+\\),,\"\\[Unallocated\\]|[0-9,.]+\"$"
+         "\\1 * \\3
+    \\2  \\4 USD
+    \"Unknown\"
+"
+         nil nil nil nil)
+        (goto-char (point-min))
+        (replace-regexp
+         "^\\([-0-9]+\\),,\\(\"[^\"]+\"\\),\\(\"[^\"]+\"\\),,-\\([0-9.]+\\),,\"\\[Unallocated\\]|-[0-9,.]+\"$"
+         "\\1 * \\3
+    \"Unknown\"  \\4 USD
+    \\2
+"
+         nil nil nil nil)
+        (goto-char (point-min))
+        (replace-regexp
+         "^\\([-0-9]+\\),\\(\"[^\"]+\"\\),\\(\"[^\"]+\"\\),\\(\"[^\"]+\"\\),,\\([0-9.]+\\),,$"
+         "\\1 * \\4
+    \\3  \\5 USD
+    \\2
+"
+         nil nil nil nil)
+        (goto-char (point-min))
+        (replace-regexp
+         "^\\([-0-9]+\\),\\(\"[^\"]+\"\\),\\(\"[^\"]+\"\\),\\(\"[^\"]+\"\\),,-\\([0-9.]+\\),,$"
+         "\\1 * \\4
+    \\2  \\5 USD
+    \\3
+"
+         nil nil nil nil)
+        (goto-char (point-min))
+        (replace-regexp
+         "^\\([-0-9]+\\),\\(\"[^\"]+\"\\),\\(\"[^\"]+\"\\),\\(\"[^\"]+\"\\),\"\\([^\"]+\\)\",\\([0-9.]+\\),,$"
+         "\\1 * \\4
+    ; \\5
+    \\3  \\6 USD
+    \\2
+"
+         nil nil nil nil)
+        (goto-char (point-min))
+        (replace-regexp
+         "^\\([-0-9]+\\),\\(\"[^\"]+\"\\),\\(\"[^\"]+\"\\),\\(\"[^\"]+\"\\),\"\\([^\"]+\\)\",-\\([0-9.]+\\),,$"
+         "\\1 * \\4
+    ; \\5
+    \\2  \\6 USD
+    \\3
+"
+         nil nil nil nil)
+        (goto-char (point-min))
+        (replace-regexp
+         "^\\([-0-9]+\\),,\\(\"[^\"]+\"\\),,\\(\"[^\"]+\"\\),\\([0-9.]+\\),,
+\\1,,\\(\"[^\"]+\"\\),,\\3,-\\4,,$"
+         "\\1 * \\3
+    \\2  \\4 USD
+    \\5
+"
+         nil nil nil nil)
+        (goto-char (point-min))
+        (replace-regexp
+         "^\\([-0-9]+\\),,\\(\"[^\"]+\"\\),,\\(\"[^\"]+\"\\),-\\([0-9.]+\\),,
+\\1,,\\(\"[^\"]+\"\\),,\\3,\\4,,$"
+         "\\1 * \\3
+    \\5  \\4 USD
+    \\2
+"
+         nil nil nil nil)
+        (goto-char (point-min))
+        (replace-regexp
+         "^\\([-0-9]+\\),\\(\"[^\"]+\"\\),,,\\(\"[^\"]+\"\\),\\([0-9.]+\\),,
+\\1,\\(\"[^\"]+\"\\),,,\\3,-\\4,,$"
+         "\\1 * \\3
+    \\2  \\4 USD
+    \\5
+"
+         nil nil nil nil)
+        (goto-char (point-min))
+        (replace-regexp
+         "^\\([-0-9]+\\),\\(\"[^\"]+\"\\),,,\\(\"[^\"]+\"\\),-\\([0-9.]+\\),,
+\\1,\\(\"[^\"]+\"\\),,,\\3,\\4,,$"
+         "\\1 * \\3
+    \\5  \\4 USD
+    \\2
+"
+         nil nil nil nil)
+        (goto-char (point-min))
+        (replace-regexp
+         "^\\([-0-9]+\\),\\(\"[^\"]+\"\\),,,\\(\"[^\"]+\"\\),\\([0-9.]+\\),,
+\\1,,\\(\"[^\"]+\"\\),,\\3,-\\4,,$"
+         "\\1 * \\3
+    \\2  \\4 USD
+    \\5
+"
+         nil nil nil nil)
+        (goto-char (point-min))
+        (replace-regexp
+         "^\\([-0-9]+\\),\\(\"[^\"]+\"\\),,,\\(\"[^\"]+\"\\),-\\([0-9.]+\\),,
+\\1,,\\(\"[^\"]+\"\\),,\\3,\\4,,$"
+         "\\1 * \\3
+    \\5  \\4 USD
+    \\2
+"
+         nil nil nil nil)
+        (goto-char (point-min))
+        (replace-regexp
+         "^\\([-0-9]+\\),\\(\"Splitwise\"\\),,,\\(\"[^\"]+\"\\),\\([0-9.]+\\),,
+\\1,\\(\"[^\"]+\"\\),,,\\3,-\\4,,$"
+         "\\1 * \\3
+    \\2  \\4 USD
+    \\5
+"
+         nil nil nil nil)
+        (goto-char (point-min))
+        (replace-regexp
+         "^\\([-0-9]+\\),,\\(\"[^\"]+\"\\),\\(\"[^\"]+\"\\),\\(\"[^\"]+\"\\),\\([0-9.]+\\),,\"\\[Unallocated\\]|\\5\"$"
+         "\\1 * \\3
+    ; \\4
+    \\2  \\5 USD
+    \"[Unallocated]\"
+"
+         nil nil nil nil)
+        (goto-char (point-min))
+        (replace-regexp
+         "^\\([-0-9]+\\),,\\(\"[^\"]+\"\\),\\(\"[^\"]+\"\\),\\(\"[^\"]+\"\\),-\\([0-9.]+\\),,\"\\[Unallocated\\]|-\\5\"$"
+         "\\1 * \\3
+    ; \\4
+    \"[Unallocated]\"  \\5 USD
+    \\2
+"
+         nil nil nil nil)))))
 
 (use-package darcula-theme
   :ensure t)
