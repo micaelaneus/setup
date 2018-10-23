@@ -35,7 +35,7 @@
      (:from . 22)
      (:subject))))
  '(mu4e-html2text-command "w3m -dump -cols 80 -T text/html")
- '(mu4e-update-interval 120)
+ '(mu4e-update-interval 300)
  '(mu4e-view-show-images t)
  ;; '(org-agenda-files `(,(concat my-org-root-dir "TODO.org")))
  '(org-agenda-skip-deadline-if-done t)
@@ -44,20 +44,20 @@
  '(org-agenda-skip-timestamp-if-done t)
  '(org-agenda-sorting-strategy
    (quote
-    ((agenda priority-down user-defined-up)
+    ((agenda priority-down time-up category-keep)
      (todo priority-down category-keep)
      (tags priority-down category-keep)
      (search category-keep))))
  '(org-agenda-start-on-weekday 0)
  '(org-agenda-use-time-grid nil)
  '(org-babel-load-languages (quote ((emacs-lisp . t) (shell . t))))
- '(org-capture-templates
-   (quote
-    (("t" "TODO" entry
-      (id "E2751D7F-DF21-48B4-9456-D7583FFD3510")
-      "** TODO %?
-   SCHEDULED: %t"
-      :empty-lines 1))))
+ ;; '(org-capture-templates
+ ;;   (quote
+ ;;    (("t" "TODO" entry
+ ;;      (file "")
+ ;;      "** TODO %?
+ ;;   SCHEDULED: %t"
+ ;;      :empty-lines 1))))
  '(org-catch-invisible-edits (quote show-and-error))
  ;; '(org-default-notes-file (concat my-org-root-dir "TODO.org"))
  '(org-default-priority 67)
@@ -218,7 +218,21 @@
                      b-scheduled-time)))
       (my-org-agenda-cmp-time a-time b-time)))
   (setq org-agenda-cmp-user-defined #'my-org-agenda-cmp-user-defined)
-  :hook (org-agenda-mode . (lambda () (hl-line-mode 1)))
+  (defun my-org-agenda-color (tag-re foreground)
+    ""
+    (interactive)
+    (save-excursion
+      (goto-char (point-min))
+      (while (re-search-forward tag-re nil t)
+        (add-text-properties
+         (match-beginning 0) (match-end 0)
+         `(face (:foreground ,foreground))))))
+  :hook
+  (org-mode . (lambda () (hl-line-mode 1)))
+  (org-agenda-mode . (lambda () (hl-line-mode 1)))
+  (org-agenda-finalize . (lambda ()
+                           (my-org-agenda-color "^  TODO: +" "chartreuse4")
+                           (my-org-agenda-color "^  TODO_habit: +" "IndianRed3")))
   :bind (("C-c l" . org-store-link)
          ("C-c a" . org-agenda)
          ("C-c c" . org-capture)
@@ -453,6 +467,18 @@
                                (set-fill-column 72)
                                (flyspell-mode)))))
 
+;; Calendar
+(use-package org-gcal
+  :ensure t
+  :commands (org-gcal-fetch)
+  :config
+  (setq org-gcal-file-alist
+        '(("me@alyssackwan.name" . "~/tmp/.emacs.d/org-gcal/gcal-me.org")
+          ("alyssa.kwan@infallisys.com" . "~/tmp/.emacs.d/org-gcal/gcal-w-cel.org")
+          ("alyssa@qbizinc.com" . "~/tmp/.emacs.d/org-gcal/gcal-w-qbz.org")))
+  :hook
+  (org-agenda-mode . org-gcal-fetch))
+
 ;; Ledger
 (use-package-customize-load-path
  ledger-mode
@@ -650,4 +676,7 @@
     (load-file path)))
 
 (let ((path "~/.emacs_custom_set.el"))
-  (setq custom-file path))
+  (delete-file path)
+  (setq custom-file path)
+  (customize-save-customized))
+(load custom-file)
