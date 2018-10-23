@@ -55,8 +55,8 @@ elif [ "$(uname)" == "Linux" ]; then
             echo '  1. http://www.insynchq.com/auth to get the auth_code.'
             echo '  2. `insync-headless add_account -a ${AUTH_CODE}`.'
             echo '  3. `insync-headless move_folder ${OLD_ABSOLUTE_PATH} ${NEW_ABSOLUTE_PATH}`.'
-            echo '     a. Default ${OLD_ABSOLUTE_PATH} is `me@alyssackwan.name`.'
-            echo '     b. Default ${NEW_ABSOLUTE_PATH} is `Google Drive` (remember to escape the space).'
+            echo '     a. Default ${OLD_ABSOLUTE_PATH} is `${HOME}/me@alyssackwan.name`.'
+            echo '     b. Default ${NEW_ABSOLUTE_PATH} is `${HOME}/Google Drive` (remember to escape the space).'
             exit 1
         fi
 
