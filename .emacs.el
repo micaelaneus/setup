@@ -17,6 +17,12 @@
  '(enable-remote-dir-locals t)
  '(exec-path-from-shell-check-startup-files nil)
  '(helm-command-prefix-key "C-x h")
+ '(helm-swoop-move-to-line-cycle t)
+ '(helm-swoop-speed-or-color t)
+ '(helm-swoop-split-direction 'split-window-vertically)
+ '(helm-swoop-split-with-multiple-windows nil)
+ '(helm-swoop-use-fuzzy-match t)
+ '(helm-swoop-use-line-number-face t)
  '(hl-line-face (quote my-hl-line))
  '(indent-tabs-mode nil)
  '(js-indent-level 2)
@@ -283,6 +289,23 @@
   :demand t
   :after (helm company))
 
+(use-package helm-swoop
+  :ensure t
+  :demand t
+  :after (helm)
+  :config
+  (setq helm-multi-swoop-edit-save t)
+  (define-key isearch-mode-map (kbd "C-h") 'helm-swoop-from-isearch)
+  (define-key helm-swoop-map (kbd "M-S") 'helm-multi-swoop-all-from-helm-swoop)
+  (define-key helm-swoop-map (kbd "C-s") 'helm-next-line)
+  (define-key helm-swoop-map (kbd "C-r") 'helm-previous-line)
+  (define-key helm-multi-swoop-map (kbd "C-s") 'helm-next-line)
+  (define-key helm-multi-swoop-map (kbd "C-r") 'helm-previous-line)
+  :bind (("C-c C-s" . helm-swoop)
+         ("C-c C-r" . helm-show-back-to-last-point)
+         ("C-c M-s" . helm-multi-swoop)
+         ("C-c M-S" . helm-multi-swoop-all)))
+
 ;; Flycheck
 (use-package flycheck
   :ensure t
@@ -499,7 +522,9 @@
 ;; Beancount
 (use-package beancount
   :load-path "~/.beancount/editors/emacs"
-  :mode ("\\.beancount\\'" . beancount-mode)
+  :mode
+  ("\\.beancount\\'" . beancount-mode)
+  ("\\.beancount\\.org\\'" . beancount-mode)
   :config (setq beancount-install-dir "~/.pyenv/versions/3.7.0"))
 (defun my-beancount-convert-goodbudget-csv (@begin @end)
   (interactive
