@@ -299,7 +299,8 @@ install ledger ledger
 if [ ! -d "${HOME}/.beancount" ]; then
     hg clone https://bitbucket.org/blais/beancount "${HOME}/.beancount"
     pushd "${HOME}/.beancount" > /dev/null
-    pyenv shell 3.7.0
+    pyenv virtualenv 3.7.0 beancount
+    pyenv shell beancount
     pip install .
     pyenv shell --unset
     popd > /dev/null

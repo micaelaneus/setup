@@ -16,6 +16,7 @@
  '(desktop-save-mode t)
  '(enable-remote-dir-locals t)
  '(exec-path-from-shell-check-startup-files nil)
+ '(global-hl-line-mode t)
  '(helm-command-prefix-key "C-x h")
  '(helm-swoop-move-to-line-cycle t)
  '(helm-swoop-speed-or-color t)
@@ -45,12 +46,12 @@
  '(mu4e-view-show-images t)
  ;; '(org-agenda-files `(,(concat my-org-root-dir "TODO.org")))
  '(org-agenda-skip-deadline-if-done t)
- '(org-agenda-skip-scheduled-if-deadline-is-shown (quote repeated-after-deadline))
+ '(org-agenda-skip-scheduled-if-deadline-is-shown t)
  '(org-agenda-skip-scheduled-if-done t)
  '(org-agenda-skip-timestamp-if-done t)
  '(org-agenda-sorting-strategy
    (quote
-    ((agenda priority-down time-up category-keep)
+    ((agenda category-keep priority-down time-up category-keep)
      (todo priority-down category-keep)
      (tags priority-down category-keep)
      (search category-keep))))
@@ -78,6 +79,11 @@
  '(org-modules
    (quote
     (org-bbdb org-bibtex org-docview org-gnus org-habit org-id org-info org-irc org-mhe org-rmail org-w3m)))
+ '(org-priority-faces
+   (quote
+    ((65 :foreground "red" :weight
+         (quote bold))
+     (66 :foreground "yellow"))))
  '(projectile-completion-system (quote helm))
  '(projectile-keymap-prefix (kbd "C-c C-p"))
  '(savehist-mode t)
@@ -234,8 +240,6 @@
          (match-beginning 0) (match-end 0)
          `(face (:foreground ,foreground))))))
   :hook
-  (org-mode . (lambda () (hl-line-mode 1)))
-  (org-agenda-mode . (lambda () (hl-line-mode 1)))
   (org-agenda-finalize . (lambda ()
                            (my-org-agenda-color "^  TODO: +" "chartreuse4")
                            (my-org-agenda-color "^  TODO_habit: +" "IndianRed3")))
@@ -391,10 +395,10 @@
 ;; Python
 (use-package pyenv-mode-auto
   :ensure t)
-(use-package lsp-python
-  :ensure t
-  :commands (lsp-python-enable)
-  :hook (python-mode . lsp-python-enable))
+;; (use-package lsp-python
+;;   :ensure t
+;;   :commands (lsp-python-enable)
+;;   :hook (python-mode . lsp-python-enable))
 
 ;; Java
 (use-package lsp-java
