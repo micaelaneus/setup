@@ -112,11 +112,6 @@ gpg --import secret-keys.asc
 rm secret-keys.asc
 popd > /dev/null
 
-pushd .ssh > /dev/null
-gpg --output id_rsa --decrypt id_rsa.gpg
-chmod 400 id_rsa
-popd > /dev/null
-
 echo "Enter the local user's password"
 read -sp 'password: ' PASSWORD
 echo "${PASSWORD}" | gpg --encrypt -o ~/.gnupg/.password.gpg -r 'me@alyssackwan.name'
