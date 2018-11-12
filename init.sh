@@ -53,6 +53,7 @@ elif [ "$(uname)" == "Linux" ]; then
             sudo apt-get install insync-headless
         fi
         if [ ! -d "${HOME}/Google Drive" ]; then
+            insync-headless start
             echo 'http://www.insynchq.com/auth to get the auth_code.'
             read -p 'auth_code: ' AUTH_CODE
             insync-headless add_account -a ${AUTH_CODE}
