@@ -75,8 +75,8 @@ git clone https://github.com/alyssackwan/.password-store.git
 dotglob_shopt=$(shopt -q dotglob)
 shopt -qs dotglob
 
-chmod -R a-x .password-store/.gnupg
-chmod -R u=rwX,g=,o= .password-store/.gnupg
+sudo chmod -R a-x .password-store/.gnupg
+sudo chmod -R u=rwX,g=,o= .password-store/.gnupg
 cp -r .password-store/.gnupg/. .gnupg/
 cp -r .password-store/.ssh/. .ssh/
 
@@ -100,8 +100,8 @@ git clone git@github.com:alyssackwan/.password-store.git
 dotglob_shopt=$(shopt -q dotglob)
 shopt -qs dotglob
 
-chmod -R a-x .password-store/.gnupg
-chmod -R u=rwX,g=,o= .password-store/.gnupg
+sudo chmod -R a-x .password-store/.gnupg
+sudo chmod -R u=rwX,g=,o= .password-store/.gnupg
 cp -r .password-store/.gnupg/. .gnupg/
 cp -r .password-store/.ssh/. .ssh/
 
@@ -117,8 +117,9 @@ gpg --output id_rsa --decrypt id_rsa.gpg
 chmod 400 id_rsa
 popd > /dev/null
 
+echo "Enter the local user's password"
 read -sp 'password: ' PASSWORD
-echo "${PASSWORD}" | gnupg --encrypt -o ~/.gnupg/.password.gpg -r 'me@alyssackwan.name'
+echo "${PASSWORD}" | gpg --encrypt -o ~/.gnupg/.password.gpg -r 'me@alyssackwan.name'
 
 [ ! "${dotglob_shopt}" ] && shopt -qu dotglob
 
