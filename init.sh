@@ -51,11 +51,12 @@ elif [ "$(uname)" == "Linux" ]; then
             echo "deb http://apt.insynchq.com/debian stretch non-free contrib" | sudo tee /etc/apt/sources.list.d/insync.list
             sudo apt-get update
             sudo apt-get install insync-headless
+        fi
+        if [ ! -d "${HOME}/Google Drive" ]; then
             echo 'http://www.insynchq.com/auth to get the auth_code.'
             read -p 'auth_code: ' AUTH_CODE
             insync-headless add_account -a ${AUTH_CODE}
             insync-headless move_folder "${HOME}/me@alyssackwan.name" "${HOME}/Google Drive"
-            exit 1
         fi
 
         sudo -S apt-get install -y git
