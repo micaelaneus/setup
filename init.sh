@@ -51,12 +51,10 @@ elif [ "$(uname)" == "Linux" ]; then
             echo "deb http://apt.insynchq.com/debian stretch non-free contrib" | sudo tee /etc/apt/sources.list.d/insync.list
             sudo apt-get update
             sudo apt-get install insync-headless
-            echo 'Please configure insync.'
-            echo '  1. http://www.insynchq.com/auth to get the auth_code.'
-            echo '  2. `insync-headless add_account -a ${AUTH_CODE}`.'
-            echo '  3. `insync-headless move_folder ${OLD_ABSOLUTE_PATH} ${NEW_ABSOLUTE_PATH}`.'
-            echo '     a. Default ${OLD_ABSOLUTE_PATH} is `${HOME}/me@alyssackwan.name`.'
-            echo '     b. Default ${NEW_ABSOLUTE_PATH} is `${HOME}/Google Drive` (remember to escape the space).'
+            echo 'http://www.insynchq.com/auth to get the auth_code.'
+            read -p 'auth_code: ' AUTH_CODE
+            insync-headless add_account -a ${AUTH_CODE}
+            insync-headless move_folder "${HOME}/me@alyssackwan.name" "${HOME}/Google Drive"
             exit 1
         fi
 
@@ -116,6 +114,9 @@ pushd .ssh > /dev/null
 gpg --output id_rsa --decrypt id_rsa.gpg
 chmod 400 id_rsa
 popd > /dev/null
+
+read -sp 'password: ' PASSWORD
+echo "${PASSWORD}" | gnupg --encrypt -o ~/.gnupg/.password.gpg -r 'me@alyssackwan.name'
 
 [ ! "${dotglob_shopt}" ] && shopt -qu dotglob
 
