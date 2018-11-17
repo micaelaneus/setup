@@ -9,7 +9,7 @@ if [ -f /etc/bashrc ]; then
 fi
 
 
-CURRENT_NODE_VERSION='v11.1.0'
+CURRENT_NODE_VERSION='stable'
 
 
 eval `ssh-agent -s`
