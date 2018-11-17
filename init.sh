@@ -51,13 +51,13 @@ elif [ "$(uname)" == "Linux" ]; then
             echo "deb http://apt.insynchq.com/debian stretch non-free contrib" | sudo tee /etc/apt/sources.list.d/insync.list
             sudo apt-get update
             sudo apt-get install insync-headless
-            echo 'Please configure insync.'
-            echo '  1. http://www.insynchq.com/auth to get the auth_code.'
-            echo '  2. `insync-headless add_account -a ${AUTH_CODE}`.'
-            echo '  3. `insync-headless move_folder ${OLD_ABSOLUTE_PATH} ${NEW_ABSOLUTE_PATH}`.'
-            echo '     a. Default ${OLD_ABSOLUTE_PATH} is `${HOME}/me@alyssackwan.name`.'
-            echo '     b. Default ${NEW_ABSOLUTE_PATH} is `${HOME}/Google Drive` (remember to escape the space).'
-            exit 1
+        fi
+        if [ ! -d "${HOME}/Google Drive" ]; then
+            insync-headless start
+            echo 'http://www.insynchq.com/auth to get the auth_code.'
+            read -p 'auth_code: ' AUTH_CODE
+            insync-headless add_account -a ${AUTH_CODE}
+            insync-headless move_folder "${HOME}/me@alyssackwan.name" "${HOME}/Google Drive"
         fi
 
         sudo -S apt-get install -y git
@@ -75,8 +75,8 @@ git clone https://github.com/alyssackwan/.password-store.git
 dotglob_shopt=$(shopt -q dotglob)
 shopt -qs dotglob
 
-chmod -R a-x .password-store/.gnupg
-chmod -R u=rwX,g=,o= .password-store/.gnupg
+sudo chmod -R a-x .password-store/.gnupg
+sudo chmod -R u=rwX,g=,o= .password-store/.gnupg
 cp -r .password-store/.gnupg/. .gnupg/
 cp -r .password-store/.ssh/. .ssh/
 
@@ -100,8 +100,8 @@ git clone git@github.com:alyssackwan/.password-store.git
 dotglob_shopt=$(shopt -q dotglob)
 shopt -qs dotglob
 
-chmod -R a-x .password-store/.gnupg
-chmod -R u=rwX,g=,o= .password-store/.gnupg
+sudo chmod -R a-x .password-store/.gnupg
+sudo chmod -R u=rwX,g=,o= .password-store/.gnupg
 cp -r .password-store/.gnupg/. .gnupg/
 cp -r .password-store/.ssh/. .ssh/
 
@@ -112,10 +112,9 @@ gpg --import secret-keys.asc
 rm secret-keys.asc
 popd > /dev/null
 
-pushd .ssh > /dev/null
-gpg --output id_rsa --decrypt id_rsa.gpg
-chmod 400 id_rsa
-popd > /dev/null
+echo "Enter the local user's password"
+read -sp 'password: ' PASSWORD
+echo "${PASSWORD}" | gpg --encrypt -o ~/.gnupg/.password.gpg -r 'me@alyssackwan.name'
 
 [ ! "${dotglob_shopt}" ] && shopt -qu dotglob
 
