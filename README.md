@@ -1,6 +1,7 @@
 ```bash
 useradd -m -s /bin/bash me
 passwd me
+usermod -aG sudo
 ```
 
 ```bash
