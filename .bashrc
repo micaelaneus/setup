@@ -212,7 +212,7 @@ elif [ "$(uname)" == "Linux" ]; then
         install lastpass-cli lastpass-cli
     elif [ -f /etc/debian_version ]; then
         if [ ! -d "${HOME}/.lastpass-cli" ]; then
-            sudo apt-get --no-install-recommends -yqq install \
+            echo "${password}" | sudo apt-get --no-install-recommends -yqq install \
               bash-completion \
               build-essential \
               cmake \
@@ -229,7 +229,7 @@ elif [ "$(uname)" == "Linux" ]; then
             pushd "${HOME}/.lastpass-cli" > /dev/null
             git checkout `git describe --abbrev=0 --tags`
             make
-            sudo make install
+            echo "${password}" | sudo make install
             popd > /dev/null
         fi
     fi
