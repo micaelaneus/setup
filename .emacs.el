@@ -44,6 +44,7 @@
  '(mu4e-html2text-command "w3m -dump -cols 80 -T text/html")
  '(mu4e-update-interval 300)
  '(mu4e-view-show-images t)
+ '(nrepl-log-messages t)
  ;; '(org-agenda-files `(,(concat my-org-root-dir "TODO.org")))
  '(org-agenda-skip-deadline-if-done t)
  '(org-agenda-skip-scheduled-if-deadline-is-shown t)
@@ -51,7 +52,7 @@
  '(org-agenda-skip-timestamp-if-done t)
  '(org-agenda-sorting-strategy
    (quote
-    ((agenda category-keep priority-down time-up category-keep)
+    ((agenda priority-down time-up category-keep)
      (todo priority-down category-keep)
      (tags priority-down category-keep)
      (search category-keep))))
@@ -81,11 +82,10 @@
     (org-bbdb org-bibtex org-docview org-gnus org-habit org-id org-info org-irc org-mhe org-rmail org-w3m)))
  '(org-priority-faces
    (quote
-    ((65 :foreground "red" :weight
-         (quote bold))
+    ((65 :foreground "red")
      (66 :foreground "yellow"))))
  '(projectile-completion-system (quote helm))
- '(projectile-keymap-prefix (kbd "C-c C-p"))
+ '(projectile-keymap-prefix (kbd "C-c C-c C-p"))
  '(savehist-mode t)
  '(show-trailing-whitespace t)
  '(truncate-lines t)
@@ -341,7 +341,9 @@
   :ensure t)
 (use-package cider
   :ensure t
-  :after (clojure-mode))
+  :after (clojure-mode company-mode)
+  :hook ((cider-repl-mode-hook . company-mode)
+         (cider-mode-hook . company-mode)))
 (use-package midje-mode
   :ensure t
   :after (clojure-mode)
