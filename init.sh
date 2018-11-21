@@ -58,6 +58,7 @@ elif [ "$(uname)" == "Linux" ]; then
             read -p 'auth_code: ' AUTH_CODE
             insync-headless add_account -a ${AUTH_CODE}
             insync-headless move_folder "${HOME}/me@alyssackwan.name" "${HOME}/Google Drive"
+            insync-headless set_autostart yes
         fi
 
         sudo -S apt-get install -y git
