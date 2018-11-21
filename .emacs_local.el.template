@@ -1,0 +1,41 @@
+(setq my-org-root-dir "~/Google Drive/org_mode/")
+(setq org-gcal-client-id "896903804596-eh9eeb30bmnkgfm839gkpem3pkr43ei1.apps.googleusercontent.com")
+(setq org-gcal-client-secret "<org-gcal-client-secret>")
+(setq org-gcal-file-alist
+        '(("me@alyssackwan.name" . "~/tmp/.emacs.d/org-gcal/gcal-me.org")
+          ("alyssa.kwan@infallisys.com" . "~/tmp/.emacs.d/org-gcal/gcal-w-cel.org")
+          ("alyssa@qbizinc.com" . "~/tmp/.emacs.d/org-gcal/gcal-w-qbz.org")))
+
+;; Calendar
+(use-package org-gcal
+  :ensure t
+  :commands (org-gcal-fetch)
+  :hook
+  (org-agenda-mode . org-gcal-fetch))
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ `(org-agenda-files
+   (quote
+    (,(concat my-org-root-dir "TODO_habit.org")
+     ,(concat my-org-root-dir "TODO.org")
+     "~/tmp/.emacs.d/org-gcal/gcal-me.org"
+     "~/tmp/.emacs.d/org-gcal/gcal-w-cel.org"
+     "~/tmp/.emacs.d/org-gcal/gcal-w-qbz.org")))
+ `(org-capture-templates
+   (quote
+    (("t" "TODO" entry
+      (file ,(concat my-org-root-dir "TODO.org"))
+      "** TODO %?
+   SCHEDULED: %t"
+      :empty-lines 1))))
+ `(org-default-notes-file ,(concat my-org-root-dir "TODO.org")))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )

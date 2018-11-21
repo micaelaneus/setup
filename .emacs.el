@@ -463,55 +463,38 @@
   :config
   (setq lastpass-user "me@alyssackwan.name"))
 
-;; Email
-(use-package w3m
-  :ensure t)
-(use-package-customize-load-path
- mu4e
- (lambda ()
-   (when (memq system-type '(darwin))
-     "~/opt/homebrew/Cellar/mu/1.0/share/emacs/site-lisp/mu/mu4e/"))
- :after (w3m)
- :config
- (imagemagick-register-types)
- (add-to-list 'mu4e-view-actions '("ViewInBrowser" . mu4e-action-view-in-browser) t)
- (setq mu4e-maildir "~/.offlineimap.d/maildir"
-       mu4e-contexts `(,(make-mu4e-context
-                         :name "me@alyssackwan.name"
-                         :vars '((mu4e-drafts-folder . "/me@alyssackwan.name/[Gmail].Drafts")
-                                 (mu4e-sent-folder . "/me@alyssackwan.name/[Gmail].Sent Mail")
-                                 (mu4e-trash-folder . "/me@alyssackwan.name/[Gmail].Trash")
-                                 (mu4e-sent-messages-behavior . 'delete)
-                                 (user-mail-address . "me@alyssackwan.name")
-                                 (user-full-name  . "Alyssa Kwan")))
-                       ,(make-mu4e-context
-                         :name "alyssa.c.kwan@gmail.com"
-                         :vars '((mu4e-drafts-folder . "/alyssa.c.kwan@gmail.com/[Gmail].Drafts")
-                                 (mu4e-sent-folder . "/alyssa.c.kwan@gmail.com/[Gmail].Sent Mail")
-                                 (mu4e-trash-folder . "/alyssa.c.kwan@gmail.com/[Gmail].Trash")
-                                 (mu4e-sent-messages-behavior . 'delete)
-                                 (user-mail-address . "alyssa.c.kwan@gmail.com")
-                                 (user-full-name  . "Alyssa Kwan")))))
- :hook ((mu4e-compose-mode . (lambda ()
-                               (set-fill-column 72)
-                               (flyspell-mode)))))
-
-;; Ledger
-(use-package-customize-load-path
- ledger-mode
- (lambda ()
-   (when (memq system-type '(darwin))
-     "~/opt/homebrew/share/emacs/site-lisp/ledger"))
- :mode ("\\.ledger\\'"))
-(use-package flycheck-ledger
-  :ensure t
-  :after (flycheck ledger-mode)
-  :hook (ledger-mode . flycheck-mode))
-(use-package company-ledger
-  :straight (company-ledger :type git :host github :repo "debanjum/company-ledger")
-  :hook (ledger-mode . (lambda ()
-                         (set (make-local-variable 'company-backends) '(company-ledger-backend))))
-  :after (company ledger-mode))
+;; ;; Email
+;; (use-package w3m
+;;   :ensure t)
+;; (use-package-customize-load-path
+;;  mu4e
+;;  (lambda ()
+;;    (when (memq system-type '(darwin))
+;;      "~/opt/homebrew/Cellar/mu/1.0/share/emacs/site-lisp/mu/mu4e/"))
+;;  :after (w3m)
+;;  :config
+;;  (imagemagick-register-types)
+;;  (add-to-list 'mu4e-view-actions '("ViewInBrowser" . mu4e-action-view-in-browser) t)
+;;  (setq mu4e-maildir "~/.offlineimap.d/maildir"
+;;        mu4e-contexts `(,(make-mu4e-context
+;;                          :name "me@alyssackwan.name"
+;;                          :vars '((mu4e-drafts-folder . "/me@alyssackwan.name/[Gmail].Drafts")
+;;                                  (mu4e-sent-folder . "/me@alyssackwan.name/[Gmail].Sent Mail")
+;;                                  (mu4e-trash-folder . "/me@alyssackwan.name/[Gmail].Trash")
+;;                                  (mu4e-sent-messages-behavior . 'delete)
+;;                                  (user-mail-address . "me@alyssackwan.name")
+;;                                  (user-full-name  . "Alyssa Kwan")))
+;;                        ,(make-mu4e-context
+;;                          :name "alyssa.c.kwan@gmail.com"
+;;                          :vars '((mu4e-drafts-folder . "/alyssa.c.kwan@gmail.com/[Gmail].Drafts")
+;;                                  (mu4e-sent-folder . "/alyssa.c.kwan@gmail.com/[Gmail].Sent Mail")
+;;                                  (mu4e-trash-folder . "/alyssa.c.kwan@gmail.com/[Gmail].Trash")
+;;                                  (mu4e-sent-messages-behavior . 'delete)
+;;                                  (user-mail-address . "alyssa.c.kwan@gmail.com")
+;;                                  (user-full-name  . "Alyssa Kwan")))))
+;;  :hook ((mu4e-compose-mode . (lambda ()
+;;                                (set-fill-column 72)
+;;                                (flyspell-mode)))))
 
 ;; Beancount
 (use-package beancount
@@ -520,170 +503,6 @@
   ("\\.beancount\\'" . beancount-mode)
   ("\\.beancount\\.org\\'" . beancount-mode)
   :config (setq beancount-install-dir "~/.pyenv/versions/3.7.0"))
-(defun my-beancount-convert-goodbudget-csv (@begin @end)
-  (interactive
-   (if (region-active-p)
-       (list (region-beginning) (region-end))
-     (list (point-min) (point-max))))
-  (save-excursion
-    (save-restriction
-      (narrow-to-region @begin @end)
-      (progn
-        (goto-char (point-min))
-        (replace-regexp
-         "^\\([0-9][0-9]\\)/\\([0-9][0-9]\\)/\\([0-9][0-9][0-9][0-9]\\),"
-         "\\3-\\2-\\1,"
-         nil nil nil nil)
-        (goto-char (point-min))
-        (replace-regexp
-         ",\"\\(-?[0-9]+\\),\\([0-9][0-9][0-9]\\.[0-9][0-9]\\)\","
-         ",\\1\\2,"
-         nil nil nil nil)
-        (goto-char (point-min))
-        (replace-regexp
-         "^\\([-0-9]+\\),\\(\"[^\"]*\"\\|[^,]*\\),\\(\"[^\"]*\"\\|[^,]*\\),\\(\"[^\"]*\"\\|[^,]*\\),\\(\"[^\"]*\"\\|[^,]*\\),\\(-?[0-9.]+\\),\\(\"[^\"]*\"\\|[^,]*\\),\\(\"[^\"]*\"\\|[^,]*\\)$"
-         (quote (replace-eval-replacement concat "\\1," (replace-quote (let ((s (match-string 2))) (if (or (and (s-starts-with\? "\"" s) (s-ends-with\? "\"" s)) (string= s "")) s (concat "\"" s "\"")))) "," (replace-quote (let ((s (match-string 3))) (if (or (and (s-starts-with\? "\"" s) (s-ends-with\? "\"" s)) (string= s "")) s (concat "\"" s "\"")))) "," (replace-quote (let ((s (match-string 4))) (if (or (and (s-starts-with\? "\"" s) (s-ends-with\? "\"" s)) (string= s "")) s (concat "\"" s "\"")))) "," (replace-quote (let ((s (match-string 5))) (if (or (and (s-starts-with\? "\"" s) (s-ends-with\? "\"" s)) (string= s "")) s (concat "\"" s "\"")))) ",\\6," (replace-quote (let ((s (match-string 7))) (if (or (and (s-starts-with\? "\"" s) (s-ends-with\? "\"" s)) (string= s "")) s (concat "\"" s "\"")))) "," (replace-quote (let ((s (match-string 8))) (if (or (and (s-starts-with\? "\"" s) (s-ends-with\? "\"" s)) (string= s "")) s (concat "\"" s "\""))))))
-         nil 1 229231 nil)
-        (goto-char (point-min))
-        (replace-regexp
-         "^\\([-0-9]+\\),,\\(\"[^\"]+\"\\),,\"Account Transfer\",\\([0-9.]+\\),,
-\\1,,\\(\"[^\"]+\"\\),,\"Account Transfer\",-\\3,,$"
-         "\\1 * \"Account Transfer\"
-    \\2  \\3 USD
-    \\4
-"
-         nil nil nil nil)
-        (goto-char (point-min))
-        (replace-regexp
-         "^\\([-0-9]+\\),,\\(\"[^\"]+\"\\),\\(\"[^\"]+\"\\),,\\([0-9.]+\\),,\"\\[Unallocated\\]|[0-9,.]+\"$"
-         "\\1 * \\3
-    \\2  \\4 USD
-    \"Unknown\"
-"
-         nil nil nil nil)
-        (goto-char (point-min))
-        (replace-regexp
-         "^\\([-0-9]+\\),,\\(\"[^\"]+\"\\),\\(\"[^\"]+\"\\),,-\\([0-9.]+\\),,\"\\[Unallocated\\]|-[0-9,.]+\"$"
-         "\\1 * \\3
-    \"Unknown\"  \\4 USD
-    \\2
-"
-         nil nil nil nil)
-        (goto-char (point-min))
-        (replace-regexp
-         "^\\([-0-9]+\\),\\(\"[^\"]+\"\\),\\(\"[^\"]+\"\\),\\(\"[^\"]+\"\\),,\\([0-9.]+\\),,$"
-         "\\1 * \\4
-    \\3  \\5 USD
-    \\2
-"
-         nil nil nil nil)
-        (goto-char (point-min))
-        (replace-regexp
-         "^\\([-0-9]+\\),\\(\"[^\"]+\"\\),\\(\"[^\"]+\"\\),\\(\"[^\"]+\"\\),,-\\([0-9.]+\\),,$"
-         "\\1 * \\4
-    \\2  \\5 USD
-    \\3
-"
-         nil nil nil nil)
-        (goto-char (point-min))
-        (replace-regexp
-         "^\\([-0-9]+\\),\\(\"[^\"]+\"\\),\\(\"[^\"]+\"\\),\\(\"[^\"]+\"\\),\"\\([^\"]+\\)\",\\([0-9.]+\\),,$"
-         "\\1 * \\4
-    ; \\5
-    \\3  \\6 USD
-    \\2
-"
-         nil nil nil nil)
-        (goto-char (point-min))
-        (replace-regexp
-         "^\\([-0-9]+\\),\\(\"[^\"]+\"\\),\\(\"[^\"]+\"\\),\\(\"[^\"]+\"\\),\"\\([^\"]+\\)\",-\\([0-9.]+\\),,$"
-         "\\1 * \\4
-    ; \\5
-    \\2  \\6 USD
-    \\3
-"
-         nil nil nil nil)
-        (goto-char (point-min))
-        (replace-regexp
-         "^\\([-0-9]+\\),,\\(\"[^\"]+\"\\),,\\(\"[^\"]+\"\\),\\([0-9.]+\\),,
-\\1,,\\(\"[^\"]+\"\\),,\\3,-\\4,,$"
-         "\\1 * \\3
-    \\2  \\4 USD
-    \\5
-"
-         nil nil nil nil)
-        (goto-char (point-min))
-        (replace-regexp
-         "^\\([-0-9]+\\),,\\(\"[^\"]+\"\\),,\\(\"[^\"]+\"\\),-\\([0-9.]+\\),,
-\\1,,\\(\"[^\"]+\"\\),,\\3,\\4,,$"
-         "\\1 * \\3
-    \\5  \\4 USD
-    \\2
-"
-         nil nil nil nil)
-        (goto-char (point-min))
-        (replace-regexp
-         "^\\([-0-9]+\\),\\(\"[^\"]+\"\\),,,\\(\"[^\"]+\"\\),\\([0-9.]+\\),,
-\\1,\\(\"[^\"]+\"\\),,,\\3,-\\4,,$"
-         "\\1 * \\3
-    \\2  \\4 USD
-    \\5
-"
-         nil nil nil nil)
-        (goto-char (point-min))
-        (replace-regexp
-         "^\\([-0-9]+\\),\\(\"[^\"]+\"\\),,,\\(\"[^\"]+\"\\),-\\([0-9.]+\\),,
-\\1,\\(\"[^\"]+\"\\),,,\\3,\\4,,$"
-         "\\1 * \\3
-    \\5  \\4 USD
-    \\2
-"
-         nil nil nil nil)
-        (goto-char (point-min))
-        (replace-regexp
-         "^\\([-0-9]+\\),\\(\"[^\"]+\"\\),,,\\(\"[^\"]+\"\\),\\([0-9.]+\\),,
-\\1,,\\(\"[^\"]+\"\\),,\\3,-\\4,,$"
-         "\\1 * \\3
-    \\2  \\4 USD
-    \\5
-"
-         nil nil nil nil)
-        (goto-char (point-min))
-        (replace-regexp
-         "^\\([-0-9]+\\),\\(\"[^\"]+\"\\),,,\\(\"[^\"]+\"\\),-\\([0-9.]+\\),,
-\\1,,\\(\"[^\"]+\"\\),,\\3,\\4,,$"
-         "\\1 * \\3
-    \\5  \\4 USD
-    \\2
-"
-         nil nil nil nil)
-        (goto-char (point-min))
-        (replace-regexp
-         "^\\([-0-9]+\\),\\(\"Splitwise\"\\),,,\\(\"[^\"]+\"\\),\\([0-9.]+\\),,
-\\1,\\(\"[^\"]+\"\\),,,\\3,-\\4,,$"
-         "\\1 * \\3
-    \\2  \\4 USD
-    \\5
-"
-         nil nil nil nil)
-        (goto-char (point-min))
-        (replace-regexp
-         "^\\([-0-9]+\\),,\\(\"[^\"]+\"\\),\\(\"[^\"]+\"\\),\\(\"[^\"]+\"\\),\\([0-9.]+\\),,\"\\[Unallocated\\]|\\5\"$"
-         "\\1 * \\3
-    ; \\4
-    \\2  \\5 USD
-    \"[Unallocated]\"
-"
-         nil nil nil nil)
-        (goto-char (point-min))
-        (replace-regexp
-         "^\\([-0-9]+\\),,\\(\"[^\"]+\"\\),\\(\"[^\"]+\"\\),\\(\"[^\"]+\"\\),-\\([0-9.]+\\),,\"\\[Unallocated\\]|-\\5\"$"
-         "\\1 * \\3
-    ; \\4
-    \"[Unallocated]\"  \\5 USD
-    \\2
-"
-         nil nil nil nil)))))
 
 (use-package darcula-theme
   :ensure t)
