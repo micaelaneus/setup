@@ -12,9 +12,6 @@ fi
 CURRENT_NODE_VERSION='stable'
 
 
-eval `ssh-agent -s`
-
-
 if [ "$(uname)" == "Darwin" ]; then
 
     # pkgconfig
@@ -84,6 +81,13 @@ if [ "$(uname)" == "Darwin" ]; then
     source $HOMEBREW/etc/bash_completion
 elif [ "$(uname)" == "Linux" ]; then
     source /usr/share/bash-completion/bash_completion
+fi
+
+install keychain keychain
+if [ "$(uname)" == "Darwin" ]; then
+    eval `keychain --eval --agents ssh --inherit any id_rsa`
+elif [ "$(uname)" == "Linux" ]; then
+    eval `keychain --eval --agents ssh id_rsa`
 fi
 
 install mercurial mercurial
