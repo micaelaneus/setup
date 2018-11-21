@@ -500,11 +500,6 @@
 (use-package org-gcal
   :ensure t
   :commands (org-gcal-fetch)
-  :config
-  (setq org-gcal-file-alist
-        '(("me@alyssackwan.name" . "~/tmp/.emacs.d/org-gcal/gcal-me.org")
-          ("alyssa.kwan@infallisys.com" . "~/tmp/.emacs.d/org-gcal/gcal-w-cel.org")
-          ("alyssa@qbizinc.com" . "~/tmp/.emacs.d/org-gcal/gcal-w-qbz.org")))
   :hook
   (org-agenda-mode . org-gcal-fetch))
 
