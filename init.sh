@@ -147,6 +147,7 @@ function link_setup() {
 link_setup '.bash_profile'
 link_setup '.bashrc'
 link_setup '.bash_logout'
+link_setup '.tmux.conf'
 link_setup '.emacs.el'
 link_setup '.offlineimaprc'
 

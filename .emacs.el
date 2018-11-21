@@ -52,7 +52,7 @@
  '(org-agenda-skip-timestamp-if-done t)
  '(org-agenda-sorting-strategy
    (quote
-    ((agenda priority-down time-up category-keep)
+    ((agenda priority-down user-defined-up category-keep)
      (todo priority-down category-keep)
      (tags priority-down category-keep)
      (search category-keep))))
