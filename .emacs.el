@@ -702,7 +702,8 @@
     (load-file path)))
 
 (let ((path "~/.emacs_custom_set.el"))
-  (delete-file path)
+  (if (file-exists-p path)
+    (delete-file path))
   (setq custom-file path)
   (customize-save-customized))
 (load custom-file)

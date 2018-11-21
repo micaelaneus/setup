@@ -56,7 +56,7 @@ else
 fi
 
 installedp() {
-    local installed=$(echo "${installed_cache}" | grep ^"${1}"$)
+    local installed=$(echo "${installed_cache}" | egrep ^"${1}"\(-\([0-9.]+\|dev\)\)?\(:amd64\)?$)
     [ x"" != x"${installed}" ]
 }
 
