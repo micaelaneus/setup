@@ -496,13 +496,6 @@
                                (set-fill-column 72)
                                (flyspell-mode)))))
 
-;; Calendar
-(use-package org-gcal
-  :ensure t
-  :commands (org-gcal-fetch)
-  :hook
-  (org-agenda-mode . org-gcal-fetch))
-
 ;; Ledger
 (use-package-customize-load-path
  ledger-mode
