@@ -206,6 +206,9 @@ eval "$(rbenv init -)"
 # Miscellaneous
 
 # Google Drive
+if [ "$(uname)" == "Linux" ]; then
+    insync-headless set_autostart on
+fi
 
 # pass
 install pass pass

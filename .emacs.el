@@ -161,6 +161,12 @@
             (exec-path-from-shell-copy-env "MANPATH")
             (exec-path-from-shell-copy-env "GOPATH")))
 
+(use-package epg
+  :ensure t)
+(let ((path "~/.emacs_secret.el"))
+  (if (file-exists-p path)
+    (load-file path)))
+
 (use-package visual-fill-column
   :ensure t
   :hook (visual-line-mode))
@@ -248,6 +254,19 @@
          ("C-c c" . org-capture)
          ("C-c b" . org-switchb)
          ("C-c o r" . org-revert-all-org-buffers)))
+
+;; Calendar
+(use-package org-gcal
+  :ensure t
+  :commands (org-gcal-fetch)
+  :config
+  (setq org-gcal-client-id "896903804596-eh9eeb30bmnkgfm839gkpem3pkr43ei1.apps.googleusercontent.com")
+  (setq org-gcal-file-alist
+        '(("me@alyssackwan.name" . "~/tmp/.emacs.d/org-gcal/gcal-me.org")
+          ("alyssa.kwan@infallisys.com" . "~/tmp/.emacs.d/org-gcal/gcal-w-cel.org")
+          ("alyssa@qbizinc.com" . "~/tmp/.emacs.d/org-gcal/gcal-w-qbz.org")))
+  :hook
+  (org-agenda-mode . org-gcal-fetch))
 
 ;; Edit Server
 (use-package edit-server
