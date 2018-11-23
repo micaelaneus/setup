@@ -267,6 +267,19 @@
           ("alyssa@qbizinc.com" . "~/tmp/.emacs.d/org-gcal/gcal-w-qbz.org")))
   :hook
   (org-agenda-mode . org-gcal-fetch))
+(use-package calfw
+  :ensure t
+  :demand t
+  :config
+  (defun my-cfw-open-calendar ()
+    (interactive)
+    (cfw:open-calendar-buffer
+     :contents-sources (list (cfw:org-create-source "IndianRed"))))
+  :bind (("C-c C-c M-c" . my-cfw-open-calendar)))
+(use-package calfw-org
+  :ensure t
+  :demand t
+  :after (calfw))
 
 ;; Edit Server
 (use-package edit-server
