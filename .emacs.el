@@ -1,3 +1,9 @@
+(defvar my-org-root-dir)
+
+(let ((path "~/.emacs_local_pre_custom.el"))
+  (if (file-exists-p path)
+    (load-file path)))
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -45,7 +51,13 @@
  '(mu4e-update-interval 300)
  '(mu4e-view-show-images t)
  '(nrepl-log-messages t)
- ;; '(org-agenda-files `(,(concat my-org-root-dir "TODO.org")))
+ `(org-agenda-files
+   (quote
+    (,(concat my-org-root-dir "TODO_habit.org")
+     ,(concat my-org-root-dir "TODO.org")
+     "~/tmp/.emacs.d/org-gcal/gcal-me.org"
+     "~/tmp/.emacs.d/org-gcal/gcal-w-cel.org"
+     "~/tmp/.emacs.d/org-gcal/gcal-w-qbz.org")))
  '(org-agenda-skip-deadline-if-done t)
  '(org-agenda-skip-scheduled-if-deadline-is-shown t)
  '(org-agenda-skip-scheduled-if-done t)
@@ -59,15 +71,15 @@
  '(org-agenda-start-on-weekday 0)
  '(org-agenda-use-time-grid nil)
  '(org-babel-load-languages (quote ((emacs-lisp . t) (shell . t))))
- ;; '(org-capture-templates
- ;;   (quote
- ;;    (("t" "TODO" entry
- ;;      (file "")
- ;;      "** TODO %?
- ;;   SCHEDULED: %t"
- ;;      :empty-lines 1))))
+ `(org-capture-templates
+   (quote
+    (("t" "TODO" entry
+      (file ,(concat my-org-root-dir "TODO.org"))
+      "** TODO %?
+   SCHEDULED: %t"
+      :empty-lines 1))))
  '(org-catch-invisible-edits (quote show-and-error))
- ;; '(org-default-notes-file (concat my-org-root-dir "TODO.org"))
+ `(org-default-notes-file ,(concat my-org-root-dir "TODO.org"))
  '(org-default-priority 67)
  '(org-goto-auto-isearch nil)
  '(org-habit-following-days 2)
@@ -539,7 +551,9 @@
 (use-package darcula-theme
   :ensure t)
 
-(defvar my-org-root-dir)
+(let ((path "~/setup/.emacs_secret.el.gpg"))
+  (if (file-exists-p path)
+    (load-file path)))
 
 (let ((path "~/.emacs_local.el"))
   (if (file-exists-p path)
