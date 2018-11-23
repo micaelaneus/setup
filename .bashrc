@@ -9,6 +9,8 @@ if [ -f /etc/bashrc ]; then
 fi
 
 
+CURRENT_PYTHON_VERSION='3.7.0'
+CURRENT_PYTHON_VERSION_REGEX='3\.7\.0'
 CURRENT_NODE_VERSION='stable'
 
 
@@ -123,6 +125,7 @@ if [ $? -ne 0 ]; then
     install opam opam
     opam init --enable-shell-hook
 fi
+eval `opam config env`
 eval $(opam env)
 
 # Go
@@ -146,7 +149,7 @@ export PATH="${PATH}:${GOPATH}/bin"
 if [ "$(uname)" == "Darwin" ]; then
     install pyenv                   pyenv
     install pyenv-virtualenv        pyenv-virtualenv
-    install pyenv-virtualenvwrapper pyenv-virtualenvwrapper
+    # install pyenv-virtualenvwrapper pyenv-virtualenvwrapper
 elif [ "$(uname)" == "Linux" ]; then
     install python-pip python-pip
     if [ ! -d "${HOME}/.pyenv" ]; then
@@ -154,7 +157,7 @@ elif [ "$(uname)" == "Linux" ]; then
         export PYENV_ROOT="${HOME}/.pyenv"
         export PATH="${PYENV_ROOT}/bin:${PATH}"
         git clone https://github.com/pyenv/pyenv-virtualenv.git "$(pyenv root)/plugins/pyenv-virtualenv"
-        git clone https://github.com/pyenv/pyenv-virtualenvwrapper.git "$(pyenv root)/plugins/pyenv-virtualenvwrapper"
+        # git clone https://github.com/pyenv/pyenv-virtualenvwrapper.git "$(pyenv root)/plugins/pyenv-virtualenvwrapper"
     else
         export PYENV_ROOT="${HOME}/.pyenv"
         export PATH="${PYENV_ROOT}/bin:${PATH}"
@@ -162,9 +165,10 @@ elif [ "$(uname)" == "Linux" ]; then
 fi
 eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
-[ ! "$(pyenv versions | grep '^  3\.7\.0$')" == '  3.7.0' ] && pyenv install 3.7.0
+current_python_version_match=$(pyenv versions | grep "^  ${CURRENT_PYTHON_VERSION_REGEX}$")
+[ ! "${current_python_version_match}" == "  ${CURRENT_PYTHON_VERSION}" ] && pyenv install "${CURRENT_PYTHON_VERSION}"
 pyenv global system
-pyenv virtualenvwrapper
+# pyenv virtualenvwrapper
 
 # Java
 if [ ! -d "${HOME}/.emacs.d/eclipse.jdt.ls/server/" ]; then
