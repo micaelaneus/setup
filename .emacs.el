@@ -55,9 +55,10 @@
    (quote
     (,(concat my-org-root-dir "TODO_habit.org")
      ,(concat my-org-root-dir "TODO.org")
-     "~/tmp/.emacs.d/org-gcal/gcal-me.org"
-     "~/tmp/.emacs.d/org-gcal/gcal-w-cel.org"
-     "~/tmp/.emacs.d/org-gcal/gcal-w-qbz.org")))
+     ;; "~/tmp/.emacs.d/org-gcal/gcal-me.org"
+     ;; "~/tmp/.emacs.d/org-gcal/gcal-w-cel.org"
+     ;; "~/tmp/.emacs.d/org-gcal/gcal-w-qbz.org"
+     )))
  '(org-agenda-skip-deadline-if-done t)
  '(org-agenda-skip-scheduled-if-deadline-is-shown t)
  '(org-agenda-skip-scheduled-if-done t)
@@ -277,8 +278,9 @@
         '(("me@alyssackwan.name" . "~/tmp/.emacs.d/org-gcal/gcal-me.org")
           ("alyssa.kwan@infallisys.com" . "~/tmp/.emacs.d/org-gcal/gcal-w-cel.org")
           ("alyssa@qbizinc.com" . "~/tmp/.emacs.d/org-gcal/gcal-w-qbz.org")))
-  :hook
-  (org-agenda-mode . org-gcal-fetch))
+  ;; :hook
+  ;; (org-agenda-mode . org-gcal-fetch)
+  )
 (use-package calfw
   :ensure t
   :demand t
