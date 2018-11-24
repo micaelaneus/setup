@@ -388,6 +388,7 @@
 (use-package cider
   :ensure t
   :after (clojure-mode company-mode)
+  :config (define-key cider-mode-map (kbd "C-c C-c") nil)
   :hook ((cider-repl-mode-hook . company-mode)
          (cider-mode-hook . company-mode)))
 (use-package midje-mode
