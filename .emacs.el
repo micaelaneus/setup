@@ -17,7 +17,6 @@
     ("41c8c11f649ba2832347fe16fe85cf66dafe5213ff4d659182e25378f9cfc183" default)))
  '(debug-on-error t)
  '(default-frame-alist (quote ((fullscreen . maximized))))
- '(desktop-path (quote ("~/.emacs.d/desktop/")))
  '(desktop-save t)
  '(desktop-save-mode t)
  '(enable-remote-dir-locals t)
@@ -103,7 +102,9 @@
  '(show-trailing-whitespace t)
  '(truncate-lines t)
  '(visible-bell nil)
- '(web-mode-markup-indent-offset 2))
+ '(web-mode-markup-indent-offset 2)
+ '(wg-prefix-key (kbd "C-c C-S-w"))
+ '(workgroups-mode 1))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -113,7 +114,7 @@
 (defface my-hl-line '((t (:inherit hl-line :background "grey25"))) "my-hl-line face")
 
 (defalias 'yes-or-no-p 'y-or-n-p)
-(make-directory (expand-file-name "desktop/" user-emacs-directory) :parents)
+; (make-directory (expand-file-name "desktop/" user-emacs-directory) :parents)
 (make-directory (expand-file-name "auto-save/" user-emacs-directory) :parents)
 
 (require 'package)
@@ -198,7 +199,15 @@
 (use-package projectile
   :ensure t
   :demand t
-  :config (projectile-mode 1))
+  :config
+  (projectile-mode 1))
+
+(straight-use-package '(workgroups :type git :host github :repo "tlh/workgroups.el" :branch "master"))
+(use-package workgroups
+  :ensure nil
+  :commands (workgroups-mode wg-load)
+  :config
+  (wg-load "~/.emacs.d/workgroups"))
 
 ;; Org
 (use-package org
@@ -388,16 +397,18 @@
 (use-package cider
   :ensure t
   :after (clojure-mode company-mode)
-  :config (define-key cider-mode-map (kbd "C-c C-c") nil)
   :hook ((cider-repl-mode-hook . company-mode)
-         (cider-mode-hook . company-mode)))
+         (cider-mode-hook . company-mode))
+  :config
+  (define-key cider-mode-map (kbd "C-c C-c") nil))
 (use-package midje-mode
   :ensure t
   :after (clojure-mode)
-  :config (let ((prefix-map (lookup-key midje-mode-map (kbd "C-c"))))
-            (define-key midje-mode-map (kbd "C-c") nil)
-            (define-key midje-mode-map (kbd "C-c C-m") prefix-map))
-  :hook (clojure-mode))
+  :hook (clojure-mode)
+  :config
+  (let ((prefix-map (lookup-key midje-mode-map (kbd "C-c"))))
+    (define-key midje-mode-map (kbd "C-c") nil)
+    (define-key midje-mode-map (kbd "C-c C-m") prefix-map)))
 
 ;; Paredit
 (use-package paredit
