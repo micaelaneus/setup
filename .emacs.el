@@ -103,7 +103,7 @@
  '(truncate-lines t)
  '(visible-bell nil)
  '(web-mode-markup-indent-offset 2)
- '(wg-prefix-key (kbd "C-c C-S-w"))
+ '(wg-prefix-key (kbd "C-c C-c C-w"))
  '(workgroups-mode 1))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
