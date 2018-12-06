@@ -34,6 +34,8 @@ if [ "$(uname)" == "Darwin" ]; then
 
 elif [ "$(uname)" == "Linux" ]; then
 
+    export PATH="${PATH}:/root/.local/bin"
+
     password=$(gpg --quiet --decrypt "${HOME}/.gnupg/.password.gpg")
 
 fi
@@ -118,9 +120,13 @@ elif [ "$(uname)" == "Linux" ]; then
         install stack stack
     else
         if [ ! -d "${HOME}/bin/stack" ]; then
-            curl -sSL https://get.haskellstack.org/ > '${HOME}/tmp/stack'
-            echo "${password}" | sh '{HOME}/tmp/stack' - -d "${HOME}/bin/stack"
+            mkdir -p "${HOME}/tmp"
+            rm -rf "${HOME}/tmp/stack"
+            curl -sSL 'https://get.haskellstack.org/' > "${HOME}/tmp/stack"
+            echo "${password}" | sudo -S sh "${HOME}/tmp/stack" -d "${HOME}/bin/stack"
+            rm -rf "${HOME}/tmp/stack"
         fi
+        export PATH="${PATH}:${HOME}/bin/stack"
     fi
 fi
 installedp opam
@@ -226,7 +232,7 @@ elif [ "$(uname)" == "Linux" ]; then
         install lastpass-cli lastpass-cli
     elif [ -f /etc/debian_version ]; then
         if [ ! -d "${HOME}/.lastpass-cli" ]; then
-            echo "${password}" | sudo apt-get --no-install-recommends -yqq install \
+            echo "${password}" | sudo -S apt-get --no-install-recommends -yqq install \
               bash-completion \
               build-essential \
               cmake \
@@ -243,7 +249,7 @@ elif [ "$(uname)" == "Linux" ]; then
             pushd "${HOME}/.lastpass-cli" > /dev/null
             git checkout `git describe --abbrev=0 --tags`
             make
-            echo "${password}" | sudo make install
+            echo "${password}" | sudo -S make install
             popd > /dev/null
         fi
     fi
