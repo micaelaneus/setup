@@ -115,7 +115,7 @@ popd > /dev/null
 
 echo "Enter the local user's password"
 read -sp 'password: ' PASSWORD
-echo "${PASSWORD}" | gpg --encrypt -o ~/.gnupg/.password.gpg -r 'me@alyssackwan.name'
+echo "${PASSWORD}" | gpg --encrypt -o ~/.gnupg/.password.gpg -r 'Alyssa Kwan (unattended)'
 
 [ ! "${dotglob_shopt}" ] && shopt -qu dotglob
 
