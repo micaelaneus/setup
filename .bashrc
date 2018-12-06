@@ -117,7 +117,7 @@ elif [ "$(uname)" == "Linux" ]; then
     if [ -d /etc/arch_release ] ; then
         install stack stack
     else
-        [ ! -d "${HOME}/bin/stack" ] && curl -sSL https://get.haskellstack.org/ | sh -s - -d "$HOME/bin/stack"
+        [ ! -d "${HOME}/bin/stack" ] && curl -sSL https://get.haskellstack.org/ | sh -s - -d "${HOME}/bin/stack"
     fi
 fi
 installedp opam
@@ -271,8 +271,6 @@ elif [ "$(uname)" == "Linux" ]; then
     install mu4e          mu4e
 fi
 
-# Ledger
-install ledger ledger
 # Beancount
 if [ ! -d "${HOME}/.beancount" ]; then
     hg clone https://bitbucket.org/blais/beancount "${HOME}/.beancount"
