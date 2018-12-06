@@ -117,7 +117,10 @@ elif [ "$(uname)" == "Linux" ]; then
     if [ -d /etc/arch_release ] ; then
         install stack stack
     else
-        [ ! -d "${HOME}/bin/stack" ] && curl -sSL https://get.haskellstack.org/ | sh -s - -d "${HOME}/bin/stack"
+        if [ ! -d "${HOME}/bin/stack" ]; then
+            curl -sSL https://get.haskellstack.org/ > '${HOME}/tmp/stack'
+            echo "${password}" | sh '{HOME}/tmp/stack' - -d "${HOME}/bin/stack"
+        fi
     fi
 fi
 installedp opam
