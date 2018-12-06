@@ -1,6 +1,7 @@
 [general]
 accounts = me@alyssackwan.name, superadmin@alyssackwan.name, alyssa.c.kwan@gmail.com
 maxsyncaccounts = 4
+pythonfile = ~/setup/.offlineimap.py
 
 [Account me@alyssackwan.name]
 localrepository = local_me@alyssackwan.name
@@ -14,7 +15,7 @@ localfolders = ~/.offlineimap.d/maildir/me@alyssackwan.name
 type = Gmail
 maxconnections = 2
 remoteuser = me@alyssackwan.name
-remotepass = a clean slate for success
+remotepasseval = remotepasseval('{HOME}/setup/.offlineimap/me@alyssackwan.name.gpg')
 folderfilter = lambda foldername: foldername not in ['[Gmail]/All Mail', '[Gmail]/Important']
 sslcacertfile = ~/opt/homebrew/etc/openssl/cert.pem
 
@@ -30,7 +31,7 @@ localfolders = ~/.offlineimap.d/maildir/superadmin@alyssackwan.name
 type = Gmail
 maxconnections = 2
 remoteuser = superadmin@alyssackwan.name
-remotepass = 7agARoMAT8PJ1vmyKIoi
+remotepasseval = remotepasseval('{HOME}/setup/.offlineimap/superadmin@alyssackwan.name.gpg')
 folderfilter = lambda foldername: foldername not in ['[Gmail]/All Mail', '[Gmail]/Important']
 sslcacertfile = ~/opt/homebrew/etc/openssl/cert.pem
 
@@ -46,6 +47,6 @@ localfolders = ~/.offlineimap.d/maildir/alyssa.c.kwan@gmail.com
 type = Gmail
 maxconnections = 2
 remoteuser = alyssa.c.kwan@gmail.com
-remotepass = DDyIZMZZ7oyRnaI3hMBD
+remotepasseval = remotepasseval('{HOME}/setup/.offlineimap/alyssa.c.kwan@gmail.com.gpg')
 folderfilter = lambda foldername: foldername not in ['[Gmail]/All Mail', '[Gmail]/Important']
 sslcacertfile = ~/opt/homebrew/etc/openssl/cert.pem

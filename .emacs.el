@@ -267,6 +267,7 @@
         (add-text-properties
          (match-beginning 0) (match-end 0)
          `(face (:foreground ,foreground))))))
+  (define-key org-mode-map (kbd "C-c C-c") nil)
   :hook
   (org-agenda-finalize . (lambda ()
                            (my-org-agenda-color "^  TODO: +" "chartreuse4")
