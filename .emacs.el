@@ -207,7 +207,8 @@
   :ensure nil
   :commands (workgroups-mode wg-load)
   :config
-  (wg-load "~/.emacs.d/workgroups"))
+  (workgroups-mode)
+  (wg-load (expand-file-name "workgroups" user-emacs-directory)))
 
 ;; Org
 (use-package org
