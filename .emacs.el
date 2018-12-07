@@ -97,13 +97,13 @@
     ((65 :foreground "red")
      (66 :foreground "yellow"))))
  '(projectile-completion-system (quote helm))
- '(projectile-keymap-prefix (kbd "C-c C-c C-p"))
+ '(projectile-keymap-prefix (kbd "C-c M-c M-p"))
  '(savehist-mode t)
  '(show-trailing-whitespace t)
  '(truncate-lines t)
  '(visible-bell nil)
  '(web-mode-markup-indent-offset 2)
- '(wg-prefix-key (kbd "C-c C-c C-w"))
+ '(wg-prefix-key (kbd "C-c M-c M-w"))
  '(workgroups-mode 1))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -267,7 +267,7 @@
         (add-text-properties
          (match-beginning 0) (match-end 0)
          `(face (:foreground ,foreground))))))
-  (define-key org-mode-map (kbd "C-c C-c") nil)
+  (define-key org-mode-map (kbd "C-c M-c") nil)
   :hook
   (org-agenda-finalize . (lambda ()
                            (my-org-agenda-color "^  TODO: +" "chartreuse4")
@@ -299,7 +299,7 @@
     (interactive)
     (cfw:open-calendar-buffer
      :contents-sources (list (cfw:org-create-source "IndianRed"))))
-  :bind (("C-c C-c M-c" . my-cfw-open-calendar)))
+  :bind (("C-c M-c M-c" . my-cfw-open-calendar)))
 (use-package calfw-org
   :ensure t
   :demand t
@@ -401,7 +401,7 @@
   :hook ((cider-repl-mode-hook . company-mode)
          (cider-mode-hook . company-mode))
   :config
-  (define-key cider-mode-map (kbd "C-c C-c") nil))
+  (define-key cider-mode-map (kbd "C-c M-c") nil))
 (use-package midje-mode
   :ensure t
   :after (clojure-mode)
@@ -522,38 +522,38 @@
   :config
   (setq lastpass-user "me@alyssackwan.name"))
 
-;; ;; Email
-;; (use-package w3m
-;;   :ensure t)
-;; (use-package-customize-load-path
-;;  mu4e
-;;  (lambda ()
-;;    (when (memq system-type '(darwin))
-;;      "~/opt/homebrew/Cellar/mu/1.0/share/emacs/site-lisp/mu/mu4e/"))
-;;  :after (w3m)
-;;  :config
-;;  (imagemagick-register-types)
-;;  (add-to-list 'mu4e-view-actions '("ViewInBrowser" . mu4e-action-view-in-browser) t)
-;;  (setq mu4e-maildir "~/.offlineimap.d/maildir"
-;;        mu4e-contexts `(,(make-mu4e-context
-;;                          :name "me@alyssackwan.name"
-;;                          :vars '((mu4e-drafts-folder . "/me@alyssackwan.name/[Gmail].Drafts")
-;;                                  (mu4e-sent-folder . "/me@alyssackwan.name/[Gmail].Sent Mail")
-;;                                  (mu4e-trash-folder . "/me@alyssackwan.name/[Gmail].Trash")
-;;                                  (mu4e-sent-messages-behavior . 'delete)
-;;                                  (user-mail-address . "me@alyssackwan.name")
-;;                                  (user-full-name  . "Alyssa Kwan")))
-;;                        ,(make-mu4e-context
-;;                          :name "alyssa.c.kwan@gmail.com"
-;;                          :vars '((mu4e-drafts-folder . "/alyssa.c.kwan@gmail.com/[Gmail].Drafts")
-;;                                  (mu4e-sent-folder . "/alyssa.c.kwan@gmail.com/[Gmail].Sent Mail")
-;;                                  (mu4e-trash-folder . "/alyssa.c.kwan@gmail.com/[Gmail].Trash")
-;;                                  (mu4e-sent-messages-behavior . 'delete)
-;;                                  (user-mail-address . "alyssa.c.kwan@gmail.com")
-;;                                  (user-full-name  . "Alyssa Kwan")))))
-;;  :hook ((mu4e-compose-mode . (lambda ()
-;;                                (set-fill-column 72)
-;;                                (flyspell-mode)))))
+;; Email
+(use-package w3m
+  :ensure t)
+(use-package-customize-load-path
+ mu4e
+ (lambda ()
+   (when (memq system-type '(darwin))
+     "~/opt/homebrew/Cellar/mu/1.0/share/emacs/site-lisp/mu/mu4e/"))
+ :after (w3m)
+ :config
+ (imagemagick-register-types)
+ (add-to-list 'mu4e-view-actions '("ViewInBrowser" . mu4e-action-view-in-browser) t)
+ (setq mu4e-maildir "~/.offlineimap.d/maildir"
+       mu4e-contexts `(,(make-mu4e-context
+                         :name "me@alyssackwan.name"
+                         :vars '((mu4e-drafts-folder . "/me@alyssackwan.name/[Gmail].Drafts")
+                                 (mu4e-sent-folder . "/me@alyssackwan.name/[Gmail].Sent Mail")
+                                 (mu4e-trash-folder . "/me@alyssackwan.name/[Gmail].Trash")
+                                 (mu4e-sent-messages-behavior . 'delete)
+                                 (user-mail-address . "me@alyssackwan.name")
+                                 (user-full-name  . "Alyssa Kwan")))
+                       ,(make-mu4e-context
+                         :name "alyssa.c.kwan@gmail.com"
+                         :vars '((mu4e-drafts-folder . "/alyssa.c.kwan@gmail.com/[Gmail].Drafts")
+                                 (mu4e-sent-folder . "/alyssa.c.kwan@gmail.com/[Gmail].Sent Mail")
+                                 (mu4e-trash-folder . "/alyssa.c.kwan@gmail.com/[Gmail].Trash")
+                                 (mu4e-sent-messages-behavior . 'delete)
+                                 (user-mail-address . "alyssa.c.kwan@gmail.com")
+                                 (user-full-name  . "Alyssa Kwan")))))
+ :hook ((mu4e-compose-mode . (lambda ()
+                               (set-fill-column 72)
+                               (flyspell-mode)))))
 
 ;; Beancount
 (use-package beancount
