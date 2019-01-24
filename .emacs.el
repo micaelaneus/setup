@@ -17,8 +17,8 @@
     ("41c8c11f649ba2832347fe16fe85cf66dafe5213ff4d659182e25378f9cfc183" default)))
  '(debug-on-error t)
  '(default-frame-alist (quote ((fullscreen . maximized))))
- '(desktop-save t)
- '(desktop-save-mode t)
+ ; '(desktop-save t)
+ ; '(desktop-save-mode t)
  '(enable-remote-dir-locals t)
  '(exec-path-from-shell-check-startup-files nil)
  '(global-hl-line-mode t)
@@ -102,9 +102,7 @@
  '(show-trailing-whitespace t)
  '(truncate-lines t)
  '(visible-bell nil)
- '(web-mode-markup-indent-offset 2)
- '(wg-prefix-key (kbd "C-c M-c M-w"))
- '(workgroups-mode 1))
+ '(web-mode-markup-indent-offset 2))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -181,6 +179,9 @@
   (if (file-exists-p path)
     (load-file path)))
 
+(use-package epkg
+  :ensure t)
+
 (use-package visual-fill-column
   :ensure t
   :hook (visual-line-mode))
@@ -201,13 +202,6 @@
   :demand t
   :config
   (projectile-mode 1))
-
-(straight-use-package '(workgroups :type git :host github :repo "tlh/workgroups.el" :branch "master"))
-(use-package workgroups
-  :ensure nil
-  :commands (workgroups-mode wg-load)
-  :config
-  (wg-load "~/.emacs.d/workgroups"))
 
 ;; Org
 (use-package org
@@ -401,7 +395,11 @@
   :hook ((cider-repl-mode-hook . company-mode)
          (cider-mode-hook . company-mode))
   :config
-  (define-key cider-mode-map (kbd "C-c M-c") nil))
+  (define-key cider-mode-map (kbd "C-c M-c") nil)
+  (cider-register-cljs-repl-type
+   'figwheel--chestnut
+   "(do (user/go) (user/cljs-repl))"
+   'cider-check-figwheel-requirements))
 (use-package midje-mode
   :ensure t
   :after (clojure-mode)

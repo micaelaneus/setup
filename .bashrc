@@ -304,3 +304,6 @@ export PATH="${HOME}/bin_local:${PATH}"
 
 # Direnv - Last
 eval "$(direnv hook bash)"
+
+# added by travis gem
+# [ -f /Users/alyssackwan/.travis/travis.sh ] && source /Users/alyssackwan/.travis/travis.sh
