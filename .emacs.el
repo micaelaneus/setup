@@ -511,6 +511,9 @@
   :after (tex company)
   :hook (TeX . company-auctex))
 
+(use-package vagrant-tramp
+  :ensure t)
+
 ;; pass
 (use-package pass
   :ensure t
