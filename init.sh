@@ -1,12 +1,13 @@
 #!/bin/bash
 
+## macOS Darwin installation
 if [ "$(uname)" == "Darwin" ]; then
-    # make sure opt exists
+    # make sure opt folder exists: necessary for homebrew
     if [ ! -d "${HOME}/opt" ]; then
         mkdir "${HOME}/opt"
     fi
 
-    # pkgconfig
+    # pkgconfig: compiling C/C++ libraries
     export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:/opt/X11/lib/pkgconfig:${PKG_CONFIG_PATH}"
 
     # Homebrew
@@ -22,41 +23,30 @@ if [ "$(uname)" == "Darwin" ]; then
     export CPATH="$CPATH:$HOMEBREW/include"
     export HOMEBREW_CASK_OPTS="--appdir=${HOME}/Applications"
 
+    # Git
     brew install git
 
+    # GNU PG: encryption utility
     if [ ! -d "${HOME}/.gnupg" ]; then
         mkdir "${HOME}/.gnupg"
         touch "${HOME}/.gnupg/gpg-agent.conf"
     fi
 
+    # Pinentry Mac: prompts for passwords in the cmd-ln open as macOS dialogs
     if [ x"" == x"$(brew ls --versions pinentry-mac)" ]; then
         brew install pinentry-mac
+        ## Config gnupg to use pinentry
         echo "pinentry-program ${HOMEBREW}/bin/pinentry-mac" >> "${HOME}/.gnupg/gpg-agent.conf"
     fi
     [ x"" == x"$(brew ls --versions gnupg       )" ] && brew install gnupg
 
+## Linux Redhat/Debian/Ubuntu/Arch installations
+# installing git via distro-specific package managers
 elif [ "$(uname)" == "Linux" ]; then
     if [ -d /etc/redhat-release ]; then
         sudo yum install git
     elif [ -f /etc/debian_version ]; then
-
-        if [ ! -f "/etc/apt/sources.list.d/insync.list" ]; then
-            sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys ACCAF35C
-            echo "deb http://apt.insynchq.com/debian stretch non-free contrib" | sudo tee /etc/apt/sources.list.d/insync.list
-            sudo apt-get update
-            sudo apt-get install insync-headless
-        fi
-        if [ ! -d "${HOME}/Google Drive" ]; then
-            insync-headless start
-            echo 'http://www.insynchq.com/auth to get the auth_code.'
-            read -p 'auth_code: ' AUTH_CODE
-            insync-headless add_account -a ${AUTH_CODE}
-            insync-headless move_folder "${HOME}/me@alyssackwan.name" "${HOME}/Google Drive"
-            insync-headless set_autostart yes
-        fi
-
         sudo -S apt-get install -y git
-
     elif [ -f /etc/arch_release ]; then
         sudo pacman -Sy git
     fi
