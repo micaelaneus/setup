@@ -54,13 +54,9 @@ fi
 
 pushd "${HOME}" > /dev/null
 
+# Include filenames beginning with a ‘.’ in the results of filename expansion using shopt
 dotglob_shopt=$(shopt -q dotglob)
 shopt -qs dotglob
-
-sudo chmod -R a-x .password-store/.gnupg
-sudo chmod -R u=rwX,g=,o= .password-store/.gnupg
-cp -r .password-store/.gnupg/. .gnupg/
-cp -r .password-store/.ssh/. .ssh/
 
 gpgconf --kill gpg-agent
 pushd .gnupg > /dev/null
