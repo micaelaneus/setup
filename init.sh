@@ -54,30 +54,6 @@ fi
 
 pushd "${HOME}" > /dev/null
 
-rm -rf .password-store
-git clone git@github.com:alyssackwan/.password-store.git
-
-dotglob_shopt=$(shopt -q dotglob)
-shopt -qs dotglob
-
-sudo chmod -R a-x .password-store/.gnupg
-sudo chmod -R u=rwX,g=,o= .password-store/.gnupg
-cp -r .password-store/.gnupg/. .gnupg/
-cp -r .password-store/.ssh/. .ssh/
-
-gpgconf --kill gpg-agent
-pushd .gnupg > /dev/null
-gpg --output secret-keys.asc --decrypt secret-keys.asc.gpg
-gpg --import secret-keys.asc
-rm secret-keys.asc
-popd > /dev/null
-
-echo "Enter the local user's password"
-read -sp 'password: ' PASSWORD
-echo "${PASSWORD}" | gpg --encrypt -o ~/.gnupg/.password.gpg -r 'Alyssa Kwan (unattended)'
-
-[ ! "${dotglob_shopt}" ] && shopt -qu dotglob
-
 git clone git@github.com:alyssackwan/setup.git
 if [ ! -f "${HOME}/bin" ] && [ ! -d "${HOME}/bin" ] && [ -d "${HOME}/setup/bin" ]; then
     pushd "${HOME}" > /dev/null
