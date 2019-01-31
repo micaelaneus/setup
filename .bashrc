@@ -233,43 +233,6 @@ eval "$(rbenv init -)"
 
 # Miscellaneous
 
-# Google Drive
-if [ "$(uname)" == "Linux" ]; then
-    insync-headless set_autostart on
-fi
-
-# pass
-install pass pass
-if [ "$(uname)" == "Darwin" ]; then
-    install lastpass-cli "lastpass-cli --with-pinentry"
-elif [ "$(uname)" == "Linux" ]; then
-    if [ -d /etc/redhat-release ] || [ -f /etc/arch_release ]; then
-        install lastpass-cli lastpass-cli
-    elif [ -f /etc/debian_version ]; then
-        if [ ! -d "${HOME}/.lastpass-cli" ]; then
-            echo "${password}" | sudo -S apt-get --no-install-recommends -yqq install \
-              bash-completion \
-              build-essential \
-              cmake \
-              libcurl3  \
-              libcurl3-openssl-dev  \
-              libssl1.0 \
-              libssl1.0-dev \
-              libxml2 \
-              libxml2-dev  \
-              pkg-config \
-              ca-certificates \
-              xclip
-            git clone https://github.com/lastpass/lastpass-cli.git "${HOME}/.lastpass-cli"
-            pushd "${HOME}/.lastpass-cli" > /dev/null
-            git checkout `git describe --abbrev=0 --tags`
-            make
-            echo "${password}" | sudo -S make install
-            popd > /dev/null
-        fi
-    fi
-fi
-
 # Emacs
 if [ "$(uname)" == "Darwin" ]; then
     install emacs "emacs --with-cocoa --with-dbus --with-imagemagick@6 --with-librsvg --with-mailutils --with-modules"
