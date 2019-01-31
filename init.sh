@@ -54,12 +54,17 @@ fi
 
 pushd "${HOME}" > /dev/null
 
-git clone git@github.com:alyssackwan/setup.git
+# Download `setup` repo 
+git clone git@github.com:micaelaneus/setup.git
+
+# Links setup/bin to ./bin
 if [ ! -f "${HOME}/bin" ] && [ ! -d "${HOME}/bin" ] && [ -d "${HOME}/setup/bin" ]; then
     pushd "${HOME}" > /dev/null
     ln -s "./setup/bin" .
     popd > /dev/null
 fi
+
+## macOS: make bin/platform directory to share macOS stuff across multiple machines
 if [ "$(uname)" == "Darwin" ]; then
     if [ ! -f "${HOME}/bin_platform" ] && [ ! -d "${HOME}/bin_platform" ] && [ -d "${HOME}/setup/platform/uname/Darwin/bin" ]; then
         pushd "${HOME}" > /dev/null
@@ -71,6 +76,7 @@ if [ "$(uname)" == "Darwin" ]; then
     fi
 fi
 
+# Make shortcuts for following list of files; if local version exists, back it up and then use global version
 function link_setup() {
     if [ -f "${HOME}/setup/${1}" ]; then
         [ -f "${HOME}/${1}" ] && mv "${HOME}/${1}" "${HOME}/${1}.bak"
@@ -82,10 +88,10 @@ function link_setup() {
 link_setup '.bash_profile'
 link_setup '.bashrc'
 link_setup '.bash_logout'
-link_setup '.tmux.conf'
 link_setup '.emacs.el'
 link_setup '.offlineimaprc'
 
+# Create bin/local: for purely local environment
 if [ ! -d "${HOME}/bin_local" ]; then
     mkdir "${HOME}/bin_local"
 fi
