@@ -1,12 +1,6 @@
 #!/bin/bash
 
 if [ "$(uname)" == "Darwin" ]; then
-
-    if [ ! -d "${HOME}/Applications/Insync.app" ]; then
-        echo "Please install and configure insync."
-        exit 1
-    fi
-
     # make sure opt exists
     if [ ! -d "${HOME}/opt" ]; then
         mkdir "${HOME}/opt"
