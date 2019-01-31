@@ -13,13 +13,13 @@ CURRENT_PYTHON_VERSION='3.7.0'
 CURRENT_PYTHON_VERSION_REGEX='3\.7\.0'
 CURRENT_NODE_VERSION='stable'
 
-
+## macOS Installation
 if [ "$(uname)" == "Darwin" ]; then
 
-    # pkgconfig
+    # pkgconfig: C/C++ compilation
     export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:/opt/X11/lib/pkgconfig:${PKG_CONFIG_PATH}"
 
-    # Homebrew
+    # Homebrew: env var to allow shell to find Homebrew, etc.
     export HOMEBREW="${HOME}/opt/homebrew"
     export HOMEBREW_CACHE="${HOME}/Library/Caches/Homebrew"
     export PATH="$HOMEBREW/bin:$HOMEBREW/sbin:$PATH"
@@ -27,11 +27,12 @@ if [ "$(uname)" == "Darwin" ]; then
     export CPATH="$CPATH:$HOMEBREW/include"
     export HOMEBREW_CASK_OPTS="--appdir=${HOME}/Applications"
 
-    # coreutils
+    # coreutils: set of C/C++ compilation tool dependency 
     [ x"" == x"$(brew ls --versions coreutils)" ] && brew install coreutils
     # coreutils - man
     export "MANPATH=$MANPATH:$HOMEBREW/opt/coreutils/libexec/gnuman"
 
+## Linux Installations
 elif [ "$(uname)" == "Linux" ]; then
 
     export PATH="${PATH}:/root/.local/bin"
@@ -41,6 +42,7 @@ elif [ "$(uname)" == "Linux" ]; then
 
 fi
 
+# Calculate installed_cache for each OS: installed_cache holds a newline separated list of all packages installed in the system for faster lookup process
 if [ "$(uname)" == "Darwin" ]; then
     installed_cache="$(brew ls)"
 elif [ "$(uname)" == "Linux" ]; then
@@ -57,11 +59,13 @@ else
     installed_cache=""
 fi
 
+# Uses installed_cache to return a binary status code re existence of package
 installedp() {
     local installed=$(echo "${installed_cache}" | egrep ^"${1}"\(-\([0-9.]+\|dev\)\)?\(:amd64\)?$)
     [ x"" != x"${installed}" ]
 }
 
+# If package not found, install it
 install() {
     installedp "${1}"
     if [ $? -ne 0 ]; then
