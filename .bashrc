@@ -83,8 +83,6 @@ install() {
     fi
 }
 
-install mosh mosh
-
 install bash-completion bash-completion
 if [ "$(uname)" == "Darwin" ]; then
     source $HOMEBREW/etc/bash_completion
