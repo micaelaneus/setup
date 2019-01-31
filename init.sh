@@ -89,7 +89,6 @@ link_setup '.bash_profile'
 link_setup '.bashrc'
 link_setup '.bash_logout'
 link_setup '.emacs.el'
-link_setup '.offlineimaprc'
 
 # Create bin/local: for purely local environment
 if [ ! -d "${HOME}/bin_local" ]; then
