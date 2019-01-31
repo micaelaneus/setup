@@ -83,6 +83,8 @@ install() {
     fi
 }
 
+# bash-completion: expanded functionality for tab complete
+### Must be installed before the following tools! Otherwise, bash-completion can't pick up the hooks for that package, reducing its functionality
 install bash-completion bash-completion
 if [ "$(uname)" == "Darwin" ]; then
     source $HOMEBREW/etc/bash_completion
@@ -90,6 +92,8 @@ elif [ "$(uname)" == "Linux" ]; then
     source /usr/share/bash-completion/bash_completion
 fi
 
+# Wraps gpg-agent to make it easier to work with: gpg-agent lets you log into ssh keys so they can be used repeatedly without having to re-enter the password 
+### Done for both macOS and Linux
 install keychain keychain
 if [ "$(uname)" == "Darwin" ]; then
     eval `keychain --eval --agents ssh --inherit any id_rsa`
@@ -97,13 +101,16 @@ elif [ "$(uname)" == "Linux" ]; then
     eval `keychain --eval --agents ssh id_rsa`
 fi
 
+# Some people don't use Git! Install 'hg' to interact with those codebases
 install mercurial mercurial
+
+# Wraps curl to handle downloading files with greater ease and persistence: curl requires specifying vars with each download and breaks if the connection is interrupted 
 install wget      wget
 if [ "$(uname)" == "Linux" ]; then
     install software-properties-common software-properties-common
     install dirmngr dirmngr
 fi
-install tmux      tmux
+
 install direnv    direnv
 install pandoc    pandoc
 
