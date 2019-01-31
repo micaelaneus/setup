@@ -54,24 +54,6 @@ fi
 
 pushd "${HOME}" > /dev/null
 
-# Include filenames beginning with a ‘.’ in the results of filename expansion using shopt
-dotglob_shopt=$(shopt -q dotglob)
-shopt -qs dotglob
-
-gpgconf --kill gpg-agent
-pushd .gnupg > /dev/null
-gpg --output secret-keys.asc --decrypt secret-keys.asc.gpg
-gpg --import secret-keys.asc
-rm secret-keys.asc
-popd > /dev/null
-
-pushd .ssh > /dev/null
-gpg --output id_rsa --decrypt id_rsa.gpg
-chmod 400 id_rsa
-popd > /dev/null
-
-[ ! "${dotglob_shopt}" ] && shopt -qu dotglob
-
 rm -rf .password-store
 git clone git@github.com:alyssackwan/.password-store.git
 
