@@ -36,7 +36,8 @@ elif [ "$(uname)" == "Linux" ]; then
 
     export PATH="${PATH}:/root/.local/bin"
 
-    password=$(gpg --quiet --decrypt "${HOME}/.gnupg/.password.gpg")
+    # When I want Debian, I'll need this; until then, unneeded
+    #password=$(gpg --quiet --decrypt "${HOME}/.gnupg/.password.gpg")
 
 fi
 
