@@ -194,13 +194,6 @@ current_python_version_match=$(pyenv versions | grep "^  ${CURRENT_PYTHON_VERSIO
 pyenv global system
 # pyenv virtualenvwrapper
 
-# Java
-if [ ! -d "${HOME}/.emacs.d/eclipse.jdt.ls/server/" ]; then
-    mkdir -p "${HOME}/.emacs.d/eclipse.jdt.ls/server/"
-    wget http://download.eclipse.org/jdtls/snapshots/jdt-language-server-latest.tar.gz -O /tmp/jdt-latest.tar
-    tar xf /tmp/jdt-latest.tar -C ~/.emacs.d/eclipse.jdt.ls/server/
-fi
-
 # Node.js
 export NVM_DIR="$HOME/.nvm"
 if [ "$(uname)" == "Darwin" ]; then
@@ -245,17 +238,11 @@ elif [ "$(uname)" == "Linux" ]; then
     fi
 fi
 
-# offlineimap + mu
-if [ "$(uname)" == "Darwin" ]; then
-    install imagemagick imagemagick
-fi
-install w3m         w3m
-install offlineimap offlineimap
-if [ "$(uname)" == "Darwin" ]; then
-    install mu mu
-elif [ "$(uname)" == "Linux" ]; then
-    install maildir-utils maildir-utils
-    install mu4e          mu4e
+# Emacs Java plugin
+if [ ! -d "${HOME}/.emacs.d/eclipse.jdt.ls/server/" ]; then
+    mkdir -p "${HOME}/.emacs.d/eclipse.jdt.ls/server/"
+    wget http://download.eclipse.org/jdtls/snapshots/jdt-language-server-latest.tar.gz -O /tmp/jdt-latest.tar
+    tar xf /tmp/jdt-latest.tar -C ~/.emacs.d/eclipse.jdt.ls/server/
 fi
 
 # Beancount
