@@ -245,7 +245,7 @@ if [ ! -d "${HOME}/.emacs.d/eclipse.jdt.ls/server/" ]; then
     tar xf /tmp/jdt-latest.tar -C ~/.emacs.d/eclipse.jdt.ls/server/
 fi
 
-# Beancount
+# Beancount: emacs-based double-entry bookkeeping
 if [ ! -d "${HOME}/.beancount" ]; then
     hg clone https://bitbucket.org/blais/beancount "${HOME}/.beancount"
     pushd "${HOME}/.beancount" > /dev/null
@@ -256,19 +256,18 @@ if [ ! -d "${HOME}/.beancount" ]; then
     popd > /dev/null
 fi
 
+# Mysterious artifact: sox is a sound formatting/parsing plugin for Linux that Alyssa once needed; keeping bc shrug
 install sox sox
 if [ "$(uname)" == "Linux" ]; then
     install libsox-fmt-all libsox-fmt-all
 fi
 
-
+# Add bin_platform and bin to PATH
 export PATH="${HOME}/bin_platform:${HOME}/bin:${PATH}"
+# Add bin_local before ^^: this order establishes a precedence hierarchy so that the shell finds and uses binaries in a way that allows for setting overrides (local comes before platform comes before bin)
 export PATH="${HOME}/bin_local:${PATH}"
 
 [ -f ~/.bashrc_local ] && source ~/.bashrc_local
 
 # Direnv - Last
 eval "$(direnv hook bash)"
-
-# added by travis gem
-# [ -f /Users/alyssackwan/.travis/travis.sh ] && source /Users/alyssackwan/.travis/travis.sh
