@@ -111,41 +111,46 @@ if [ "$(uname)" == "Linux" ]; then
     install dirmngr dirmngr
 fi
 
+# Install direnv for local env var setups
 install direnv    direnv
-install pandoc    pandoc
 
-if [ "$(uname)" == "Linux" ]; then
-    if [ -f /etc/debian_version ]; then
-        install libbz2-dev      libbz2-dev
-        install libreadline-dev libreadline-dev
-        install libsqlite3-dev  libsqlite3-dev
-    fi
-fi
+# Convert Markdown files into PDF: built on Haskell, which takes 1.5hrs to install lol
+# install pandoc    pandoc
 
-# Haskell
-if [ "$(uname)" == "Darwin" ]; then
-    install haskell-stack haskell-stack
-elif [ "$(uname)" == "Linux" ]; then
-    if [ -d /etc/arch_release ] ; then
-        install stack stack
-    else
-        if [ ! -d "${HOME}/bin/stack" ]; then
-            mkdir -p "${HOME}/tmp"
-            rm -rf "${HOME}/tmp/stack"
-            curl -sSL 'https://get.haskellstack.org/' > "${HOME}/tmp/stack"
-            echo "${password}" | sudo -S sh "${HOME}/tmp/stack" -d "${HOME}/bin/stack"
-            rm -rf "${HOME}/tmp/stack"
-        fi
-        export PATH="${PATH}:${HOME}/bin/stack"
-    fi
-fi
-installedp opam
-if [ $? -ne 0 ]; then
-    install opam opam
-    opam init --enable-shell-hook
-fi
-eval `opam config env`
-eval $(opam env)
+# Mysterious artifact Alyssa needed when working with Python in Debian
+#if [ "$(uname)" == "Linux" ]; then
+#    if [ -f /etc/debian_version ]; then
+#        install libbz2-dev      libbz2-dev
+#        install libreadline-dev libreadline-dev
+#        install libsqlite3-dev  libsqlite3-dev
+#    fi
+#fi
+
+# Haskell: not currently needed
+#if [ "$(uname)" == "Darwin" ]; then
+#    install haskell-stack haskell-stack
+#elif [ "$(uname)" == "Linux" ]; then
+#    if [ -d /etc/arch_release ] ; then
+#        install stack stack
+#    else
+#        if [ ! -d "${HOME}/bin/stack" ]; then
+#            mkdir -p "${HOME}/tmp"
+#            rm -rf "${HOME}/tmp/stack"
+#            curl -sSL 'https://get.haskellstack.org/' > "${HOME}/tmp/stack"
+#            echo "${password}" | sudo -S sh "${HOME}/tmp/stack" -d "${HOME}/bin/stack"
+#            rm -rf "${HOME}/tmp/stack"
+#        fi
+#        export PATH="${PATH}:${HOME}/bin/stack"
+#    fi
+#fi
+
+# installedp opam
+#if [ $? -ne 0 ]; then
+#    install opam opam
+#    opam init --enable-shell-hook
+#fi
+#eval `opam config env`
+#eval $(opam env)
 
 # Go
 if [ "$(uname)" == "Darwin" ]; then
