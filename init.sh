@@ -54,9 +54,6 @@ fi
 
 pushd "${HOME}" > /dev/null
 
-rm -rf .password-store
-git clone https://github.com/alyssackwan/.password-store.git
-
 dotglob_shopt=$(shopt -q dotglob)
 shopt -qs dotglob
 
