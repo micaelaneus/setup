@@ -82,6 +82,22 @@ install() {
         fi
     fi
 }
+install_array() {
+    installedp "${1}"
+    if [ $? -ne 0 ]; then
+        if [ "$(uname)" == "Darwin" ]; then
+            brew install "${!2[@]}"
+        elif [ "$(uname)" == "Linux" ]; then
+            if [ -d /etc/redhat-release ]; then
+                sudo yum install "${2[@]}"
+            elif [ -f /etc/debian_version ]; then
+                echo "${password}" | sudo -S apt-get install -y "${2[@]}"
+            elif [ -f /etc/arch_release ]; then
+                sudo pacman -Sy "${2[@]}"
+            fi
+        fi
+    fi
+}
 
 # bash-completion: expanded functionality for tab complete
 ### Must be installed before the following tools! Otherwise, bash-completion can't pick up the hooks for that package, reducing its functionality
@@ -228,7 +244,7 @@ eval "$(rbenv init -)"
 
 # Emacs
 if [ "$(uname)" == "Darwin" ]; then
-    install emacs "emacs --with-cocoa --with-dbus --with-imagemagick@6 --with-librsvg --with-mailutils --with-modules"
+    install_array emacs ("emacs" "--with-cocoa" "--with-dbus" "--with-imagemagick@6" "--with-librsvg" "--with-mailutils" "--with-modules")
     [ ! -L "${HOME}/Applications/Emacs.app" ] && ln -s "${HOMEBREW}/opt/emacs/Emacs.app" "${HOME}/Applications/"
 elif [ "$(uname)" == "Linux" ]; then
     if [ -f /etc/debian_version ]; then
