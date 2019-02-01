@@ -118,7 +118,8 @@ elif [ "$(uname)" == "Linux" ]; then
 fi
 
 # Some people don't use Git! Install 'hg' to interact with those codebases
-install mercurial mercurial
+### Mercurial was giving us sh*t the day we tried, skipped it as well as Beancount
+#install mercurial mercurial
 
 # Wraps curl to handle downloading files with greater ease and persistence: curl requires specifying vars with each download and breaks if the connection is interrupted 
 install wget      wget
@@ -263,15 +264,15 @@ if [ ! -d "${HOME}/.emacs.d/eclipse.jdt.ls/server/" ]; then
 fi
 
 # Beancount: emacs-based double-entry bookkeeping
-if [ ! -d "${HOME}/.beancount" ]; then
-    hg clone https://bitbucket.org/blais/beancount "${HOME}/.beancount"
-    pushd "${HOME}/.beancount" > /dev/null
-    pyenv virtualenv 3.7.0 beancount
-    pyenv shell beancount
-    pip install .
-    pyenv shell --unset
-    popd > /dev/null
-fi
+#if [ ! -d "${HOME}/.beancount" ]; then
+#    hg clone https://bitbucket.org/blais/beancount "${HOME}/.beancount"
+#    pushd "${HOME}/.beancount" > /dev/null
+#    pyenv virtualenv 3.7.0 beancount
+#    pyenv shell beancount
+#    pip install .
+#    pyenv shell --unset
+#    popd > /dev/null
+#fi
 
 # Mysterious artifact: sox is a sound formatting/parsing plugin for Linux that Alyssa once needed; keeping bc shrug
 install sox sox
