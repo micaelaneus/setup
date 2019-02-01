@@ -244,7 +244,8 @@ eval "$(rbenv init -)"
 
 # Emacs
 if [ "$(uname)" == "Darwin" ]; then
-    install_array emacs ("emacs" "--with-cocoa" "--with-dbus" "--with-imagemagick@6" "--with-librsvg" "--with-mailutils" "--with-modules")
+    emacs_pkg_with_args=("emacs" "--with-cocoa" "--with-dbus" "--with-imagemagick@6" "--with-librsvg" "--with-mailutils" "--with-modules")
+    install_array emacs emacs_pkg_with_args
     [ ! -L "${HOME}/Applications/Emacs.app" ] && ln -s "${HOMEBREW}/opt/emacs/Emacs.app" "${HOME}/Applications/"
 elif [ "$(uname)" == "Linux" ]; then
     if [ -f /etc/debian_version ]; then
