@@ -34,68 +34,8 @@
  '(js-indent-level 2)
  '(js2-basic-offset 2)
  '(js2-bounce-indent-p t)
- '(ledger-post-amount-alignment-column 80)
- '(mail-user-agent 'mu4e-user-agent)
- '(message-kill-buffer-on-exit t)
- '(mu4e-get-mail-command "offlineimap")
- '(mu4e-headers-date-format "%FT%T(%Z)")
- '(mu4e-headers-fields
-   (quote
-    ((:date . 24)
-     (:flags . 6)
-     (:mailing-list . 10)
-     (:from . 22)
-     (:subject))))
- '(mu4e-html2text-command "w3m -dump -cols 80 -T text/html")
- '(mu4e-update-interval 300)
- '(mu4e-view-show-images t)
+ ;;Used for Beancount: '(ledger-post-amount-alignment-column 80)
  '(nrepl-log-messages t)
- `(org-agenda-files
-   (quote
-    (,(concat my-org-root-dir "TODO_habit.org")
-     ,(concat my-org-root-dir "TODO.org")
-     ;; "~/tmp/.emacs.d/org-gcal/gcal-me.org"
-     ;; "~/tmp/.emacs.d/org-gcal/gcal-w-cel.org"
-     ;; "~/tmp/.emacs.d/org-gcal/gcal-w-qbz.org"
-     )))
- '(org-agenda-skip-deadline-if-done t)
- '(org-agenda-skip-scheduled-if-deadline-is-shown t)
- '(org-agenda-skip-scheduled-if-done t)
- '(org-agenda-skip-timestamp-if-done t)
- '(org-agenda-sorting-strategy
-   (quote
-    ((agenda priority-down user-defined-up category-keep)
-     (todo priority-down category-keep)
-     (tags priority-down category-keep)
-     (search category-keep))))
- '(org-agenda-start-on-weekday 0)
- '(org-agenda-use-time-grid nil)
- '(org-babel-load-languages (quote ((emacs-lisp . t) (shell . t))))
- `(org-capture-templates
-   (quote
-    (("t" "TODO" entry
-      (file ,(concat my-org-root-dir "TODO.org"))
-      "** TODO %?
-   SCHEDULED: %t"
-      :empty-lines 1))))
- '(org-catch-invisible-edits (quote show-and-error))
- `(org-default-notes-file ,(concat my-org-root-dir "TODO.org"))
- '(org-default-priority 67)
- '(org-goto-auto-isearch nil)
- '(org-habit-following-days 2)
- '(org-habit-graph-column 72)
- '(org-habit-preceding-days 7)
- '(org-id-link-to-org-use-id (quote create-if-interactive-and-no-custom-id))
- '(org-log-done (quote time))
- '(org-log-into-drawer t)
- '(org-lowest-priority 69)
- '(org-modules
-   (quote
-    (org-bbdb org-bibtex org-docview org-gnus org-habit org-id org-info org-irc org-mhe org-rmail org-w3m)))
- '(org-priority-faces
-   (quote
-    ((65 :foreground "red")
-     (66 :foreground "yellow"))))
  '(projectile-completion-system (quote helm))
  '(projectile-keymap-prefix (kbd "C-c M-c M-p"))
  '(savehist-mode t)
@@ -173,15 +113,6 @@
             (exec-path-from-shell-copy-env "MANPATH")
             (exec-path-from-shell-copy-env "GOPATH")))
 
-(use-package epg
-  :ensure t)
-(let ((path "~/.emacs_secret.el"))
-  (if (file-exists-p path)
-    (load-file path)))
-
-(use-package epkg
-  :ensure t)
-
 (use-package visual-fill-column
   :ensure t
   :hook (visual-line-mode))
@@ -202,114 +133,6 @@
   :demand t
   :config
   (projectile-mode 1))
-
-;; Org
-(use-package org
-  :straight t
-  :ensure t
-  :commands (org-store-link org-agenda org-capture org-switchb)
-  :init
-  (require 'cl-extra)
-  :config
-  (require 'org-id)
-  (defun my-org-agenda-cmp (a b)
-    (cond ((< a b) -1)
-          ((= a b) 0)
-          (t 1)))
-  (defun my-org-agenda-cmp-time-truncated (time-1 time-2)
-    (let ((cmp-seq (mapcar* #'my-org-agenda-cmp time-1 time-2)))
-      (seq-reduce (lambda (v e)
-                    (if (not (= v 0))
-                        v
-                      e))
-                  cmp-seq
-                  0)))
-  (defun my-org-agenda-cmp-time (time-1 time-2)
-    (let* ((time-1-len (if time-1
-                           (length time-1)
-                         0))
-           (time-2-len (if time-2
-                           (length time-2)
-                         0)))
-      (cond ((not time-1) 1)
-            ((not time-2) -1)
-            (t (let ((cmp (my-org-agenda-cmp-time-truncated time-1 time-2)))
-                 (cond ((< cmp 0) -1)
-                       ((= cmp 0) (my-org-agenda-cmp time-2-len time-1-len))
-                       (t 1)))))))
-  (defun my-org-agenda-cmp-user-defined (a b)
-    (let* ((a-pos (get-text-property 0 'org-marker a))
-           (b-pos (get-text-property 0 'org-marker b))
-           (a-deadline-time (org-get-deadline-time a-pos))
-           (a-scheduled-time (org-get-scheduled-time a-pos))
-           (b-deadline-time (org-get-deadline-time b-pos))
-           (b-scheduled-time (org-get-scheduled-time b-pos))
-           (a-time (if (<= (my-org-agenda-cmp-time a-deadline-time a-scheduled-time) 0)
-                       a-deadline-time
-                     a-scheduled-time))
-           (b-time (if (<= (my-org-agenda-cmp-time b-deadline-time b-scheduled-time) 0)
-                       b-deadline-time
-                     b-scheduled-time)))
-      (my-org-agenda-cmp-time a-time b-time)))
-  (setq org-agenda-cmp-user-defined #'my-org-agenda-cmp-user-defined)
-  (defun my-org-agenda-color (tag-re foreground)
-    ""
-    (interactive)
-    (save-excursion
-      (goto-char (point-min))
-      (while (re-search-forward tag-re nil t)
-        (add-text-properties
-         (match-beginning 0) (match-end 0)
-         `(face (:foreground ,foreground))))))
-  (define-key org-mode-map (kbd "C-c M-c") nil)
-  :hook
-  (org-agenda-finalize . (lambda ()
-                           (my-org-agenda-color "^  TODO: +" "chartreuse4")
-                           (my-org-agenda-color "^  TODO_habit: +" "IndianRed3")))
-  :bind (("C-c l" . org-store-link)
-         ("C-c a" . org-agenda)
-         ("C-c c" . org-capture)
-         ("C-c b" . org-switchb)
-         ("C-c o r" . org-revert-all-org-buffers)))
-
-;; Calendar
-(use-package org-gcal
-  :ensure t
-  :commands (org-gcal-fetch)
-  :config
-  (setq org-gcal-client-id "896903804596-eh9eeb30bmnkgfm839gkpem3pkr43ei1.apps.googleusercontent.com")
-  (setq org-gcal-file-alist
-        '(("me@alyssackwan.name" . "~/tmp/.emacs.d/org-gcal/gcal-me.org")
-          ("alyssa.kwan@infallisys.com" . "~/tmp/.emacs.d/org-gcal/gcal-w-cel.org")
-          ("alyssa@qbizinc.com" . "~/tmp/.emacs.d/org-gcal/gcal-w-qbz.org")))
-  ;; :hook
-  ;; (org-agenda-mode . org-gcal-fetch)
-  )
-(use-package calfw
-  :ensure t
-  :demand t
-  :config
-  (defun my-cfw-open-calendar ()
-    (interactive)
-    (cfw:open-calendar-buffer
-     :contents-sources (list (cfw:org-create-source "IndianRed"))))
-  :bind (("C-c M-c M-c" . my-cfw-open-calendar)))
-(use-package calfw-org
-  :ensure t
-  :demand t
-  :after (calfw))
-
-;; Edit Server
-(use-package edit-server
-  :ensure t
-  :demand t
-  :config (edit-server-start))
-
-(use-package gmail-message-mode
-  :ensure t
-  :demand t
-  :after (edit-server)
-  :hook (gmail-message-mode . turn-on-visual-line-mode))
 
 ;; Company
 (use-package company
@@ -514,48 +337,6 @@
 (use-package vagrant-tramp
   :ensure t)
 
-;; pass
-(use-package pass
-  :ensure t
-  :commands (pass))
-(use-package lastpass
-  :ensure t
-  :config
-  (setq lastpass-user "me@alyssackwan.name"))
-
-;; Email
-(use-package w3m
-  :ensure t)
-(use-package-customize-load-path
- mu4e
- (lambda ()
-   (when (memq system-type '(darwin))
-     "~/opt/homebrew/Cellar/mu/1.0/share/emacs/site-lisp/mu/mu4e/"))
- :after (w3m)
- :config
- (imagemagick-register-types)
- (add-to-list 'mu4e-view-actions '("ViewInBrowser" . mu4e-action-view-in-browser) t)
- (setq mu4e-maildir "~/.offlineimap.d/maildir"
-       mu4e-contexts `(,(make-mu4e-context
-                         :name "me@alyssackwan.name"
-                         :vars '((mu4e-drafts-folder . "/me@alyssackwan.name/[Gmail].Drafts")
-                                 (mu4e-sent-folder . "/me@alyssackwan.name/[Gmail].Sent Mail")
-                                 (mu4e-trash-folder . "/me@alyssackwan.name/[Gmail].Trash")
-                                 (mu4e-sent-messages-behavior . 'delete)
-                                 (user-mail-address . "me@alyssackwan.name")
-                                 (user-full-name  . "Alyssa Kwan")))
-                       ,(make-mu4e-context
-                         :name "alyssa.c.kwan@gmail.com"
-                         :vars '((mu4e-drafts-folder . "/alyssa.c.kwan@gmail.com/[Gmail].Drafts")
-                                 (mu4e-sent-folder . "/alyssa.c.kwan@gmail.com/[Gmail].Sent Mail")
-                                 (mu4e-trash-folder . "/alyssa.c.kwan@gmail.com/[Gmail].Trash")
-                                 (mu4e-sent-messages-behavior . 'delete)
-                                 (user-mail-address . "alyssa.c.kwan@gmail.com")
-                                 (user-full-name  . "Alyssa Kwan")))))
- :hook ((mu4e-compose-mode . (lambda ()
-                               (set-fill-column 72)
-                               (flyspell-mode)))))
-
 ;; Beancount
 (use-package beancount
   :load-path "~/.beancount/editors/emacs"
@@ -566,10 +347,6 @@
 
 (use-package darcula-theme
   :ensure t)
-
-(let ((path "~/setup/.emacs_secret.el.gpg"))
-  (if (file-exists-p path)
-    (load-file path)))
 
 (let ((path "~/.emacs_local.el"))
   (if (file-exists-p path)
