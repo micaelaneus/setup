@@ -86,14 +86,14 @@ install_array() {
     installedp "${1}"
     if [ $? -ne 0 ]; then
         if [ "$(uname)" == "Darwin" ]; then
-            brew install "${2[@]}"
+            brew install "${@:2}"
         elif [ "$(uname)" == "Linux" ]; then
             if [ -d /etc/redhat-release ]; then
-                sudo yum install "${2[@]}"
+                sudo yum install "${@:2}"
             elif [ -f /etc/debian_version ]; then
-                echo "${password}" | sudo -S apt-get install -y "${2[@]}"
+                echo "${password}" | sudo -S apt-get install -y "${@:2}"
             elif [ -f /etc/arch_release ]; then
-                sudo pacman -Sy "${2[@]}"
+                sudo pacman -Sy "${@:2}"
             fi
         fi
     fi
