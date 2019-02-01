@@ -86,7 +86,7 @@ install_array() {
     installedp "${1}"
     if [ $? -ne 0 ]; then
         if [ "$(uname)" == "Darwin" ]; then
-            brew install "${!2[@]}"
+            brew install "${2[@]}"
         elif [ "$(uname)" == "Linux" ]; then
             if [ -d /etc/redhat-release ]; then
                 sudo yum install "${2[@]}"
